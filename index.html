@@ -501,30 +501,37 @@
       return `
         <div class="p-4 space-y-3.5 text-slate-900">
 
-          <!-- Top D-Day Banner Card: 무드 포토 히어로 -->
-          <div class="relative rounded-3xl shadow-md overflow-hidden h-56 text-white bg-slate-800 bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&auto=format&fit=crop&q=70')">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/10"></div>
+          <!-- Top D-Day Banner Card: 무드 포토 히어로 (참고 이미지 분위기) -->
+          <div class="relative rounded-3xl shadow-md overflow-hidden h-64 text-white bg-slate-800 bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&auto=format&fit=crop&q=70')">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/5"></div>
 
             <div class="relative z-10 h-full flex flex-col justify-between p-4">
               <div class="flex justify-between items-start">
-                <span class="text-[10px] font-semibold tracking-[0.15em] text-white/70 uppercase">Our Days</span>
-                <button onclick="openSheet('sheet-ai-assistant')" class="w-7 h-7 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center hover:bg-white/25 transition-all">
-                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                <i data-lucide="menu" class="w-4 h-4 text-white/90"></i>
+                <button onclick="openSheet('sheet-ai-assistant')" class="text-white/90">
+                  <i data-lucide="upload" class="w-4 h-4"></i>
                 </button>
               </div>
 
               <div>
-                <h2 class="text-2xl font-black tracking-tight leading-tight" style="font-family:'Noto Serif KR',serif">준영 &amp; 아정</h2>
+                <h2 class="text-3xl font-black tracking-tight leading-tight" style="font-family:'Noto Serif KR',serif">준영 &amp; 아정</h2>
                 <div class="mt-1.5 flex items-baseline gap-1.5">
                   <span class="text-lg font-bold font-mono tracking-tight">D+1,432</span>
-                  <span class="text-[11px] text-white/60 font-medium">함께한 지 1,432일째</span>
+                  <span class="text-[11px] text-white/70 font-medium">함께한 지 1,432일째</span>
                 </div>
-                <div class="mt-2 pt-2 border-t border-white/20 flex justify-between items-center text-[10px] text-white/70 font-medium">
+                <div class="mt-2 pt-2 border-t border-white/20 flex justify-between items-center text-[10px] text-white/75 font-medium">
                   <span>👨🏻 준영 ☀️ 오늘 맑음</span>
                   <span>👩🏻‍🦰 아정 ☁️ 필라테스 데이</span>
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- Photo 아래 리액션 아이콘 라인 (참고 이미지 분위기) -->
+          <div class="flex items-center gap-4 px-1 text-slate-400">
+            <i data-lucide="heart" class="w-5 h-5"></i>
+            <i data-lucide="message-circle" class="w-5 h-5"></i>
+            <i data-lucide="bookmark" class="w-5 h-5"></i>
           </div>
 
           <!-- Section: Today's Overview -->
