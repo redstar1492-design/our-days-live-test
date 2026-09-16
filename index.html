@@ -435,6 +435,16 @@
       localStorage.setItem('our_days_app_v2_state', JSON.stringify(state));
     }
 
+    // 테스트 중 추가/삭제한 내용을 지우고 처음 넣어둔 예시 데이터로 되돌린다
+    function resetDataToDefault() {
+      const confirmed = confirm('모든 테스트 데이터를 지우고 처음 예시 데이터로 되돌릴까요?');
+      if (!confirmed) return;
+      state = JSON.parse(JSON.stringify(defaultData));
+      saveState();
+      showToast('예시 데이터로 초기화되었습니다');
+      renderActiveScreen();
+    }
+
     // Switch Testing Persona
     function setCurrentUser(user) {
       state.currentUser = user;
@@ -535,9 +545,14 @@
             <div class="relative z-10 h-full flex flex-col justify-between px-4 pt-12 pb-5">
               <div class="flex justify-between items-start">
                 <i data-lucide="menu" class="w-5 h-5 text-white/90"></i>
-                <button onclick="document.getElementById('hero-photo-file').click()" class="text-white/90" title="사진 올리기">
-                  <i data-lucide="upload" class="w-5 h-5"></i>
-                </button>
+                <div class="flex items-center gap-3">
+                  <button onclick="resetDataToDefault()" class="text-white/90" title="예시 데이터로 초기화">
+                    <i data-lucide="refresh-ccw" class="w-5 h-5"></i>
+                  </button>
+                  <button onclick="document.getElementById('hero-photo-file').click()" class="text-white/90" title="사진 올리기">
+                    <i data-lucide="upload" class="w-5 h-5"></i>
+                  </button>
+                </div>
               </div>
 
               <div>
