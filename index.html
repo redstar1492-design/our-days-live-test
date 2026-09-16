@@ -501,9 +501,18 @@
       return `
         <div class="p-4 space-y-3.5 text-slate-900">
 
-          <!-- Top D-Day Banner Card: 무드 포토 히어로 (참고 이미지 분위기) -->
-          <div class="relative rounded-3xl shadow-md overflow-hidden h-64 text-white bg-slate-800 bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&auto=format&fit=crop&q=70')">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/5"></div>
+          <!-- Top D-Day Banner Card: 무드 씬 히어로 (참고 이미지의 흐린 해변/실루엣 분위기, CSS로 직접 구성 - 외부 사진 URL 불일치 문제 방지) -->
+          <div class="relative rounded-3xl shadow-md overflow-hidden h-64 text-white" style="background:linear-gradient(180deg,#8b96a1 0%,#6b7885 22%,#4b5864 45%,#333e48 68%,#1c242c 100%)">
+            <!-- 흐린 하늘 질감 -->
+            <div class="absolute inset-0 opacity-40" style="background:radial-gradient(ellipse 70% 40% at 30% 8%, rgba(255,255,255,.35), transparent 60%), radial-gradient(ellipse 60% 35% at 75% 15%, rgba(255,255,255,.2), transparent 65%)"></div>
+            <!-- 수평선 -->
+            <div class="absolute left-0 right-0 top-[42%] h-px bg-white/15"></div>
+            <!-- 두 사람 실루엣 -->
+            <div class="absolute left-1/2 -translate-x-1/2 bottom-[34%] flex items-end gap-1.5">
+              <div class="w-6 rounded-t-full bg-black/75" style="height:58px"></div>
+              <div class="w-6 rounded-t-full bg-black/70" style="height:52px"></div>
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent"></div>
 
             <div class="relative z-10 h-full flex flex-col justify-between p-4">
               <div class="flex justify-between items-start">
