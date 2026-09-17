@@ -1277,7 +1277,7 @@
     // 이 부분만 갱신해서 화면이 덜컥거리거나 스크롤 위치가 튀지 않게 한다.
     function dumpPostsListHTML() {
       const list = dumpShowEndorsedOnly ? state.posts.filter(isEndorsed) : state.posts;
-      const empty = list.length === 0 && dumpShowEndorsedOnly ? '<div class="text-center py-6 text-slate-400 text-xs">아직은 서로가 공감가는 장소가 없는 것 같아요..</div>' : '';
+      const empty = list.length === 0 && dumpShowEndorsedOnly ? '<div class="text-center py-6 text-slate-400 text-xs">아직은 서로가 공감가는 덤프가 없는 것 같아요..</div>' : '';
       return empty + list.map(post => `
             <article class="relative py-1">
               <span class="absolute left-[17px] top-10 bottom-0 w-px bg-slate-200"></span>
