@@ -1244,7 +1244,7 @@
               <div class="py-2 text-slate-400 text-[13px]">오늘 약속된 일정이 없습니다.</div>
             ` : todayEvents.map(ev => `
               <div class="grid grid-cols-[54px_minmax(0,1fr)_auto] items-center min-h-10 gap-2 px-1">
-                <span class="tabular-nums font-semibold tracking-tight text-slate-900 text-[13px] shrink-0">${ev.time}</span>
+                <span class="tabular-nums font-semibold tracking-tight text-slate-900 text-[13px] shrink-0 translate-x-2">${ev.time}</span>
                 <span class="font-medium text-slate-800 text-[13px] leading-5 truncate">${titleOf(ev)}</span>
                 <div class="flex items-center gap-2 shrink-0">
                   ${(!isMine(ev) && ownerOf(ev) !== '함께' && ev.lifecycle !== 'cancelled' && ev.detailVisibility !== 'private') ? `
