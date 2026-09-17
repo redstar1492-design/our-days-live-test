@@ -1191,8 +1191,11 @@
                   <i data-lucide="menu" class="w-5 h-5"></i>
                 </button>
                 <div class="flex items-center gap-3">
-                  <button onclick="resetDataToDefault()" class="text-white/90" title="예시 데이터로 초기화">
+                  <button onclick="location.reload()" class="text-white/90" title="새로고침 (누구의 것인가요 다시 묻기)">
                     <i data-lucide="refresh-ccw" class="w-5 h-5"></i>
+                  </button>
+                  <button onclick="resetDataToDefault()" class="text-white/90" title="작성한 내용 모두 초기화">
+                    <i data-lucide="trash-2" class="w-5 h-5"></i>
                   </button>
                   <button onclick="document.getElementById('hero-photo-file').click()" class="text-white/90" title="사진 올리기">
                     <i data-lucide="upload" class="w-5 h-5"></i>
@@ -1216,7 +1219,7 @@
           <!-- Section: Today's Overview (요구사항 5: 여백을 조밀하게 정리) -->
           <div class="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-soft space-y-2">
             <div class="flex justify-between items-center">
-              <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+              <h3 class="text-sm font-black tracking-tight text-slate-900 flex items-center gap-1.5">
                 <i data-lucide="clock" class="w-4 h-4 text-brand-blue"></i>
                 오늘의 중요 일정 (${todayEvents.length})
               </h3>
@@ -1250,7 +1253,7 @@
           <!-- Section: Feed Feed Posts -->
           <div class="flex justify-between items-center px-1 pt-1">
             <div class="flex items-center gap-1.5">
-              <h3 class="text-base font-black tracking-tight text-slate-900">DUMP</h3>
+              <h3 class="text-sm font-black tracking-tight text-slate-900">DUMP</h3>
               ${state.anniversary ? `<span class="text-[10px] font-bold text-slate-400">함께한 지 ${ddayText()}</span>` : ''}
             </div>
             <button onclick="openNewPostSheet()" class="w-8 h-8 rounded-full border border-slate-200 text-lg leading-none font-light text-slate-700 hover:bg-slate-100">+</button>
@@ -1263,15 +1266,14 @@
                 <img src="${post.authorAvatar}" class="w-9 h-9 rounded-full object-cover ring-2 ring-white border border-slate-100 shrink-0" alt="${post.author}">
                 <div class="flex-1 min-w-0 pb-4">
                   <div class="flex items-center gap-1.5 leading-none">
-                    <span class="text-sm font-extrabold text-slate-900">${nicknameOf(post.author)}</span>
+                    <span class="text-sm font-bold text-slate-900">${nicknameOf(post.author)}</span>
                     <span class="text-[10px] text-slate-400">🕒 ${post.timeAgo.replace('시간 전','h').replace('분 전','m')}</span>
                     ${post.author === state.currentUser ? `<button onclick="requestDeletePost(${post.id})" class="text-slate-300 hover:text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
                   </div>
                   <p class="mt-2 text-[13px] text-slate-800 font-medium leading-relaxed whitespace-pre-wrap">${escapeHtml(post.text)}</p>
                   ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? (() => {
                     const mediaList = post.media || [post.photoUrl];
-                    const multi = mediaList.length > 1;
-                    return `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${mediaList.map((url, index) => `<div class="relative h-48 shrink-0" style="width:${multi ? '70%' : '100%'}"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${post.endorsed ? '' : 'hidden'} absolute top-1 right-2 text-[28px] leading-none drop-shadow-md">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}</div>`).join('')}</div>`;
+                    return `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${mediaList.map((url, index) => `<div class="relative h-48 shrink-0 w-full"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${isEndorsed(post) ? '' : 'hidden'} absolute top-1 right-2 text-[28px] leading-none drop-shadow-md">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}</div>`).join('')}</div>`;
                   })() : ''}
                   <div id="heart-row-${post.id}" class="mt-2.5 flex items-center gap-4 text-slate-500">${heartRowHTML(post)}</div>
                   <div id="comment-section-${post.id}" class="comment-panel mt-3 text-sm">
@@ -2005,23 +2007,22 @@
     let pendingEndorsePostId = null;
 
     // 서로 하트는 1인 1회 토글이다. 둘 다 하트를 누른 순간에만 '인정' 확인을 한 번 물어본다 (무분별한 인정 방지)
+    // 인정마크는 둘 다 하트 + 둘 다 별점 4점 이상일 때 자동으로 뜬다. 별도 확인 절차 없음
+    function isEndorsed(post) {
+      const h = post.hearts || {}; const r = post.ratings || {};
+      return !!(h['준영'] && h['아정'] && (r['준영'] || 0) >= 4 && (r['아정'] || 0) >= 4);
+    }
+
     function toggleHeart(id) {
       const post = state.posts.find(p => p.id === id);
       if (!post) return;
       post.hearts = post.hearts || {};
-      const wasBoth = !!(post.hearts['준영'] && post.hearts['아정']);
       post.hearts[state.currentUser] = !post.hearts[state.currentUser];
-      const isBoth = !!(post.hearts['준영'] && post.hearts['아정']);
       saveState();
       const row = document.getElementById(`heart-row-${id}`);
       if (row) row.innerHTML = heartRowHTML(post);
+      document.getElementById(`endorse-badge-${id}`)?.classList.toggle('hidden', !isEndorsed(post));
       if (window.lucide) lucide.createIcons();
-      if (!wasBoth && isBoth && !post.endorsed) {
-        pendingEndorsePostId = id;
-        const modal = document.getElementById('endorse-confirm-modal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-      }
     }
 
     function closeEndorseConfirm() {
