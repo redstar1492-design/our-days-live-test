@@ -1334,38 +1334,6 @@
       `;
     }
 
-        function getCommonFreeTimeHTML(date) {
-      const relevant = state.events.filter(e => e.date === date && e.lifecycle !== 'cancelled' && (e.detailVisibility === 'shared' || e.detailVisibility === 'busy_only' || ownerOf(e) === '함께'));
-      const busyRanges = relevant.map(e => [timeToMinutes(e.time), timeToMinutes(e.endTime || addMinutesToTime(e.time, 60))]).sort((a, b) => a[0] - b[0]);
-
-      const merged = [];
-      for (const r of busyRanges) {
-        if (merged.length && r[0] <= merged[merged.length - 1][1]) {
-          merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], r[1]);
-        } else {
-          merged.push([...r]);
-        }
-      }
-
-      const freeRanges = [];
-      let cursor = TIMELINE_START_MIN;
-      for (const [s, e] of merged) {
-        if (s > cursor) freeRanges.push([cursor, Math.min(s, TIMELINE_END_MIN)]);
-        cursor = Math.max(cursor, e);
-      }
-      if (cursor < TIMELINE_END_MIN) freeRanges.push([cursor, TIMELINE_END_MIN]);
-      const meaningful = freeRanges.filter(([s, e]) => e - s >= 30);
-
-      return `
-        <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-soft space-y-1">
-          <h3 class="text-xs font-bold text-slate-700">오늘 둘 다 비는 시간</h3>
-          ${meaningful.length ? meaningful.slice(0, 3).map(([s, e]) => `
-            <div class="text-sm font-black text-slate-900">${minutesToTime(s)}–${minutesToTime(e)}</div>
-          `).join('') : '<div class="text-xs text-slate-400">공개한 일정 기준으로 겹치지 않는 시간이 없습니다</div>'}
-          <p class="text-[9px] text-slate-400">공개한 일정(함께 보기·바쁜 시간) 기준이며, 나만 보기 일정은 포함하지 않습니다</p>
-        </div>
-      `;
-    }
     function getMonthlyCalendarHTML() {
       const [yy, mm] = state.calendarMonth.split('-').map(Number);
       const firstWeekday = new Date(yy, mm - 1, 1).getDay();     // 0=일
