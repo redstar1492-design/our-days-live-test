@@ -83,6 +83,19 @@
     .animate-pulse-glow {
       animation: pulseGlow 2s infinite ease-in-out;
     }
+
+    /* 답글은 display:none으로 사라지지 않고, 실제 높이만큼 부드럽게 접히고 펼쳐진다. */
+    .comment-panel {
+      height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transform: translateY(-4px);
+      transition: height 260ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease, transform 220ms ease;
+    }
+    .comment-panel.is-open {
+      opacity: 1;
+      transform: translateY(0);
+    }
   </style>
 </head>
 <body class="bg-slate-900 min-h-screen font-sans text-gray-900 antialiased flex flex-col justify-center items-center p-0 sm:p-4 selection:bg-rose-100 selection:text-rose-600">
@@ -1148,9 +1161,11 @@
                     <button onclick="toggleCommentBox(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold hover:text-brand-blue"><i data-lucide="message-circle" class="w-4 h-4"></i><span id="comment-count-${post.id}">${post.comments.length}</span></button>
                     <button class="hover:text-slate-900" aria-label="공유"><i data-lucide="send" class="w-4 h-4"></i></button>
                   </div>
-                  <div id="comment-section-${post.id}" class="hidden mt-3 space-y-2 text-sm">
+                  <div id="comment-section-${post.id}" class="comment-panel mt-3 text-sm">
+                    <div class="space-y-2">
                     <div id="comment-list-${post.id}" class="space-y-2">${post.comments.map(c => `<div class="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2"><span class="font-bold text-slate-900">${escapeHtml(c.author)}</span><span class="ml-1 text-slate-700">${escapeHtml(c.text)}</span><span class="ml-2 text-[10px] text-slate-400">${c.timeAgo}</span></div>`).join('')}</div>
                     <div class="flex gap-1.5"><input type="text" id="comment-input-${post.id}" placeholder="${escapeHtml(post.author)}님이 올린 피드에 답글 달기" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-full text-xs outline-none focus:border-brand-blue"><button onclick="addComment(${post.id})" class="px-3 py-2 bg-slate-900 text-white font-bold rounded-full text-xs">게시</button></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1832,7 +1847,23 @@
 
     function toggleCommentBox(id) {
       const el = document.getElementById(`comment-section-${id}`);
-      if (el) el.classList.toggle('hidden');
+      if (!el) return;
+      const opening = !el.classList.contains('is-open');
+      if (opening) {
+        el.classList.add('is-open');
+        el.style.height = '0px';
+        requestAnimationFrame(() => { el.style.height = `${el.scrollHeight}px`; });
+        el.addEventListener('transitionend', function done(e) {
+          if (e.propertyName === 'height' && el.classList.contains('is-open')) el.style.height = 'auto';
+          el.removeEventListener('transitionend', done);
+        });
+      } else {
+        el.style.height = `${el.scrollHeight}px`;
+        requestAnimationFrame(() => {
+          el.classList.remove('is-open');
+          el.style.height = '0px';
+        });
+      }
     }
 
     function addComment(postId) {
