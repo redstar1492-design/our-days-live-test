@@ -96,7 +96,7 @@
       opacity: 1;
       transform: translateY(0);
     }
-    .dump-vibe { padding: 8px 4px; border: 1px solid #e2e8f0; border-radius: 12px; color: #475569; font-size: 10px; font-weight: 700; }
+    .dump-vibe { padding: 8px 4px; border: 1px solid #e2e8f0; border-radius: 12px; color: #94a3b8; font-size: 10px; font-weight: 500; }
     .dump-vibe.is-selected { background: #0f172a; border-color: #0f172a; color: #fff; }
     .endorse-badge-anim {
       animation: badgePop .5s cubic-bezier(.34,1.56,.64,1), badgeGlow 2.2s ease-in-out .5s infinite;
@@ -429,9 +429,9 @@
 
     <div class="space-y-4 text-xs">
       <div>
-        <label class="block font-bold text-slate-700 mb-1.5">장소</label>
-        <input id="post-location-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-900 placeholder:text-slate-300 outline-none" placeholder="장소 이름">
-        <select id="post-category-select" class="mt-1.5 w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-900 outline-none">
+        <label class="block text-xs font-bold text-slate-700 mb-1.5">장소</label>
+        <input id="post-location-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-600 placeholder:text-slate-400 placeholder:font-medium outline-none" placeholder="장소 이름">
+        <select id="post-category-select" onchange="this.classList.toggle('text-slate-600', !!this.value); this.classList.toggle('text-slate-400', !this.value)" class="mt-1.5 w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 outline-none">
           <option value="">장소 유형</option>
           <option>카페/디저트</option>
           <option>맛집 탐방</option>
@@ -442,26 +442,27 @@
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1.5">분위기</label>
+        <label class="block text-xs font-bold text-slate-700 mb-1.5">분위기</label>
         <input type="hidden" id="post-vibe-input" value="">
         <div id="post-vibe-chips" class="grid grid-cols-5 gap-1.5"></div>
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1.5">내용</label>
-        <textarea id="post-text-input" rows="3" placeholder="상대방과 공유할 내용을 남겨보세요" class="w-full resize-none text-sm font-medium text-slate-900 leading-relaxed outline-none placeholder:text-slate-300"></textarea>
+        <label class="block text-xs font-bold text-slate-700 mb-1.5">내용</label>
+        <textarea id="post-text-input" rows="3" placeholder="상대방과 공유할 내용을 남겨보세요" class="w-full resize-none text-xs font-medium text-slate-600 leading-relaxed outline-none placeholder:text-slate-400 placeholder:font-medium"></textarea>
       </div>
 
       <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1.5">사진</label>
         <input type="hidden" id="post-photo-input" value="">
         <div class="flex items-center gap-2">
-          <button onclick="document.getElementById('post-photo-file').click()" class="shrink-0 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-500 flex items-center gap-1"><i data-lucide="image-plus" class="w-3.5 h-3.5"></i> 사진 추가</button>
+          <button onclick="document.getElementById('post-photo-file').click()" class="shrink-0 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-400 flex items-center gap-1"><i data-lucide="image-plus" class="w-3.5 h-3.5"></i> 사진 추가</button>
           <div id="post-media-preview" class="flex gap-2 overflow-x-auto no-scrollbar items-center"></div>
         </div>
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1.5">별점</label>
+        <label class="block text-xs font-bold text-slate-700 mb-1.5">별점</label>
         <input type="hidden" id="post-rating-input" value="0">
         <div id="post-rating-stars" class="flex gap-1"></div>
       </div>
@@ -1147,8 +1148,8 @@
       if (field) field.value = postMediaDraft[0] || '';
       if (!preview) return;
       preview.innerHTML = postMediaDraft.length
-        ? `<span class="text-[11px] font-bold text-slate-600">사진 ${postMediaDraft.length}장 담음</span><button onclick="clearDumpPhotos()" class="text-[11px] font-bold text-slate-400 underline">지우기</button>`
-        : `<p class="text-[11px] text-slate-300 font-bold">아직 담은 사진이 없어요</p>`;
+        ? `<span class="text-xs font-medium text-slate-600">사진 ${postMediaDraft.length}장 담음</span><button onclick="clearDumpPhotos()" class="text-xs font-medium text-slate-400 underline">지우기</button>`
+        : `<p class="text-xs font-medium text-slate-400">아직 담은 사진이 없어요</p>`;
     }
     function clearDumpPhotos() { postMediaDraft = []; renderPostMediaDraft(); }
     function removeDumpPhoto(i) { postMediaDraft.splice(i, 1); renderPostMediaDraft(); }
