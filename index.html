@@ -411,15 +411,15 @@
     <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
     <div class="flex justify-between items-center mb-4">
       <button onclick="closeAllSheets()" class="text-xs font-bold text-slate-500">취소</button>
-      <h3 class="font-black text-sm tracking-tight text-slate-900">새 게시물</h3>
-      <button onclick="saveNewPost()" class="text-xs font-black text-brand-red">게시</button>
+      <h3 class="font-black text-sm tracking-tight text-slate-900">새 덤프</h3>
+      <button onclick="saveNewPost()" class="text-xs font-black text-slate-900">던지기</button>
     </div>
 
     <div class="space-y-4 text-xs">
       <!-- 사진이 맨 위: photo dump 먼저, 이야기는 그 아래 (요구사항 6·9) -->
       <input type="hidden" id="post-photo-input" value="">
-      <div id="post-media-preview" class="flex gap-2 overflow-x-auto no-scrollbar"></div>
-      <button onclick="document.getElementById('post-photo-file').click()" class="w-full h-16 rounded-2xl bg-slate-50 border border-dashed border-slate-300 text-xs font-bold text-slate-500 flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> photo dump 📸</button>
+      <div id="post-media-preview" class="flex gap-2 overflow-x-auto no-scrollbar min-h-[96px] items-center"></div>
+      <button onclick="document.getElementById('post-photo-file').click()" class="w-full h-16 rounded-2xl bg-slate-50 border border-dashed border-slate-300 text-sm font-bold text-slate-500 flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> photo dump</button>
 
       <textarea id="post-text-input" rows="4" placeholder="오늘 뭐 했음?" class="w-full resize-none text-[15px] leading-relaxed outline-none placeholder:text-slate-300"></textarea>
 
@@ -1063,12 +1063,15 @@
 
     let postMediaDraft = [];
 
+    // 사진이 추가되어도 미리보기 영역 높이가 고정되어 있어 시트 크기가 갑자기 바뀌지 않는다
     function renderPostMediaDraft() {
       const preview = document.getElementById('post-media-preview');
       const field = document.getElementById('post-photo-input');
       if (field) field.value = postMediaDraft[0] || '';
       if (!preview) return;
-      preview.innerHTML = postMediaDraft.map((url, i) => `<div class="relative shrink-0"><img src="${url}" class="w-24 h-24 object-cover rounded-2xl border border-slate-200"><button onclick="removeDumpPhoto(${i})" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-900 text-white text-[11px]">×</button></div>`).join('');
+      preview.innerHTML = postMediaDraft.length
+        ? postMediaDraft.map((url, i) => `<div class="relative shrink-0"><img src="${url}" class="w-24 h-24 object-cover rounded-2xl border border-slate-200"><button onclick="removeDumpPhoto(${i})" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-900 text-white text-[11px]">×</button></div>`).join('')
+        : `<div class="w-full h-24 flex items-center justify-center text-[11px] text-slate-300 font-bold">아직 담은 사진이 없어요</div>`;
       if (window.lucide) lucide.createIcons();
     }
     function removeDumpPhoto(i) { postMediaDraft.splice(i, 1); renderPostMediaDraft(); }
@@ -1920,10 +1923,15 @@
     }
 
     // 카드 하단에 각자 남긴 별점을 나란히 보여준다 (평균 내지 않음 — 취향은 다를 수 있으니까)
+    // 등록자 별점은 블라인드: 상대가 아직 별점을 안 남겼으면 숨긴다.
+    // 내 별점은 하트 옆 버튼에 이미 '4점'으로 보이므로 여기서 다시 보여주지 않는다.
+    // 둘 다 채워지면 그제서야 상대방(등록자) 쪽 별점만 좌측 하단에 공개한다.
     function ratingSummaryHTML(post) {
       const r = post.ratings || {};
-      const parts = PEOPLE.filter(p => r[p]).map(p => `${p} ${'★'.repeat(r[p])}${'☆'.repeat(5 - r[p])}`);
-      return parts.length ? `<p class="mt-1.5 text-[10px] font-bold text-amber-600">${parts.join(' · ')}</p>` : '';
+      if (!r['준영'] || !r['아정']) return '';
+      const other = otherUser();
+      const n = r[other];
+      return `<p class="mt-1.5 text-[10px] font-bold text-amber-600">${other} ${'★'.repeat(n)}${'☆'.repeat(5 - n)}</p>`;
     }
 
     let pendingEndorsePostId = null;
