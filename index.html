@@ -1241,7 +1241,7 @@
             ` : todayEvents.map(ev => `
               <div class="grid grid-cols-[54px_minmax(0,1fr)_auto] items-center min-h-8 gap-2 px-1">
                 <span class="tabular-nums font-semibold tracking-tight text-slate-900 text-[13px] shrink-0 translate-x-4">${ev.time}</span>
-                <span class="font-medium text-slate-800 text-[13px] leading-5 truncate">${titleOf(ev)}</span>
+                <span class="font-medium text-slate-800 text-[13px] leading-5 flex items-center gap-1 min-w-0"><span class="truncate">${titleOf(ev)}</span>${joinedMark(ev)}</span>
                 <div class="flex items-center gap-2 shrink-0">
                   ${(!isMine(ev) && ownerOf(ev) !== '함께' && ev.lifecycle !== 'cancelled' && ev.detailVisibility !== 'private') ? `
                     <button onclick="requestJoinTogether(${ev.id})" class="text-[10px] bg-slate-900 text-white px-2.5 py-1 rounded-full font-bold hover:bg-black">같이 보내기</button>
