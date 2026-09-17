@@ -421,10 +421,9 @@
   <!-- Modal 2: Create Post Sheet -->
   <div id="sheet-create-post" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-[28px] border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[88vh] overflow-y-auto">
     <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-5"></div>
-    <div class="flex justify-between items-center pb-4 border-b border-slate-100">
-      <button onclick="closeAllSheets()" class="p-1 -ml-1 text-slate-800"><i data-lucide="x" class="w-5 h-5"></i></button>
-      <h3 id="post-sheet-title" class="font-bold text-[15px] tracking-tight text-slate-900">새 덤프</h3>
-      <button id="post-sheet-submit" onclick="saveNewPost()" class="text-xs font-bold text-slate-900">게시</button>
+    <div class="flex items-center gap-5 pb-4 border-b border-slate-100">
+      <button onclick="closeAllSheets()" class="p-1 -ml-1 text-slate-900"><i data-lucide="x" class="w-7 h-7"></i></button>
+      <h3 id="post-sheet-title" class="font-black text-[18px] tracking-tight text-slate-900">새로운 덤프</h3>
     </div>
 
     <div class="pt-5 space-y-5 text-xs">
@@ -471,6 +470,9 @@
         <input type="hidden" id="post-rating-input" value="0">
         <div id="post-rating-stars" class="flex gap-1"></div>
       </div>
+    </div>
+    <div class="sticky bottom-0 -mx-5 mt-5 px-5 pt-3 pb-1 bg-white border-t border-slate-100 flex justify-end">
+      <button id="post-sheet-submit" onclick="saveNewPost()" class="rounded-full bg-slate-900 px-4 py-2 text-xs font-black text-white">던지기</button>
     </div>
   </div>
 
@@ -1967,8 +1969,8 @@
       postMediaDraft = [];
       const catSel = document.getElementById('post-category-select');
       catSel.classList.add('text-slate-400'); catSel.classList.remove('text-slate-600');
-      document.getElementById('post-sheet-title').textContent = '새 덤프';
-      document.getElementById('post-sheet-submit').textContent = '게시';
+      document.getElementById('post-sheet-title').textContent = '새로운 덤프';
+      document.getElementById('post-sheet-submit').textContent = '던지기';
       setPostSheetAuthor();
       renderVibeChips();
       renderPostRatingStars(0);
