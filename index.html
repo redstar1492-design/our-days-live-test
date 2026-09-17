@@ -1190,7 +1190,7 @@
                     <div class="flex justify-end gap-1 mt-2">
                       ${canUnjoin(ev) ? `<button onclick="unjoinEvent(${ev.id})" class="px-2 py-0.5 text-emerald-700 border border-emerald-300 rounded-md text-[10px] font-bold">함께 해제</button>` : ''}
                       <button onclick="openEditEvent(${ev.id})" class="px-2 py-0.5 text-slate-500 text-[10px] font-bold">수정</button>
-                      ${canDelete(ev) ? `<button onclick="cancelEvent(${ev.id})" class="px-2 py-0.5 text-rose-500 text-[10px] font-bold">삭제</button>` : ''}
+                      ${canDelete(ev) ? `<button onclick="cancelEvent(${ev.id})" class="px-2 py-0.5 text-rose-500 text-[10px] font-bold">취소</button>` : ''}
                     </div>`}
                   </div>
                 `;
@@ -1208,7 +1208,7 @@
                   <div class="text-[10px] font-mono ${oc.accent}">${ev.time} ${placeOf(ev) ? '· ' + escapeHtml(placeOf(ev)) : ''}</div>
                   ${cancelled ? '' : `<div class="flex gap-1 mt-1">
                     <button onclick="openEditEvent(${ev.id})" class="flex-1 py-1 border ${oc.border} ${oc.accent} rounded-lg text-[10px] font-bold">수정</button>
-                    ${canDelete(ev) ? `<button onclick="cancelEvent(${ev.id})" class="px-2 py-1 text-rose-500 text-[10px] font-bold">삭제</button>` : ''}
+                    ${canDelete(ev) ? `<button onclick="cancelEvent(${ev.id})" class="px-2 py-1 text-rose-500 text-[10px] font-bold">취소</button>` : ''}
                   </div>`}
                 </div>`;
               const theirCard = `
