@@ -98,6 +98,18 @@
     }
     .dump-vibe { padding: 8px 4px; border: 1px solid #e2e8f0; border-radius: 12px; color: #475569; font-size: 10px; font-weight: 700; }
     .dump-vibe.is-selected { background: #0f172a; border-color: #0f172a; color: #fff; }
+    .endorse-badge-anim {
+      animation: badgePop .5s cubic-bezier(.34,1.56,.64,1), badgeGlow 2.2s ease-in-out .5s infinite;
+    }
+    @keyframes badgePop {
+      0% { transform: scale(0) rotate(-15deg); opacity: 0; }
+      60% { transform: scale(1.3) rotate(8deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    @keyframes badgeGlow {
+      0%, 100% { filter: drop-shadow(0 0 2px rgba(255,196,0,.35)); }
+      50% { filter: drop-shadow(0 0 9px rgba(255,196,0,.95)); }
+    }
   </style>
 </head>
 <body class="bg-slate-900 min-h-screen font-sans text-gray-900 antialiased flex flex-col justify-center items-center p-0 sm:p-4 selection:bg-rose-100 selection:text-rose-600">
@@ -411,8 +423,8 @@
     <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
     <div class="flex justify-between items-center mb-4">
       <button onclick="closeAllSheets()" class="text-xs font-bold text-slate-500">취소</button>
-      <h3 class="font-black text-sm tracking-tight text-slate-900">새 덤프</h3>
-      <button onclick="saveNewPost()" class="text-xs font-black text-slate-900">던지기</button>
+      <h3 id="post-sheet-title" class="font-black text-sm tracking-tight text-slate-900">새 덤프</h3>
+      <button id="post-sheet-submit" onclick="saveNewPost()" class="text-xs font-black text-slate-900">던지기</button>
     </div>
 
     <div class="space-y-4 text-xs">
@@ -1267,12 +1279,12 @@
                   <div class="flex items-center gap-1.5 leading-none">
                     <span class="text-sm font-bold text-slate-900">${nicknameOf(post.author)}</span>
                     <span class="text-[10px] text-slate-400">🕒 ${post.timeAgo.replace('시간 전','h').replace('분 전','m')}</span>
-                    ${post.author === state.currentUser ? `<button onclick="requestDeletePost(${post.id})" class="text-slate-300 hover:text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
+                    ${post.author === state.currentUser ? `<button onclick="openEditPostSheet(${post.id})" class="text-slate-300 hover:text-slate-600 mr-1"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button><button onclick="requestDeletePost(${post.id})" class="text-slate-300 hover:text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
                   </div>
                   <p class="mt-2 text-[13px] text-slate-800 font-medium leading-relaxed whitespace-pre-wrap">${escapeHtml(post.text)}</p>
                   ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? (() => {
                     const mediaList = post.media || [post.photoUrl];
-                    return `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${mediaList.map((url, index) => `<div class="relative h-48 shrink-0 w-full"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${isEndorsed(post) ? '' : 'hidden'} absolute top-1 right-2 text-[28px] leading-none drop-shadow-md">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}</div>`).join('')}</div>`;
+                    return `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${mediaList.map((url, index) => `<div class="relative h-48 shrink-0 w-full"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${isEndorsed(post) ? '' : 'hidden'} endorse-badge-anim absolute top-1 right-2 text-[28px] leading-none">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}</div>`).join('')}</div>`;
                   })() : ''}
                   <div id="heart-row-${post.id}" class="mt-2.5 flex items-center gap-4 text-slate-500">${heartRowHTML(post)}</div>
                   <div id="comment-section-${post.id}" class="comment-panel mt-3 text-sm">
@@ -1932,13 +1944,39 @@
     // 우리가 정한 10가지 분위기 표현 (요구사항 8)
     const DUMP_VIBES = ['완전좋았음', '두근두근', '활기찼음', '다정했음', '인생샷각', '힐링그자체', '신세계였음', '그냥그랬음', '아쉬웠음', '별로였음'];
 
+    // 수정 중인 게시물 id. null이면 새로 작성하는 것
+    let editingPostId = null;
+
     function openNewPostSheet() {
+      editingPostId = null;
       ['post-text-input', 'post-location-input', 'post-vibe-input', 'post-photo-input', 'post-rating-input', 'post-category-select'].forEach(id => {
         const el = document.getElementById(id); if (el) el.value = '';
       });
       postMediaDraft = [];
+      document.getElementById('post-sheet-title').textContent = '새 덤프';
+      document.getElementById('post-sheet-submit').textContent = '던지기';
       renderVibeChips();
       renderPostRatingStars(0);
+      openSheet('sheet-create-post');
+      renderPostMediaDraft();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // 본인 게시물만 수정할 수 있다. 작성 시트를 재사용하고 기존 값으로 채운다
+    function openEditPostSheet(id) {
+      const post = state.posts.find(p => p.id === id);
+      if (!post || post.author !== state.currentUser) return;
+      editingPostId = id;
+      document.getElementById('post-text-input').value = post.text || '';
+      document.getElementById('post-location-input').value = post.location || post.meta?.spot || '';
+      document.getElementById('post-vibe-input').value = post.meta?.vibe || '';
+      document.getElementById('post-category-select').value = post.meta?.category || '';
+      document.getElementById('post-rating-input').value = String((post.ratings && post.ratings[state.currentUser]) || 0);
+      postMediaDraft = post.media ? [...post.media] : (post.photoUrl ? [post.photoUrl] : []);
+      document.getElementById('post-sheet-title').textContent = 'DUMP 수정';
+      document.getElementById('post-sheet-submit').textContent = '저장';
+      renderVibeChips();
+      renderPostRatingStars(Number(document.getElementById('post-rating-input').value) || 0);
       openSheet('sheet-create-post');
       renderPostMediaDraft();
       if (window.lucide) lucide.createIcons();
@@ -2750,11 +2788,29 @@
       const location = document.getElementById('post-location-input').value.trim();
       const vibe = document.getElementById('post-vibe-input').value.trim();
       const category = document.getElementById('post-category-select').value;
-      const photoUrl = document.getElementById('post-photo-input').value.trim();
+      const photoUrl = postMediaDraft[0] || document.getElementById('post-photo-input').value.trim();
       const myRating = Number(document.getElementById('post-rating-input').value) || 0;
 
       if (!text && !location && !photoUrl) {
         showToast('사진, 장소, 한마디 중 하나를 남겨 주세요');
+        return;
+      }
+
+      if (editingPostId) {
+        // 수정: 작성자·날짜·하트·별점(상대방 것)·댓글은 그대로 두고 내용만 바꾼다
+        const post = state.posts.find(p => p.id === editingPostId);
+        if (!post || post.author !== author) { closeAllSheets(); return; }
+        post.text = text;
+        post.location = location;
+        post.meta = { spot: location, vibe, category };
+        post.photoUrl = photoUrl;
+        post.media = [...postMediaDraft];
+        post.ratings = post.ratings || { '준영': null, '아정': null };
+        post.ratings[author] = myRating || null;
+        saveState();
+        closeAllSheets();
+        showToast('덤프를 수정했어요');
+        renderActiveScreen();
         return;
       }
 
