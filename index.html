@@ -437,7 +437,7 @@
 
       <div>
         <label class="block font-bold text-slate-700 mb-1.5">내용</label>
-        <textarea id="post-text-input" rows="3" placeholder="소소한 하루를 남겨보세요" class="w-full resize-none text-[15px] leading-relaxed outline-none placeholder:text-slate-300"></textarea>
+        <textarea id="post-text-input" rows="3" placeholder="상대방과 공유할 내용을 남겨보세요" class="w-full resize-none text-[15px] leading-relaxed outline-none placeholder:text-slate-300"></textarea>
       </div>
 
       <div>
@@ -602,10 +602,11 @@
           authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
           timeAgo: '5시간 전',
           date: '2026-09-16',
-          text: '퇴근하고 혼자 들렀는데 존나힘듬... 그래도 여기 파스타는 진짜 존나좋음',
+          text: '퇴근하고 혼자 들렀는데 진짜 힘들었음... 그래도 여기 파스타는 완전 힐링이었음',
           location: '강남 · 파스타 맛집',
           meta: { spot: '강남 · 파스타 맛집', vibe: '힐링그자체', category: '맛집 탐방' },
           photoUrl: 'https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=600&auto=format&fit=crop&q=80',
+          media: ['https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=600&auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=600&auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&auto=format&fit=crop&q=80'],
           hearts: { '준영': true, '아정': false },
           ratings: { '준영': 4, '아정': null },
           endorsed: false,
@@ -1123,16 +1124,18 @@
     let postMediaDraft = [];
 
     // 사진이 추가되어도 미리보기 영역 높이가 고정되어 있어 시트 크기가 갑자기 바뀌지 않는다
+    // 사진을 썸네일로 미리 보여주지 않는다. 텍스트 한 줄만 바뀌어서 사진을 추가해도
+    // 시트 레이아웃이 절대 움직이지 않는다 (사용자 요청: 화면 튕김 금지)
     function renderPostMediaDraft() {
       const preview = document.getElementById('post-media-preview');
       const field = document.getElementById('post-photo-input');
       if (field) field.value = postMediaDraft[0] || '';
       if (!preview) return;
       preview.innerHTML = postMediaDraft.length
-        ? postMediaDraft.map((url, i) => `<div class="relative shrink-0"><img src="${url}" class="w-24 h-24 object-cover rounded-2xl border border-slate-200"><button onclick="removeDumpPhoto(${i})" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-900 text-white text-[11px]">×</button></div>`).join('')
+        ? `<span class="text-[11px] font-bold text-slate-600">사진 ${postMediaDraft.length}장 담음</span><button onclick="clearDumpPhotos()" class="text-[11px] font-bold text-slate-400 underline">지우기</button>`
         : `<p class="text-[11px] text-slate-300 font-bold">아직 담은 사진이 없어요</p>`;
-      if (window.lucide) lucide.createIcons();
     }
+    function clearDumpPhotos() { postMediaDraft = []; renderPostMediaDraft(); }
     function removeDumpPhoto(i) { postMediaDraft.splice(i, 1); renderPostMediaDraft(); }
 
     function handlePostPhotoUpload(input) {
@@ -1266,7 +1269,11 @@
                     ${post.author === state.currentUser ? `<button onclick="requestDeletePost(${post.id})" class="text-slate-300 hover:text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
                   </div>
                   <p class="mt-2 text-[13px] text-slate-800 font-medium leading-relaxed whitespace-pre-wrap">${escapeHtml(post.text)}</p>
-                  ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${(post.media || [post.photoUrl]).map((url, index) => `<div class="relative h-48 min-w-[78%]"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${post.endorsed ? '' : 'hidden'} absolute top-1 right-2 text-[28px] leading-none drop-shadow-md">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}</div>`).join('')}</div>` : ''}
+                  ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? (() => {
+                    const mediaList = post.media || [post.photoUrl];
+                    const multi = mediaList.length > 1;
+                    return `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${mediaList.map((url, index) => `<div class="relative h-48 shrink-0" style="width:${multi ? '70%' : '100%'}"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${post.endorsed ? '' : 'hidden'} absolute top-1 right-2 text-[28px] leading-none drop-shadow-md">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}${multi ? `<span class="absolute top-2 left-1/2 -translate-x-1/2 rounded-full bg-black/65 backdrop-blur-md px-2 py-0.5 text-[10px] font-bold text-white">${index + 1}/${mediaList.length}</span>` : ''}</div>`).join('')}</div>`;
+                  })() : ''}
                   <div id="heart-row-${post.id}" class="mt-2.5 flex items-center gap-4 text-slate-500">${heartRowHTML(post)}</div>
                   <div id="comment-section-${post.id}" class="comment-panel mt-3 text-sm">
                     <div class="space-y-2">
