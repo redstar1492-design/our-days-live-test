@@ -427,12 +427,9 @@
     </div>
 
     <div class="pt-5 space-y-5 text-xs">
-      <div class="flex gap-3 pb-4 border-b border-slate-100">
-        <span id="post-author-avatar" class="w-9 h-9 shrink-0 rounded-full bg-slate-900 text-white text-xs font-black flex items-center justify-center">준</span>
-        <div class="flex-1 min-w-0">
-          <div id="post-author-name" class="text-[13px] font-bold text-slate-900 mb-1"></div>
-          <textarea id="post-text-input" rows="3" placeholder="좋은 소식이 있나요?" class="w-full resize-none text-[14px] font-medium text-slate-800 leading-relaxed outline-none placeholder:text-slate-400 placeholder:font-medium"></textarea>
-        </div>
+      <div class="pb-4 border-b border-slate-100">
+        <div id="post-author-name" class="text-[13px] font-bold text-slate-900 mb-1.5"></div>
+        <textarea id="post-text-input" rows="3" placeholder="좋은 소식이 있나요?" class="w-full resize-none text-[13px] font-medium text-slate-800 leading-relaxed outline-none placeholder:text-slate-400 placeholder:font-medium"></textarea>
       </div>
 
       <div class="space-y-3">
@@ -442,14 +439,8 @@
             <span class="text-[10px] text-slate-400">기억하고 싶은 곳</span>
           </div>
           <input id="post-location-input" class="w-full border-b border-slate-200 px-0 py-2 text-[13px] font-medium text-slate-700 placeholder:text-slate-400 outline-none focus:border-slate-900" placeholder="장소 이름">
-          <select id="post-category-select" onchange="this.classList.toggle('text-slate-700', !!this.value); this.classList.toggle('text-slate-400', !this.value)" class="mt-2 w-full bg-slate-50 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 outline-none">
-            <option value="">장소 유형 선택</option>
-            <option>카페/디저트</option>
-            <option>맛집 탐방</option>
-            <option>산책/데이트</option>
-            <option>영화/문화</option>
-            <option>기타</option>
-          </select>
+          <input type="hidden" id="post-category-select" value="">
+          <div id="post-category-chips" class="mt-2 flex flex-wrap gap-1.5"></div>
         </div>
 
         <div>
@@ -1952,14 +1943,23 @@
     let editingPostId = null;
 
     function setPostSheetAuthor() {
-      const name = nicknameOf(state.currentUser);
       const nameEl = document.getElementById('post-author-name');
-      const avatarEl = document.getElementById('post-author-avatar');
-      if (nameEl) nameEl.textContent = name;
-      if (avatarEl) {
-        avatarEl.textContent = name.slice(0, 1);
-        avatarEl.className = `w-9 h-9 shrink-0 rounded-full text-white text-xs font-black flex items-center justify-center ${state.currentUser === '준영' ? 'bg-rose-500' : 'bg-brand-blue'}`;
-      }
+      if (nameEl) nameEl.textContent = nicknameOf(state.currentUser);
+    }
+
+    const DUMP_CATEGORIES = ['카페/디저트', '맛집 탐방', '산책/데이트', '영화/문화', '기타'];
+
+    function renderCategoryChips() {
+      const cur = document.getElementById('post-category-select').value;
+      document.getElementById('post-category-chips').innerHTML = DUMP_CATEGORIES.map(category =>
+        `<button type="button" onclick="setDumpCategory('${category}')" class="dump-vibe ${category === cur ? 'is-selected' : ''}">${category}</button>`
+      ).join('');
+    }
+
+    function setDumpCategory(category) {
+      const input = document.getElementById('post-category-select');
+      input.value = input.value === category ? '' : category;
+      renderCategoryChips();
     }
 
     function openNewPostSheet() {
@@ -1969,11 +1969,12 @@
       });
       postMediaDraft = [];
       const catSel = document.getElementById('post-category-select');
-      catSel.classList.add('text-slate-400'); catSel.classList.remove('text-slate-600');
+      catSel.value = '';
       document.getElementById('post-sheet-title').textContent = '새로운 덤프';
       document.getElementById('post-sheet-submit').textContent = '던지기';
       setPostSheetAuthor();
       renderVibeChips();
+      renderCategoryChips();
       renderPostRatingStars(0);
       openSheet('sheet-create-post');
       renderPostMediaDraft();
@@ -1990,8 +1991,7 @@
       document.getElementById('post-vibe-input').value = post.meta?.vibe || '';
       const catSel = document.getElementById('post-category-select');
       catSel.value = post.meta?.category || '';
-      catSel.classList.toggle('text-slate-600', !!catSel.value);
-      catSel.classList.toggle('text-slate-400', !catSel.value);
+      
       document.getElementById('post-rating-input').value = String((post.ratings && post.ratings[state.currentUser]) || 0);
       postMediaDraft = post.media ? [...post.media] : (post.photoUrl ? [post.photoUrl] : []);
       document.getElementById('post-sheet-title').textContent = 'DUMP 수정';
