@@ -1567,8 +1567,24 @@
     function cancelEvent(id) {
       const ev = state.events.find(e => e.id === id);
       if (!ev || !canDelete(ev)) return;
+      const before = { lifecycle: ev.lifecycle };
       ev.lifecycle = 'cancelled';
       ev.changeStatus = null;
+      ev.version = (ev.version || 1) + 1;
+      ev.revisions = ev.revisions || [];
+      ev.revisions.push({
+        version: ev.version,
+        actor: state.currentUser,
+        changedFields: ['lifecycle'],
+        before,
+        after: { lifecycle: 'cancelled' },
+        createdAt: new Date().toISOString()
+      });
+      state.notifications.unshift({
+        id: Date.now(),
+        text: `${state.currentUser}이 '${titleOf(ev)}' 일정을 취소했어요`,
+        timeAgo: '방금 전', read: false, type: 'calendar', color: 'bg-brand-blue'
+      });
       saveState();
       showToast('일정이 취소되었습니다');
       renderActiveScreen();
