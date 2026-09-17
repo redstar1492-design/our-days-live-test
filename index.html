@@ -420,18 +420,18 @@
 
   <!-- Modal 2: Create Post Sheet -->
   <div id="sheet-create-post" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[88vh] overflow-y-auto">
-    <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
-    <div class="flex justify-between items-center mb-4">
+    <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-5"></div>
+    <div class="flex justify-between items-center mb-6">
       <button onclick="closeAllSheets()" class="text-xs font-bold text-slate-500">취소</button>
-      <h3 id="post-sheet-title" class="font-black text-sm tracking-tight text-slate-900">새 덤프</h3>
+      <h3 id="post-sheet-title" class="font-black text-lg tracking-tight text-slate-900">새 덤프</h3>
       <button id="post-sheet-submit" onclick="saveNewPost()" class="text-xs font-black text-slate-900">던지기</button>
     </div>
 
     <div class="space-y-4 text-xs">
       <div>
         <label class="block font-bold text-slate-700 mb-1.5">장소</label>
-        <input id="post-location-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-medium outline-none" placeholder="장소 이름">
-        <select id="post-category-select" class="mt-1.5 w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-600 outline-none">
+        <input id="post-location-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-900 placeholder:text-slate-300 outline-none" placeholder="장소 이름">
+        <select id="post-category-select" class="mt-1.5 w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-900 outline-none">
           <option value="">장소 유형</option>
           <option>카페/디저트</option>
           <option>맛집 탐방</option>
@@ -449,7 +449,7 @@
 
       <div>
         <label class="block font-bold text-slate-700 mb-1.5">내용</label>
-        <textarea id="post-text-input" rows="3" placeholder="상대방과 공유할 내용을 남겨보세요" class="w-full resize-none text-[15px] leading-relaxed outline-none placeholder:text-slate-300"></textarea>
+        <textarea id="post-text-input" rows="3" placeholder="상대방과 공유할 내용을 남겨보세요" class="w-full resize-none text-sm font-medium text-slate-900 leading-relaxed outline-none placeholder:text-slate-300"></textarea>
       </div>
 
       <div>
@@ -576,7 +576,7 @@
       // Schedule Events — subject(원래 대상)와 participants(실제 참석자)를 분리 (요청서 2-3)
       events: [
         { id: 1, title: '성수동 맛집 점심', date: '2026-09-16', endDate: null, time: '12:30', endTime: '14:00', subject: '아정', subjectMemberId: '아정', participants: ['아정'], participation: {}, place: '성수동', createdBy: '아정', detailVisibility: 'shared', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '예약 완료' },
-        { id: 2, title: '퇴근 후 저녁 모임', date: '2026-09-16', time: '19:00', endTime: '21:30', subject: '준영', subjectMemberId: '준영', participants: ['준영'], participation: {}, place: '강남', createdBy: '준영', detailVisibility: 'busy_only', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '' },
+        { id: 2, title: '저녁 회식', date: '2026-09-16', time: '19:00', endTime: '21:30', subject: '준영', subjectMemberId: '준영', participants: ['준영'], participation: {}, place: '강남', createdBy: '준영', detailVisibility: 'shared', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '' },
         { id: 3, title: '테니스 치기', date: '2026-09-16', time: '20:00', endTime: '21:00', subject: '아정', subjectMemberId: '아정', participants: ['아정'], participation: {}, place: '센트럴', createdBy: '아정', detailVisibility: 'shared', lifecycle: 'active', changeStatus: 'changed', version: 2, revisions: [], note: '' },
         { id: 4, title: '부모님 저녁 식사', date: '2026-09-18', time: '18:30', endTime: '20:30', subject: '아정', subjectMemberId: '아정', participants: ['아정'], participation: {}, place: '분당', createdBy: '아정', detailVisibility: 'shared', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '' }
       ],
@@ -1134,6 +1134,10 @@
 
     let postMediaDraft = [];
 
+    // DUMP 모아보기: 인정 도장 찍힌 게시물만 필터링해서 보여준다
+    let dumpShowEndorsedOnly = false;
+    function toggleEndorsedOnly() { dumpShowEndorsedOnly = !dumpShowEndorsedOnly; renderActiveScreen(); }
+
     // 사진이 추가되어도 미리보기 영역 높이가 고정되어 있어 시트 크기가 갑자기 바뀌지 않는다
     // 사진을 썸네일로 미리 보여주지 않는다. 텍스트 한 줄만 바뀌어서 사진을 추가해도
     // 시트 레이아웃이 절대 움직이지 않는다 (사용자 요청: 화면 튕김 금지)
@@ -1246,12 +1250,12 @@
                 <div class="flex items-center justify-between px-2 py-1 rounded-lg hover:bg-slate-50 gap-2">
                   <div class="flex items-center gap-1.5 min-w-0">
                     <span class="font-bold text-slate-900 text-sm w-11 shrink-0">${ev.time}</span>
-                    ${ownerPill(ownerOf(ev))}
                     <span class="font-medium text-slate-500 text-sm truncate">${titleOf(ev)}</span>
+                    ${ownerPill(ownerOf(ev))}
                   </div>
                   <div class="flex items-center gap-1.5 shrink-0">
                     ${(!isMine(ev) && ownerOf(ev) !== '함께' && ev.lifecycle !== 'cancelled' && ev.detailVisibility !== 'private') ? `
-                      <button onclick="requestJoinTogether(${ev.id})" class="text-[10px] bg-slate-900 text-white px-2 py-0.5 rounded-full font-bold hover:bg-black">나도 함께</button>
+                      <button onclick="requestJoinTogether(${ev.id})" class="text-[10px] bg-slate-900 text-white px-2 py-0.5 rounded-full font-bold hover:bg-black">같이 보내기</button>
                     ` : ''}
                   </div>
                 </div>
@@ -1265,10 +1269,14 @@
               <h3 class="text-sm font-black tracking-tight text-slate-900">DUMP</h3>
               ${state.anniversary ? `<span class="text-[10px] font-bold text-slate-400">함께한 지 ${ddayText()}</span>` : ''}
             </div>
-            <button onclick="openNewPostSheet()" class="w-8 h-8 rounded-full border border-slate-200 text-lg leading-none font-light text-slate-700 hover:bg-slate-100">+</button>
+            <div class="flex items-center gap-2">
+              <button onclick="toggleEndorsedOnly()" class="flex items-center gap-1 text-[10px] font-bold ${dumpShowEndorsedOnly ? 'text-amber-500' : 'text-slate-400 hover:text-slate-600'}">🏅 모아보기</button>
+              <button onclick="openNewPostSheet()" class="w-8 h-8 rounded-full border border-slate-200 text-lg leading-none font-light text-slate-700 hover:bg-slate-100">+</button>
+            </div>
           </div>
 
-          ${state.posts.map(post => `
+          ${(dumpShowEndorsedOnly ? state.posts.filter(isEndorsed) : state.posts).length === 0 && dumpShowEndorsedOnly ? '<div class="text-center py-6 text-slate-400 text-xs">아직 인정 도장 찍힌 덤프가 없어요.</div>' : ''}
+          ${(dumpShowEndorsedOnly ? state.posts.filter(isEndorsed) : state.posts).map(post => `
             <article class="relative py-1">
               <span class="absolute left-[17px] top-10 bottom-0 w-px bg-slate-200"></span>
               <div class="relative flex gap-3">
@@ -1282,7 +1290,7 @@
                   <p class="mt-2 text-[13px] text-slate-800 font-medium leading-relaxed whitespace-pre-wrap">${escapeHtml(post.text)}</p>
                   ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? (() => {
                     const mediaList = post.media || [post.photoUrl];
-                    return `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${mediaList.map((url, index) => `<div class="relative h-48 shrink-0 w-full"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${isEndorsed(post) ? '' : 'hidden'} endorse-badge-anim absolute top-1 right-2 text-[28px] leading-none">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}</div>`).join('')}</div>`;
+                    return `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${mediaList.map((url, index) => `<div class="relative h-48 shrink-0 w-full"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${isEndorsed(post) ? '' : 'hidden'} endorse-badge-anim absolute top-3 right-2 text-[28px] leading-none">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}</div>`).join('')}</div>`;
                   })() : ''}
                   <div id="heart-row-${post.id}" class="mt-2.5 flex items-center gap-4 text-slate-500">${heartRowHTML(post)}</div>
                   <div id="comment-section-${post.id}" class="comment-panel mt-3 text-sm">
@@ -1398,7 +1406,7 @@
           const pending = pendingJoinRequestOf(ev.id, state.currentUser);
           actionBtn = pending
             ? `<button onclick="event.stopPropagation();cancelJoinRequest(${pending.id})" class="text-[9px] font-bold text-slate-500 bg-slate-100 rounded px-1.5 py-0.5 shrink-0">요청 보냄</button>`
-            : `<button onclick="event.stopPropagation();requestJoinTogether(${ev.id})" class="text-[9px] font-bold text-white bg-slate-900/80 rounded px-1.5 py-0.5 shrink-0">나도 함께</button>`;
+            : `<button onclick="event.stopPropagation();requestJoinTogether(${ev.id})" class="text-[9px] font-bold text-white bg-slate-900/80 rounded px-1.5 py-0.5 shrink-0">같이 보내기</button>`;
         }
         return `
           <div${clickAttr} class="rounded-lg border px-1.5 py-1 text-[10px] flex items-center gap-1 ${busy ? 'bg-slate-100 border-slate-200' : oc.bg + ' ' + oc.border} ${cancelled ? 'opacity-50' : ''} ${mine && !cancelled ? 'cursor-pointer' : ''}">
