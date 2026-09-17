@@ -370,25 +370,25 @@
   <div id="sheet-create-post" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[88vh] overflow-y-auto">
     <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
     <div class="flex justify-between items-center mb-4">
-      <button onclick="closeAllSheets()" class="text-xs font-bold text-slate-500">Cancel</button>
-      <h3 class="font-black text-sm tracking-tight text-slate-900">New Dump 📦</h3>
-      <button onclick="saveNewPost()" class="text-xs font-black text-brand-red">Drop 💥</button>
+      <button onclick="closeAllSheets()" class="text-xs font-bold text-slate-500">취소</button>
+      <h3 class="font-black text-sm tracking-tight text-slate-900">새 게시물</h3>
+      <button onclick="saveNewPost()" class="text-xs font-black text-brand-red">게시</button>
     </div>
 
     <div class="space-y-4 text-xs">
+      <div class="flex gap-2 overflow-x-auto no-scrollbar">
+        <button onclick="setDumpMeta('spot')" id="dump-spot-btn" class="shrink-0 px-3 py-2 rounded-full border border-slate-200 text-xs font-bold text-slate-600">📍 장소 추가</button>
+        <button onclick="setDumpMeta('vibe')" id="dump-vibe-btn" class="shrink-0 px-3 py-2 rounded-full border border-slate-200 text-xs font-bold text-slate-600">⚡ 분위기 선택</button>
+      </div>
       <div class="flex items-start gap-2.5">
         <span id="post-compose-avatar" class="w-8 h-8 rounded-full bg-slate-900 text-white text-[10px] font-black flex items-center justify-center shrink-0"></span>
-        <textarea id="post-text-input" rows="4" placeholder="what's the vibe today? 👀" class="flex-1 resize-none pt-1 text-[15px] leading-relaxed outline-none placeholder:text-slate-300"></textarea>
+        <textarea id="post-text-input" rows="4" placeholder="이 순간을 자유롭게 남겨보세요" class="flex-1 resize-none pt-1 text-[15px] leading-relaxed outline-none placeholder:text-slate-300"></textarea>
       </div>
       <input type="hidden" id="post-photo-input" value="">
       <input type="hidden" id="post-location-input" value="">
       <input type="hidden" id="post-vibe-input" value="">
       <div id="post-media-preview" class="flex gap-2 overflow-x-auto no-scrollbar"></div>
       <button onclick="document.getElementById('post-photo-file').click()" class="w-full h-16 rounded-2xl bg-slate-50 border border-dashed border-slate-300 text-xs font-bold text-slate-500 flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> add photos / videos 📸</button>
-      <div class="flex gap-2 overflow-x-auto no-scrollbar">
-        <button onclick="setDumpMeta('spot')" id="dump-spot-btn" class="shrink-0 px-3 py-2 rounded-full border border-slate-200 text-xs font-bold text-slate-600">📍 spot</button>
-        <button onclick="setDumpMeta('vibe')" id="dump-vibe-btn" class="shrink-0 px-3 py-2 rounded-full border border-slate-200 text-xs font-bold text-slate-600">⚡ vibe</button>
-      </div>
     </div>
   </div>
 
@@ -482,6 +482,7 @@
       activeCalendarView: 'daily', // 'daily' | 'monthly'
       selectedDate: '2026-09-16',
       currentUser: '준영',
+      memberProfiles: { '준영': { nickname: '준영' }, '아정': { nickname: '아정' } },
       heroPhoto: null, // 우리 탭 상단 사진 업로드 시 데이터URL 저장 (브라우저 localStorage에 영구 보관)
       calendarMonth: '2026-09',   // 월간 보기 기준 월
       calendarFilter: '전체',      // 전체 | 준영 | 아정 | 함께
@@ -653,6 +654,7 @@
     /* ===== 개인화·표시 기능 (CLAUDE_PERSONALIZATION_AND_PRIVATE_MARKERS_REQUEST) ===== */
 
     const PEOPLE = ['준영', '아정'];
+    function nicknameOf(member) { return state.memberProfiles?.[member]?.nickname || member; }
 
     // 시간 문자열(HH:MM) <-> 분 변환. 일간 타임라인 배치·공통 가능 시간 계산에 공용으로 쓴다
     function timeToMinutes(t) {
@@ -1122,8 +1124,8 @@
           </div>
 
           <!-- Section: Feed Feed Posts -->
-          <div class="flex justify-between items-end px-1 pt-1">
-            <div><h3 class="text-base font-black tracking-tight text-slate-900">DUMP 📦</h3><p class="text-[10px] text-slate-400">today with you</p></div>
+          <div class="flex justify-between items-center px-1 pt-1">
+            <h3 class="text-base font-black tracking-tight text-slate-900">DUMP</h3>
             <button onclick="openNewPostSheet()" class="w-8 h-8 rounded-full border border-slate-200 text-lg leading-none font-light text-slate-700 hover:bg-slate-100">+</button>
           </div>
 
@@ -1134,17 +1136,16 @@
                 <img src="${post.authorAvatar}" class="w-9 h-9 rounded-full object-cover ring-2 ring-white border border-slate-100 shrink-0" alt="${post.author}">
                 <div class="flex-1 min-w-0 pb-4">
                   <div class="flex items-center gap-1.5 leading-none">
-                    <span class="text-sm font-extrabold text-slate-900">${post.author === '아정' ? 'aj_flower' : 'jy_junyoung'}</span>
+                    <span class="text-sm font-extrabold text-slate-900">${nicknameOf(post.author)}</span>
                     <span class="text-[10px] text-slate-400">🕒 ${post.timeAgo.replace('시간 전','h').replace('분 전','m')}</span>
                     ${post.author === state.currentUser ? `<button onclick="deletePost(${post.id})" class="text-slate-300 hover:text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
                   </div>
                   <p class="mt-2 text-[13px] text-slate-800 font-medium leading-relaxed whitespace-pre-wrap">${escapeHtml(post.text)}</p>
-                  ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${(post.media || [post.photoUrl]).map(url => `<img src="${url}" class="h-48 min-w-[78%] rounded-2xl object-cover border border-slate-200" alt="dump photo">`).join('')}</div>` : ''}
-                  ${(post.meta?.spot || post.location) ? `<p class="mt-1.5 text-[10px] text-slate-400">📍 ${escapeHtml(post.meta?.spot || post.location)}</p>` : ''}
-                  ${post.meta?.vibe ? `<p class="mt-1 text-[10px] text-slate-400">⚡ ${escapeHtml(post.meta.vibe)}</p>` : ''}
+                  ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${(post.media || [post.photoUrl]).map((url, index) => `<div class="relative h-48 min-w-[78%]"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">⚡ ${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${(post.endorsements || []).length >= 2 ? '' : 'hidden'} absolute top-2 right-2 w-9 h-9 rounded-full bg-rose-500 text-white text-[8px] font-black flex flex-col items-center justify-center border-2 border-white shadow-md">♥<small class="text-[7px]">인정</small></span>` : ''}</div>`).join('')}</div>` : ''}
                   <div class="mt-2.5 flex items-center gap-4 text-slate-500">
                     <button onclick="togglePostLike(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold hover:text-brand-red active:scale-95"><i data-lucide="heart" class="w-4 h-4"></i><span id="like-count-${post.id}">${post.likes}</span></button>
                     <button onclick="toggleCommentBox(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold hover:text-brand-blue"><i data-lucide="message-circle" class="w-4 h-4"></i><span id="comment-count-${post.id}">${post.comments.length}</span></button>
+                    <button onclick="endorsePost(${post.id})" id="endorse-btn-${post.id}" class="inline-flex items-center gap-1 text-xs font-bold hover:text-rose-500"><i data-lucide="badge-check" class="w-4 h-4"></i><span>${(post.endorsements || []).length ? `인정 ${(post.endorsements || []).length}` : '인정'}</span></button>
                     <button class="hover:text-slate-900" aria-label="공유"><i data-lucide="send" class="w-4 h-4"></i></button>
                   </div>
                   <div id="comment-section-${post.id}" class="comment-panel mt-3 text-sm">
@@ -1808,20 +1809,32 @@
       postMediaDraft = [];
       openSheet('sheet-create-post');
       const avatar = document.getElementById('post-compose-avatar');
-      if (avatar) avatar.textContent = state.currentUser === '아정' ? '아' : '준';
+      if (avatar) avatar.textContent = nicknameOf(state.currentUser).slice(0, 1);
       renderPostMediaDraft();
       if (window.lucide) lucide.createIcons();
     }
 
     function setDumpMeta(type) {
-      const labels = { spot: ['post-location-input', 'dump-spot-btn', '📍 spot', 'spot을 입력하세요'], vibe: ['post-vibe-input', 'dump-vibe-btn', '⚡ vibe', '오늘의 vibe를 입력하세요'] };
+      const labels = { spot: ['post-location-input', 'dump-spot-btn', '📍 장소', '장소를 입력하세요'], vibe: ['post-vibe-input', 'dump-vibe-btn', '⚡ 분위기', '오늘의 분위기를 입력하세요'] };
       const [inputId, buttonId, base, message] = labels[type];
       const input = document.getElementById(inputId);
       const value = prompt(message, input.value || '');
       if (value === null) return;
       input.value = value.trim();
       const button = document.getElementById(buttonId);
-      if (button) button.textContent = input.value ? `${base} · ${input.value}` : base;
+      if (button) button.textContent = input.value ? `${base} · ${input.value}` : (type === 'spot' ? '📍 장소 추가' : '⚡ 분위기 선택');
+    }
+
+    function endorsePost(id) {
+      const post = state.posts.find(p => p.id === id);
+      if (!post) return;
+      post.endorsements = post.endorsements || [];
+      if (post.endorsements.includes(state.currentUser)) return;
+      post.endorsements.push(state.currentUser);
+      saveState();
+      const btn = document.getElementById(`endorse-btn-${id}`);
+      if (btn) btn.lastElementChild.textContent = `인정 ${post.endorsements.length}`;
+      if (post.endorsements.length >= 2) document.getElementById(`endorse-badge-${id}`)?.classList.remove('hidden');
     }
 
     // 좋아요는 취소 토글이 아니라, 누를 때마다 한 번씩 남기는 응원 카운터다.
@@ -2493,6 +2506,7 @@
         media: [...postMediaDraft],
         likes: 0,
         userLiked: false,
+        endorsements: [],
         comments: []
       });
 
