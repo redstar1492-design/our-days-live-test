@@ -563,9 +563,9 @@
 
       // Schedule Events — subject(원래 대상)와 participants(실제 참석자)를 분리 (요청서 2-3)
       events: [
-        { id: 1, title: '성수동 맛집 점심', date: '2026-09-16', endDate: null, time: '12:30', endTime: '14:00', subject: '함께', subjectMemberId: null, participants: ['준영', '아정'], participation: {}, place: '성수동', createdBy: '준영', detailVisibility: 'shared', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '예약 완료' },
+        { id: 1, title: '성수동 맛집 점심', date: '2026-09-16', endDate: null, time: '12:30', endTime: '14:00', subject: '아정', subjectMemberId: '아정', participants: ['아정'], participation: {}, place: '성수동', createdBy: '아정', detailVisibility: 'shared', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '예약 완료' },
         { id: 2, title: '퇴근 후 저녁 모임', date: '2026-09-16', time: '19:00', endTime: '21:30', subject: '준영', subjectMemberId: '준영', participants: ['준영'], participation: {}, place: '강남', createdBy: '준영', detailVisibility: 'busy_only', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '' },
-        { id: 3, title: '필라테스 운동', date: '2026-09-16', time: '20:00', endTime: '21:00', subject: '아정', subjectMemberId: '아정', participants: ['아정'], participation: {}, place: '센트럴', createdBy: '아정', detailVisibility: 'busy_only', lifecycle: 'active', changeStatus: 'changed', version: 2, revisions: [], note: '' },
+        { id: 3, title: '테니스 치기', date: '2026-09-16', time: '20:00', endTime: '21:00', subject: '아정', subjectMemberId: '아정', participants: ['아정'], participation: {}, place: '센트럴', createdBy: '아정', detailVisibility: 'shared', lifecycle: 'active', changeStatus: 'changed', version: 2, revisions: [], note: '' },
         { id: 4, title: '부모님 저녁 식사', date: '2026-09-18', time: '18:30', endTime: '20:30', subject: '아정', subjectMemberId: '아정', participants: ['아정'], participation: {}, place: '분당', createdBy: '아정', detailVisibility: 'shared', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '' }
       ],
 
@@ -1169,9 +1169,9 @@
     function getOurScreenHTML() {
       const todayEvents = state.events.filter(e => occursOn(e, state.selectedDate));
       const ownerPill = (person) => {
-        if (person === '준영') return `<span class="shrink-0 text-sm leading-none" title="준영">🤵🏻</span>`;
-        if (person === '아정') return `<span class="shrink-0 text-sm leading-none" title="아정">👰🏻</span>`;
-        return `<span class="shrink-0 text-sm leading-none tracking-[-0.2em]" title="함께">🤵🏻<span class="relative -top-px text-[9px] text-rose-500">♥</span>👰🏻</span>`;
+        if (person === '준영') return `<span class="shrink-0 text-lg leading-none" title="준영">🤵🏻</span>`;
+        if (person === '아정') return `<span class="shrink-0 text-lg leading-none" title="아정">👰🏻</span>`;
+        return `<span class="shrink-0 text-lg leading-none tracking-[-0.15em]" title="함께">🤵🏻<span class="relative -top-px text-[10px] text-rose-500">♥</span>👰🏻</span>`;
       };
 
       const heroBg = `background-image:url('${heroImageUrl()}');background-size:cover;background-position:center 58%;`;
@@ -1225,20 +1225,19 @@
               </button>
             </div>
 
-            <div class="space-y-1.5">
+            <div class="space-y-1">
               ${todayEvents.length === 0 ? `
                 <div class="text-center py-2.5 text-slate-400 text-sm">오늘 약속된 일정이 없습니다.</div>
               ` : todayEvents.map(ev => `
-                <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100 gap-2">
+                <div class="flex items-center justify-between p-1.5 rounded-xl bg-slate-50 border border-slate-100 gap-2">
                   <div class="flex items-center gap-2 min-w-0">
                     <span class="font-mono font-bold text-slate-900 text-sm w-11 shrink-0">${ev.time}</span>
                     <div class="flex items-center gap-1.5 min-w-0">
-                      <span class="font-bold ${canSeeDetails(ev) ? 'text-slate-800' : 'text-slate-500'} text-sm truncate">${titleOf(ev)}</span>
+                      <span class="font-bold text-slate-800 text-sm truncate">${titleOf(ev)}</span>
                       ${ownerPill(ownerOf(ev))}
                     </div>
                   </div>
                   <div class="flex items-center gap-1.5 shrink-0">
-                    ${ev.changeStatus ? badgeHTML(ev) : ''}
                     ${(!isMine(ev) && ownerOf(ev) !== '함께' && ev.lifecycle !== 'cancelled' && ev.detailVisibility !== 'private') ? `
                       <button onclick="requestJoinTogether(${ev.id})" class="text-[11px] bg-rose-50 text-rose-600 border border-rose-200 px-2 py-0.5 rounded font-bold hover:bg-rose-100">나도 함께!</button>
                     ` : ''}
