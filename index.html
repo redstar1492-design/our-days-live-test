@@ -1197,10 +1197,17 @@
 
     function getOurScreenHTML() {
       const todayEvents = state.events.filter(e => occursOn(e, state.selectedDate));
-      const ownerPill = (person) => {
-        if (person === '준영') return `<span class="shrink-0 text-base leading-none" title="준영">🤵🏻</span>`;
-        if (person === '아정') return `<span class="shrink-0 text-base leading-none" title="아정">👰🏻</span>`;
-        return `<span class="shrink-0 text-lg leading-none tracking-[-0.15em]" title="함께">🤵🏻<span class="relative -top-px text-[10px] text-rose-500">♥</span>👰🏻</span>`;
+      const emojiOf = (person) => person === '준영' ? '🤵🏻' : '👰🏻';
+      // 함께 일정: 원래 주체자(subjectMemberId)가 항상 오른쪽에 오도록, 나머지 한 명을 왼쪽에 둔다.
+      // 처음부터 함께로 만든 일정(subjectMemberId 없음)은 고정 순서(신랑-신부) 그대로 둔다.
+      const ownerPill = (ev) => {
+        const owner = ownerOf(ev);
+        if (owner !== '함께') return `<span class="shrink-0 text-base leading-none" title="${owner}">${emojiOf(owner)}</span>`;
+        const subject = ev.subjectMemberId;
+        const other = subject === '준영' ? '아정' : '준영';
+        const leftPerson = subject ? other : '준영';
+        const rightPerson = subject ? subject : '아정';
+        return `<span class="shrink-0 text-lg leading-none tracking-[-0.15em]" title="함께">${emojiOf(leftPerson)}<span class="relative -top-px text-[10px] text-rose-500">♥</span>${emojiOf(rightPerson)}</span>`;
       };
 
       const heroBg = `background-image:url('${heroImageUrl()}');background-size:cover;background-position:center 58%;`;
@@ -1246,7 +1253,7 @@
                     <button onclick="requestJoinTogether(${ev.id})" class="text-[9px] bg-slate-900 text-white px-1.5 py-0.5 rounded-full font-bold hover:bg-black">같이 보내기</button>
                   ` : ''}
                   ${(() => { const req = isMine(ev) ? pendingRequestForMyEvent(ev.id) : null; return req ? `<button onclick="approveJoinRequest(${req.id})" class="text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-bold hover:bg-emerald-600">수락하기</button>` : ''; })()}
-                  ${ownerPill(ownerOf(ev))}
+                  ${ownerPill(ev)}
                 </div>
               </div>
             `).join('')}
