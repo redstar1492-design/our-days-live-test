@@ -95,16 +95,6 @@
     </div>
 
     <div class="flex items-center gap-1.5">
-      <!-- Persona Switcher -->
-      <div class="flex items-center bg-slate-900/80 p-0.5 rounded-xl border border-slate-700">
-        <button id="persona-btn-junyoung" onclick="setCurrentUser('준영')" class="px-2 py-0.5 rounded-lg text-[11px] font-bold transition-all bg-rose-500 text-white shadow-sm">
-          👨🏻 준영
-        </button>
-        <button id="persona-btn-ajeong" onclick="setCurrentUser('아정')" class="px-2 py-0.5 rounded-lg text-[11px] font-medium transition-all text-slate-400 hover:text-white">
-          👩🏻‍🦰 아정
-        </button>
-      </div>
-
       <!-- GitHub Deploy Guide Button -->
       <button onclick="openSheet('sheet-github-guide')" class="p-1.5 bg-slate-700 hover:bg-slate-600 rounded-xl text-amber-300 transition-all" title="깃허브 공개 배포 방법">
         <i data-lucide="github" class="w-4 h-4"></i>
@@ -118,11 +108,8 @@
     <div id="status-bar" class="absolute top-0 inset-x-0 z-40 px-5 pt-3 pb-1 flex justify-between items-center text-xs font-bold select-none transition-colors">
       <span class="font-mono text-[11px]">09:41</span>
 
-      <!-- Persona Switcher for Mobile (visible on mobile view) -->
-      <div class="flex sm:hidden items-center bg-black/10 p-0.5 rounded-full text-[10px] font-bold">
-        <button id="m-persona-junyoung" onclick="setCurrentUser('준영')" class="px-2 py-0.5 rounded-full bg-rose-500 text-white shadow-sm">준영</button>
-        <button id="m-persona-ajeong" onclick="setCurrentUser('아정')" class="px-2 py-0.5 rounded-full text-slate-500">아정</button>
-      </div>
+      <!-- 현재 보고 있는 시점 표시 (테스트 시점 전환은 공간 설정 안에 있음) -->
+      <span id="viewer-label" class="text-[10px] font-bold opacity-80"></span>
 
       <div class="flex items-center gap-1.5">
         <i data-lucide="wifi" class="w-3.5 h-3.5"></i>
@@ -134,6 +121,7 @@
       <!-- Dynamic Screen Content Rendered by JS -->
     </div>
     <input type="file" id="hero-photo-file" accept="image/*" class="hidden" onchange="handleHeroPhotoUpload(this)">
+    <input type="file" id="folder-photo-file" accept="image/*" class="hidden" onchange="handleFolderPhotoUpload(this)">
 
     <nav class="absolute bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-100 px-2 py-2 flex justify-around items-center z-30 shadow-lg">
       <button onclick="switchTab('our')" id="nav-btn-our" class="flex flex-col items-center gap-0.5 text-slate-900 font-bold transition-all px-2 py-1">
@@ -178,6 +166,50 @@
   <div id="sheet-backdrop" onclick="closeAllSheets()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] z-40 hidden transition-opacity"></div>
 
   <!-- Modal 1: Create Event Sheet -->
+  <div id="sheet-folder" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[85vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h3 id="folder-sheet-title" class="font-extrabold text-slate-900">새 폴더</h3>
+      <button onclick="closeAllSheets()" class="p-1 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <div class="space-y-3 text-xs">
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">폴더 이름 (필수)</label>
+        <input type="text" id="folder-title-input" placeholder="예: 가을 여행" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none">
+      </div>
+      <label class="block font-bold text-slate-700">표지</label>
+      <div id="folder-cover-body" class="space-y-2"></div>
+    </div>
+    <button onclick="saveFolder()" class="w-full mt-5 py-3 bg-slate-900 text-white rounded-xl text-sm font-bold">저장</button>
+  </div>
+
+  <div id="sheet-settings" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[85vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h3  class="font-extrabold text-slate-900">공간 설정</h3>
+      <button onclick="closeAllSheets()" class="p-1 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <div id="settings-body" class="space-y-5"></div>
+  </div>
+
+  <div id="sheet-marker" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[85vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h3  class="font-extrabold text-slate-900">표시 남기기</h3>
+      <button onclick="closeAllSheets()" class="p-1 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <div id="marker-body" class="space-y-4"></div>
+    <button onclick="saveMarker()" class="w-full mt-5 py-3 bg-slate-900 text-white rounded-xl text-sm font-bold">저장</button>
+  </div>
+
+  <div id="device-user-modal" class="fixed inset-0 z-[60] bg-slate-950/70 hidden flex items-center justify-center p-6">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-[320px] text-center space-y-4">
+      <h3 class="font-extrabold text-slate-900">이 휴대폰은 누구의 것인가요?</h3>
+      <p class="text-xs text-slate-500">선택한 사람의 시점으로 시작합니다. 나중에 공간 설정에서 바꿀 수 있어요.</p>
+      <div class="flex gap-3">
+        <button onclick="setDeviceUser('준영')" class="flex-1 py-3 rounded-xl bg-slate-900 text-white font-bold">준영</button>
+        <button onclick="setDeviceUser('아정')" class="flex-1 py-3 rounded-xl bg-slate-900 text-white font-bold">아정</button>
+      </div>
+    </div>
+  </div>
+
   <div id="sheet-create-event" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl">
     <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
     <div class="flex justify-between items-center mb-4">
@@ -433,13 +465,27 @@
       // 부가 이벤트 2번: 기분 표현 (날씨 한 줄). 점수·등급·통계는 만들지 않는다
       moodStatus: { '준영': '맑음', '아정': '흐림' },
 
-      // Schedule Events
+      // 공간 설정 (요청서 2-1)
+      heroMode: 'auto',          // 'auto' | 'direct'
+      heroAuto: 'couple',        // 자동 설정일 때 쓰는 기본 이미지 키
+      anniversary: null,         // 'YYYY-MM-DD' 또는 null
+      ddayFormat: 'dplus',       // 'dplus'(D+N) | 'nth'(N일째)
+
+      // Schedule Events — subject(원래 대상)와 participants(실제 참석자)를 분리 (요청서 2-3)
       events: [
-        { id: 1, title: '성수동 맛집 점심', date: '2026-09-16', time: '12:30', owner: '함께', place: '성수동', createdBy: '준영', showDetails: true, changeStatus: null, version: 1, note: '예약 완료' },
-        { id: 2, title: '퇴근 후 저녁 모임', date: '2026-09-16', time: '19:00', owner: '준영', place: '강남', createdBy: '준영', showDetails: false, changeStatus: null, version: 1, note: '' },
-        { id: 3, title: '필라테스 운동', date: '2026-09-16', time: '20:00', owner: '아정', place: '센트럴', createdBy: '아정', showDetails: false, changeStatus: 'changed', version: 2, note: '' },
-        { id: 4, title: '부모님 저녁 식사', date: '2026-09-18', time: '18:30', owner: '아정', place: '분당', createdBy: '아정', showDetails: true, changeStatus: null, version: 1, note: '' }
+        { id: 1, title: '성수동 맛집 점심', date: '2026-09-16', time: '12:30', subject: '함께', participants: ['준영', '아정'], place: '성수동', createdBy: '준영', showDetails: true, changeStatus: null, version: 1, note: '예약 완료' },
+        { id: 2, title: '퇴근 후 저녁 모임', date: '2026-09-16', time: '19:00', subject: '준영', participants: ['준영'], place: '강남', createdBy: '준영', showDetails: false, changeStatus: null, version: 1, note: '' },
+        { id: 3, title: '필라테스 운동', date: '2026-09-16', time: '20:00', subject: '아정', participants: ['아정'], place: '센트럴', createdBy: '아정', showDetails: false, changeStatus: 'changed', version: 2, note: '' },
+        { id: 4, title: '부모님 저녁 식사', date: '2026-09-18', time: '18:30', subject: '아정', participants: ['아정'], place: '분당', createdBy: '아정', showDetails: true, changeStatus: null, version: 1, note: '' }
       ],
+
+      // 이모지 빠른 표시 (요청서 2-4) — 기본 공개 범위는 나만 보기
+      dailyMarkers: [
+        { id: 501, date: '2026-09-16', author: '아정', emoji: '🥗', visibility: 'shared', note: '', kind: 'emoji' }
+      ],
+
+      // 생리·배란일 수동 기록 (요청서 2-5) — 자동 예측·알림 없음, 기본 나만 보기
+      cycleMarkers: [],
 
       // Feed Posts
       posts: [
@@ -473,7 +519,9 @@
           id: 'jeju',
           title: '이번 가을, 제주도 여행 ✈️',
           subtitle: '10월 함께 떠나는 가을 휴가',
-          coverImg: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80',
+          coverMode: 'auto',
+          coverAuto: 'sea',
+          coverImg: null,
           items: [
             { id: 301, text: '감성 숙소 예약하기', date: '10월 초', done: true },
             { id: 302, text: '렌트카 및 항공권 비교', date: '9월 중', done: false },
@@ -484,7 +532,9 @@
           id: 'home',
           title: '소소한 우리 집 꾸미기 🌿',
           subtitle: '아늑하고 따뜻한 공간 만들기',
-          coverImg: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&auto=format&fit=crop&q=80',
+          coverMode: 'auto',
+          coverAuto: 'leaf',
+          coverImg: null,
           items: [
             { id: 304, text: '거실 식물 화분 정리', date: '이번 주', done: true },
             { id: 305, text: '커플 필름 사진 인화하기', date: '9월 중', done: false }
@@ -494,11 +544,163 @@
     };
 
     // Persistent Local Storage Sync
-    window.state = JSON.parse(localStorage.getItem('our_days_app_v3_state')) || JSON.parse(JSON.stringify(defaultData));
+    const STATE_KEY = 'our_days_app_v3_state';
+    // '이 휴대폰의 사용자'는 예시 데이터 초기화와 무관하게 브라우저마다 따로 보관한다 (요청서 2-1)
+    const DEVICE_USER_KEY = 'our_days_device_user';
+
+    function loadDeviceUser() {
+      try { return localStorage.getItem(DEVICE_USER_KEY); } catch (e) { return null; }
+    }
+
+    // 이전 구조(owner) 데이터와 누락 필드를 새 구조로 옮긴다 (요청서 2-3 마이그레이션)
+    function normalizeState(raw) {
+      const s = Object.assign(JSON.parse(JSON.stringify(defaultData)), raw || {});
+      ['dailyMarkers', 'cycleMarkers'].forEach(k => { if (!Array.isArray(s[k])) s[k] = []; });
+      if (!s.moodStatus) s.moodStatus = { '준영': '맑음', '아정': '흐림' };
+      s.events = (s.events || []).map(ev => {
+        if (!ev.subject) {
+          const owner = ev.owner || '함께';
+          ev.subject = owner;
+          ev.participants = owner === '함께' ? ['준영', '아정'] : [owner];
+        }
+        if (!Array.isArray(ev.participants)) ev.participants = ev.subject === '함께' ? ['준영', '아정'] : [ev.subject];
+        delete ev.owner;
+        return ev;
+      });
+      s.todoCategories = (s.todoCategories || []).map(cat => {
+        if (!cat.coverMode) {
+          const external = typeof cat.coverImg === 'string' && /^https?:/.test(cat.coverImg);
+          cat.coverMode = (cat.coverImg && !external) ? 'direct' : 'auto';
+          cat.coverAuto = cat.coverAuto || 'sea';
+          if (external) cat.coverImg = null;
+        }
+        return cat;
+      });
+      // 각 휴대폰은 매번 자기 사용자 시점으로 시작한다
+      const device = loadDeviceUser();
+      if (device) s.currentUser = device;
+      return s;
+    }
+
+    function readStoredState() {
+      try { return JSON.parse(localStorage.getItem(STATE_KEY)); } catch (e) { return null; }
+    }
+
+    window.state = normalizeState(readStoredState());
     let currentOwnerType = state.currentUser || '준영';
 
+    // 사진이 커서 저장 용량을 넘으면 false를 돌려준다 (호출한 쪽에서 이전 값으로 되돌림)
     function saveState() {
-      localStorage.setItem('our_days_app_v3_state', JSON.stringify(state));
+      try {
+        localStorage.setItem(STATE_KEY, JSON.stringify(state));
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    /* ===== 개인화·표시 기능 (CLAUDE_PERSONALIZATION_AND_PRIVATE_MARKERS_REQUEST) ===== */
+
+    const PEOPLE = ['준영', '아정'];
+
+    // 앱에 준비된 기본 이미지. 외부 URL을 새 폴더에 고정으로 넣지 않기 위해 SVG로 직접 그린다.
+    const AUTO_IMAGES = {
+      couple: { label: '노을', stops: ['#f6d365', '#fda085', '#5d4157'], shape: 'sun' },
+      sea:    { label: '바다', stops: ['#a1c4fd', '#4facfe', '#1e3c72'], shape: 'wave' },
+      leaf:   { label: '초록', stops: ['#d4fc79', '#96e6a1', '#2f6b4f'], shape: 'hill' },
+      night:  { label: '밤하늘', stops: ['#4b6cb7', '#243b55', '#141e30'], shape: 'moon' },
+      rose:   { label: '장미빛', stops: ['#fbc2eb', '#f68084', '#8e3b5b'], shape: 'hill' }
+    };
+
+    function autoImageDataUrl(key) {
+      const img = AUTO_IMAGES[key] || AUTO_IMAGES.sea;
+      const [a, b, c] = img.stops;
+      const shapes = {
+        sun:  `<circle cx="600" cy="520" r="150" fill="#fff" opacity="0.35"/><rect y="560" width="1200" height="240" fill="${c}" opacity="0.55"/>`,
+        wave: `<path d="M0 520 Q300 460 600 520 T1200 520 V800 H0Z" fill="#fff" opacity="0.25"/><path d="M0 600 Q300 540 600 600 T1200 600 V800 H0Z" fill="${c}" opacity="0.6"/>`,
+        hill: `<path d="M0 560 Q350 380 700 560 T1200 520 V800 H0Z" fill="${c}" opacity="0.55"/>`,
+        moon: `<circle cx="880" cy="220" r="80" fill="#fff" opacity="0.8"/><circle cx="300" cy="160" r="3" fill="#fff"/><circle cx="520" cy="90" r="2" fill="#fff"/><circle cx="700" cy="300" r="2" fill="#fff"/>`
+      };
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset=".6" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></linearGradient></defs><rect width="1200" height="800" fill="url(#g)"/>${shapes[img.shape] || ''}</svg>`;
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+
+    function heroImageUrl() {
+      if (state.heroMode === 'direct' && state.heroPhoto) return state.heroPhoto;
+      return autoImageDataUrl(state.heroAuto || 'couple');
+    }
+
+    function folderCoverUrl(cat) {
+      if (cat.coverMode === 'direct' && cat.coverImg) return cat.coverImg;
+      return autoImageDataUrl(cat.coverAuto || 'sea');
+    }
+
+    // 업로드 사진을 줄여서 저장 용량 초과를 막는다
+    function compressImage(file, maxSize, onDone, onError) {
+      const reader = new FileReader();
+      reader.onerror = onError;
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onerror = onError;
+        img.onload = () => {
+          const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          onDone(canvas.toDataURL('image/jpeg', 0.8));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // 일정의 화면상 주체: 두 사람이 모두 참석하면 '함께', 아니면 원래 대상
+    function ownerOf(ev) {
+      const p = ev.participants || [];
+      if (ev.subject === '함께' || PEOPLE.every(x => p.includes(x))) return '함께';
+      return ev.subject;
+    }
+
+    function ownerDotClass(ev) {
+      const o = ownerOf(ev);
+      return o === '준영' ? 'bg-brand-red' : o === '아정' ? 'bg-brand-blue' : 'bg-brand-green';
+    }
+
+    // 개인 일정에 내가 나중에 참여한 경우에만 '함께 해제' 가능 (요청서 2-3)
+    function canUnjoin(ev) {
+      return ev.joinedFromPersonal === true && ev.joinedBy === state.currentUser;
+    }
+
+    // 표시(이모지·주기)는 작성자 본인이거나 '함께 보기'일 때만 보인다
+    function isMarkerVisible(m) {
+      return m.author === state.currentUser || m.visibility === 'shared';
+    }
+
+    function visibleEmojiMarkers(date) {
+      return state.dailyMarkers.filter(m => m.date === date && isMarkerVisible(m));
+    }
+
+    function visibleCycleMarkers(date) {
+      return state.cycleMarkers.filter(m => m.date === date && isMarkerVisible(m));
+    }
+
+    const CYCLE_TYPES = {
+      period_start: { label: '생리 시작', icon: '🔴' },
+      period:       { label: '생리 중',   icon: '🩸' },
+      ovulation:    { label: '배란일',     icon: '🌸' }
+    };
+
+    // 기념일 D-day. 기기의 오늘 날짜 기준, 기념일 당일은 D+0 / 1일째
+    function ddayText() {
+      if (!state.anniversary) return '';
+      const [y, m, d] = state.anniversary.split('-').map(Number);
+      const start = new Date(y, m - 1, d);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const diff = Math.round((today - start) / 864e5);
+      if (diff < 0) return `D${diff}`;
+      return state.ddayFormat === 'nth' ? `${(diff + 1).toLocaleString()}일째` : `D+${diff.toLocaleString()}`;
     }
 
     /* ===== 02-1-1 달력 기획서 확정 규칙 구현 ===== */
@@ -515,13 +717,13 @@
     }
 
     function isMine(ev) {
-      return ev.owner === state.currentUser;
+      return ownerOf(ev) === state.currentUser;
     }
 
     // 기획서 3절: 기본은 시간·대상만 공개. 함께 일정과 본인 일정은 전체 공개,
     // 상대방 개인 일정은 showDetails 토글이 켜져 있을 때만 제목·장소를 보여준다.
     function canSeeDetails(ev) {
-      return ev.owner === '함께' || isMine(ev) || ev.showDetails === true;
+      return ownerOf(ev) === '함께' || isMine(ev) || ev.showDetails === true;
     }
 
     function titleOf(ev) {
@@ -539,9 +741,9 @@
 
     // 기획서 5-1: 3조건(상대방 일정 + 날짜·시간·참석자 변경 + 48시간 이내)을 모두 만족할 때만 '확인 필요'
     function resolveChangeStatus(ev, changedFields, editor) {
-      const targetsPartner = ev.owner !== editor || ev.owner === '함께';
+      const targetsPartner = ownerOf(ev) !== editor;
       if (!targetsPartner) return null;
-      const scheduleFields = changedFields.some(f => ['date', 'time', 'owner'].includes(f));
+      const scheduleFields = changedFields.some(f => ['date', 'time', 'participants'].includes(f));
       if (!scheduleFields) return changedFields.length ? 'changed' : null;
       const h = hoursUntil(ev);
       return (h >= 0 && h <= CONFLICT_WINDOW_HOURS) ? 'needsConfirm' : 'changed';
@@ -550,12 +752,13 @@
     // 기획서 5-2: 일정당 배지 1개. 경고색·느낌표·재촉 문구 금지
     function badgeHTML(ev) {
       if (ev.changeStatus === 'needsConfirm') {
-        return `<button onclick="confirmChange(${ev.id})" class="bg-amber-100 text-amber-800 text-[11px] px-2 py-0.5 rounded font-bold shrink-0">${otherUser() === ev.owner ? ev.owner : state.currentUser} 확인 전</button>`;
+        const confirmer = ownerOf(ev) === '함께' ? otherUser() : ownerOf(ev);
+        return `<button onclick="confirmChange(${ev.id})" class="bg-amber-100 text-amber-800 text-[11px] px-2 py-0.5 rounded font-bold shrink-0">${confirmer} 확인 전</button>`;
       }
       if (ev.changeStatus === 'changed') {
         return `<span class="bg-blue-50 text-brand-blue text-[11px] px-2 py-0.5 rounded font-bold shrink-0">변경됨</span>`;
       }
-      if (ev.owner === '함께') {
+      if (ownerOf(ev) === '함께') {
         return `<span class="bg-emerald-100 text-emerald-800 text-[11px] px-2 py-0.5 rounded font-bold shrink-0">공통</span>`;
       }
       return '';
@@ -582,38 +785,34 @@
     function resetDataToDefault() {
       const confirmed = confirm('모든 테스트 데이터를 지우고 처음 예시 데이터로 되돌릴까요?');
       if (!confirmed) return;
-      state = JSON.parse(JSON.stringify(defaultData));
+      // '이 휴대폰의 사용자'는 별도 키라 초기화해도 유지된다
+      state = normalizeState(null);
       saveState();
       showToast('예시 데이터로 초기화되었습니다');
       renderActiveScreen();
     }
 
-    // Switch Testing Persona
+    // 테스트 시점 전환 (개발·테스트 전용). 휴대폰 기본 사용자는 바꾸지 않는다
     function setCurrentUser(user) {
       state.currentUser = user;
       currentOwnerType = user;
       saveState();
-
-      // UI Persona Updates
-      const btnJun = document.getElementById('persona-btn-junyoung');
-      const btnAj = document.getElementById('persona-btn-ajeong');
-      const mJun = document.getElementById('m-persona-junyoung');
-      const mAj = document.getElementById('m-persona-ajeong');
-
-      if (user === '준영') {
-        if (btnJun) btnJun.className = "px-2 py-0.5 rounded-lg text-[11px] font-bold transition-all bg-rose-500 text-white shadow-sm";
-        if (btnAj) btnAj.className = "px-2 py-0.5 rounded-lg text-[11px] font-medium transition-all text-slate-400 hover:text-white";
-        if (mJun) mJun.className = "px-2 py-0.5 rounded-full bg-rose-500 text-white shadow-sm";
-        if (mAj) mAj.className = "px-2 py-0.5 rounded-full text-slate-500";
-      } else {
-        if (btnAj) btnAj.className = "px-2 py-0.5 rounded-lg text-[11px] font-bold transition-all bg-blue-500 text-white shadow-sm";
-        if (btnJun) btnJun.className = "px-2 py-0.5 rounded-lg text-[11px] font-medium transition-all text-slate-400 hover:text-white";
-        if (mAj) mAj.className = "px-2 py-0.5 rounded-full bg-blue-500 text-white shadow-sm";
-        if (mJun) mJun.className = "px-2 py-0.5 rounded-full text-slate-500";
-      }
-
       showToast(`'${user}' 시점으로 전환되었습니다`);
       renderActiveScreen();
+      if (!document.getElementById('sheet-settings').classList.contains('hidden')) renderSettingsSheet();
+    }
+
+    // 이 휴대폰의 사용자 설정 — 브라우저마다 따로 저장
+    function setDeviceUser(user) {
+      try { localStorage.setItem(DEVICE_USER_KEY, user); } catch (e) {}
+      state.currentUser = user;
+      currentOwnerType = user;
+      saveState();
+      const first = document.getElementById('device-user-modal');
+      if (first) first.classList.add('hidden');
+      showToast(`이 휴대폰은 '${user}'으로 시작합니다`);
+      renderActiveScreen();
+      if (!document.getElementById('sheet-settings').classList.contains('hidden')) renderSettingsSheet();
     }
 
     function renderActiveScreen() {
@@ -643,6 +842,9 @@
 
       updateNotifBadge();
 
+      const viewer = document.getElementById('viewer-label');
+      if (viewer) viewer.textContent = `${state.currentUser}(나)`;
+
       // 우리 탭은 사진 위라 흰 글씨, 나머지는 흰 배경이라 어두운 글씨
       const statusBar = document.getElementById('status-bar');
       if (statusBar) {
@@ -652,17 +854,25 @@
       if (window.lucide) lucide.createIcons();
     }
 
+    // 대표 사진 직접 선택. 실패하면 기존 사진을 유지하고 안내한다
     function handleHeroPhotoUpload(input) {
       const file = input.files && input.files[0];
+      input.value = '';
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        state.heroPhoto = e.target.result;
-        saveState();
-        showToast('사진이 저장되었습니다');
+      compressImage(file, 1200, (dataUrl) => {
+        const prev = { heroPhoto: state.heroPhoto, heroMode: state.heroMode };
+        state.heroPhoto = dataUrl;
+        state.heroMode = 'direct';
+        if (!saveState()) {
+          Object.assign(state, prev);
+          saveState();
+          showToast('사진을 저장하지 못했어요. 기존 사진을 유지합니다');
+          return;
+        }
+        showToast('대표 사진이 저장되었습니다');
         renderActiveScreen();
-      };
-      reader.readAsDataURL(file);
+        if (!document.getElementById('sheet-settings').classList.contains('hidden')) renderSettingsSheet();
+      }, () => showToast('사진을 불러오지 못했어요. 기존 사진을 유지합니다'));
     }
 
     function switchTab(tab) {
@@ -674,9 +884,9 @@
     function getOurScreenHTML() {
       const todayEvents = state.events.filter(e => e.date === state.selectedDate);
 
-      const defaultHeroPhoto = 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800&auto=format&fit=crop&q=70';
-      const heroPhoto = state.heroPhoto || defaultHeroPhoto;
-      const heroBg = `background-image:url('${heroPhoto}');background-size:cover;background-position:center;`;
+      const heroBg = `background-image:url('${heroImageUrl()}');background-size:cover;background-position:center;`;
+      const dday = ddayText();
+      const todayEmojis = visibleEmojiMarkers(state.selectedDate);
 
       return `
         <div>
@@ -687,7 +897,9 @@
 
             <div class="relative z-10 h-full flex flex-col justify-between px-4 pt-12 pb-5">
               <div class="flex justify-between items-start">
-                <i data-lucide="menu" class="w-5 h-5 text-white/90"></i>
+                <button onclick="openSettingsSheet()" class="text-white/90" title="공간 설정">
+                  <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
                 <div class="flex items-center gap-3">
                   <button onclick="resetDataToDefault()" class="text-white/90" title="예시 데이터로 초기화">
                     <i data-lucide="refresh-ccw" class="w-5 h-5"></i>
@@ -701,6 +913,7 @@
               <div>
                 <h2 class="text-3xl font-black tracking-tight leading-tight" style="font-family:'Noto Serif KR',serif">9월의 우리</h2>
                 <p class="mt-1.5 text-sm text-white/85 font-medium leading-snug">맑았지만 조금 쌀쌀했던, 같이 걷기 좋은 하루였어요</p>
+                ${dday ? `<p id="hero-dday" class="mt-2 inline-block text-xs font-bold bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-full">${dday}</p>` : ''}
               </div>
             </div>
           </div>
@@ -713,6 +926,17 @@
             <span class="text-slate-300">·</span>
             <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-brand-blue"></span>아정 ${MOOD_ICONS[state.moodStatus['아정']] || ''} ${state.moodStatus['아정']}</span>
           </button>
+
+          <!-- 오늘의 이모지 표시: 피드 카드처럼 크게 차지하지 않는 한 줄 (요청서 2-4) -->
+          ${todayEmojis.length ? `
+            <div class="flex items-center gap-2 flex-wrap px-1">
+              ${todayEmojis.map(m => `
+                <span class="inline-flex items-center gap-1 bg-white border border-slate-100 rounded-full px-2.5 py-1 text-sm shadow-soft">
+                  <span>${m.emoji}</span><span class="text-[10px] text-slate-400 font-bold">${m.author}${m.visibility === 'private' ? ' · 나만' : ''}</span>
+                </span>
+              `).join('')}
+            </div>
+          ` : ''}
 
           <!-- Section: Today's Overview -->
           <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-soft space-y-3">
@@ -734,14 +958,14 @@
                   <div class="flex items-center gap-2.5 min-w-0">
                     <span class="font-mono font-bold text-slate-900 text-sm w-11 shrink-0">${ev.time}</span>
                     <div class="flex items-center gap-1.5 min-w-0">
-                      <span class="w-2 h-2 rounded-full shrink-0 ${ev.owner === '준영' ? 'bg-brand-red' : ev.owner === '아정' ? 'bg-brand-blue' : 'bg-brand-green'}"></span>
+                      <span class="w-2 h-2 rounded-full shrink-0 ${ownerDotClass(ev)}"></span>
                       ${canSeeDetails(ev) ? '' : '<i data-lucide="lock" class="w-3 h-3 text-slate-400 shrink-0"></i>'}
                       <span class="font-bold ${canSeeDetails(ev) ? 'text-slate-800' : 'text-slate-500'} text-sm truncate">${titleOf(ev)}</span>
                     </div>
                   </div>
                   <div class="flex items-center gap-1.5 shrink-0">
                     ${badgeHTML(ev)}
-                    ${(!isMine(ev) && ev.owner !== '함께') ? `
+                    ${(!isMine(ev) && ownerOf(ev) !== '함께') ? `
                       <button onclick="promptJoinTogether(${ev.id})" class="text-[11px] bg-rose-50 text-rose-600 border border-rose-200 px-2 py-0.5 rounded font-bold hover:bg-rose-100">나도 함께!</button>
                     ` : ''}
                   </div>
@@ -753,9 +977,14 @@
           <!-- Section: Feed Feed Posts -->
           <div class="flex justify-between items-center px-1 pt-1">
             <h3 class="text-sm font-extrabold text-slate-900">우리의 소식 피드</h3>
-            <button onclick="openSheet('sheet-create-post')" class="text-sm text-brand-red font-bold flex items-center gap-1 hover:underline">
-              <i data-lucide="plus-circle" class="w-4 h-4"></i> 글 쓰기
-            </button>
+            <div class="flex items-center gap-3">
+              <button onclick="openMarkerSheet()" class="text-sm text-slate-600 font-bold flex items-center gap-1 hover:underline">
+                <i data-lucide="smile-plus" class="w-4 h-4"></i> 표시 남기기
+              </button>
+              <button onclick="openSheet('sheet-create-post')" class="text-sm text-brand-red font-bold flex items-center gap-1 hover:underline">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> 글 쓰기
+              </button>
+            </div>
           </div>
 
           ${state.posts.map(post => `
@@ -861,10 +1090,12 @@
             </div>
           </div>
 
+          ${markersSectionHTML(state.selectedDate)}
+
           <!-- 시간순 단일 목록: 좌측=본인, 우측=상대방, 함께는 전체 폭 -->
           <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-soft space-y-2">
             ${state.events.filter(e => e.date === state.selectedDate).sort((a, b) => a.time.localeCompare(b.time)).map(ev => {
-              const isTogether = ev.owner === '함께';
+              const isTogether = ownerOf(ev) === '함께';
               const mine = isMine(ev);
               const hidden = !canSeeDetails(ev);
 
@@ -875,8 +1106,9 @@
                       <span class="flex items-center gap-1 text-xs truncate">💚 ${titleOf(ev)}</span>
                       <span class="flex items-center gap-1 shrink-0">${badgeHTML(ev)}<span class="font-mono text-[10px] text-emerald-700">${ev.time}</span></span>
                     </div>
-                    <p class="text-[10px] text-slate-500 mt-1">${placeOf(ev) ? '📍 ' + placeOf(ev) : '공통 커플 일정'}</p>
+                    <p class="text-[10px] text-slate-500 mt-1">${placeOf(ev) ? '📍 ' + placeOf(ev) : '공통 커플 일정'}${ev.joinedFromPersonal ? ` · ${ev.subject} 일정에 ${ev.joinedBy} 참여` : ''}</p>
                     <div class="flex justify-end gap-1 mt-2">
+                      ${canUnjoin(ev) ? `<button onclick="unjoinEvent(${ev.id})" class="px-2 py-0.5 text-emerald-700 border border-emerald-300 rounded-md text-[10px] font-bold">함께 해제</button>` : ''}
                       <button onclick="openEditEvent(${ev.id})" class="px-2 py-0.5 text-slate-500 text-[10px] font-bold">수정</button>
                       <button onclick="deleteEvent(${ev.id})" class="px-2 py-0.5 text-rose-500 text-[10px] font-bold">삭제</button>
                     </div>
@@ -930,7 +1162,7 @@
       const daysInMonth = new Date(yy, mm, 0).getDate();
       const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
       const filt = state.calendarFilter;
-      const matchFilter = (e) => filt === '전체' || e.owner === filt;
+      const matchFilter = (e) => filt === '전체' || ownerOf(e) === filt;
 
       return `
         <div class="pt-12 px-4 pb-4 space-y-3 text-slate-900 bg-white min-h-full">
@@ -966,13 +1198,21 @@
               const isSelected = state.selectedDate === dateStr;
               const isToday = dateStr === '2026-09-16';
               const weekday = (firstWeekday + d - 1) % 7;
+              // 월간에는 작은 아이콘만. 주기 상세명은 날짜 상세에서만 보여준다 (요청서 2-5)
+              const emojiMarks = visibleEmojiMarkers(dateStr);
+              const cycleMarks = visibleCycleMarkers(dateStr);
+              const markIcons = [
+                ...(emojiMarks.length ? [Array.from(emojiMarks[0].emoji)[0]] : []),
+                ...cycleMarks.slice(0, 1).map(m => CYCLE_TYPES[m.type].icon)
+              ].join('');
 
               return `
-                <div onclick="selectCalendarDate('${dateStr}')" class="h-14 rounded-xl p-1 flex flex-col justify-between items-center cursor-pointer border-2 transition-all ${isSelected ? 'border-brand-blue bg-blue-50/80 font-bold' : isToday ? 'border-brand-red bg-rose-50/60' : 'border-slate-100 hover:bg-slate-50'}">
+                <div onclick="selectCalendarDate('${dateStr}')" class="relative h-14 rounded-xl p-1 flex flex-col justify-between items-center cursor-pointer border-2 transition-all ${isSelected ? 'border-brand-blue bg-blue-50/80 font-bold' : isToday ? 'border-brand-red bg-rose-50/60' : 'border-slate-100 hover:bg-slate-50'}">
+                  ${markIcons ? `<span class="absolute top-0 right-0.5 text-[8px] leading-none">${markIcons}</span>` : ''}
                   <span class="text-[11px] ${weekday === 0 ? 'text-rose-500' : weekday === 6 ? 'text-blue-500' : 'text-slate-700'}">${d}</span>
                   <div class="flex flex-col gap-0.5 w-full px-0.5">
                     ${dayEvents.slice(0, 3).map(e => `
-                      <span class="h-1.5 rounded-full ${e.owner === '준영' ? 'bg-brand-red' : e.owner === '아정' ? 'bg-brand-blue' : 'bg-brand-green'}"></span>
+                      <span class="h-1.5 rounded-full ${ownerDotClass(e)}"></span>
                     `).join('')}
                   </div>
                 </div>
@@ -995,7 +1235,7 @@
               }
               return `<div class="space-y-1.5">${dayEvents.map(e => `
                 <div class="flex items-center gap-2 text-xs p-2 rounded-lg bg-slate-50 border border-slate-100">
-                  <span class="w-2 h-2 rounded-full shrink-0 ${e.owner === '준영' ? 'bg-brand-red' : e.owner === '아정' ? 'bg-brand-blue' : 'bg-brand-green'}"></span>
+                  <span class="w-2 h-2 rounded-full shrink-0 ${ownerDotClass(e)}"></span>
                   <span class="font-mono font-bold text-slate-900 w-10 shrink-0">${e.time}</span>
                   ${canSeeDetails(e) ? '' : '<i data-lucide="lock" class="w-3 h-3 text-slate-400 shrink-0"></i>'}
                   <span class="font-bold ${canSeeDetails(e) ? 'text-slate-700' : 'text-slate-500'} truncate">${titleOf(e)}</span>
@@ -1004,6 +1244,47 @@
               `).join('')}</div>`;
             })()}
           </div>
+
+          ${markersSectionHTML(state.selectedDate)}
+        </div>
+      `;
+    }
+
+    // 날짜별 이모지·주기 표시. 보이는 것만 노출하고, 수정·삭제는 작성자만 (요청서 2-4, 2-5)
+    function markersSectionHTML(date) {
+      const emojis = visibleEmojiMarkers(date);
+      const cycles = visibleCycleMarkers(date);
+      const visLabel = (m) => m.visibility === 'shared' ? '함께 보기' : '나만 보기';
+      const ownerActions = (m, kind) => m.author === state.currentUser ? `
+        <button onclick="toggleMarkerVisibility('${kind}', ${m.id})" class="text-[10px] font-bold text-slate-500 px-1.5 py-0.5 rounded border border-slate-200">${m.visibility === 'shared' ? '나만 보기로' : '함께 보기로'}</button>
+        <button onclick="deleteMarker('${kind}', ${m.id})" class="text-[10px] font-bold text-rose-500 px-1">삭제</button>
+      ` : '';
+
+      return `
+        <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-soft space-y-2">
+          <div class="flex justify-between items-center">
+            <h3 class="text-xs font-bold text-slate-700">${Number(date.split('-')[2])}일 표시</h3>
+            <button onclick="openMarkerSheet('${date}')" class="text-xs font-bold text-slate-600 px-2 py-0.5 rounded-full border border-slate-200 hover:bg-slate-50">+ 표시 남기기</button>
+          </div>
+          ${(!emojis.length && !cycles.length) ? '<p class="text-[11px] text-slate-400">남긴 표시가 없어요.</p>' : ''}
+          ${emojis.map(m => `
+            <div class="flex items-center gap-2 text-xs">
+              <span class="text-lg leading-none">${m.emoji}</span>
+              <span class="font-bold text-slate-600">${m.author}</span>
+              ${m.note ? `<span class="text-slate-500 truncate">${m.note}</span>` : ''}
+              <span class="text-[10px] text-slate-400">${visLabel(m)}</span>
+              <span class="ml-auto flex items-center gap-1 shrink-0">${ownerActions(m, 'emoji')}</span>
+            </div>
+          `).join('')}
+          ${cycles.map(m => `
+            <div class="flex items-center gap-2 text-xs">
+              <span class="text-base leading-none">${CYCLE_TYPES[m.type].icon}</span>
+              <span class="font-bold text-slate-600">${CYCLE_TYPES[m.type].label}</span>
+              <span class="text-slate-400">${m.author}</span>
+              <span class="text-[10px] text-slate-400">${visLabel(m)}</span>
+              <span class="ml-auto flex items-center gap-1 shrink-0">${ownerActions(m, 'cycle')}</span>
+            </div>
+          `).join('')}
         </div>
       `;
     }
@@ -1037,7 +1318,7 @@
               <h2 class="text-base font-black text-slate-900">함께할 일 & 버킷리스트</h2>
               <p class="text-[10px] text-slate-400">둘이서 하나씩 완성해나가는 공유 목록</p>
             </div>
-            <button onclick="promptAddNewCategory()" class="px-3 py-1.5 bg-slate-900 text-white font-bold rounded-xl text-xs hover:bg-black transition-all flex items-center gap-1 shadow-sm">
+            <button onclick="openFolderSheet()" class="px-3 py-1.5 bg-slate-900 text-white font-bold rounded-xl text-xs hover:bg-black transition-all flex items-center gap-1 shadow-sm">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i> 폴더 추가
             </button>
           </div>
@@ -1050,7 +1331,7 @@
             return `
               <div class="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-soft space-y-3">
                 <div class="flex items-center gap-3 cursor-pointer" onclick="toggleCategoryCollapse('${cat.id}')">
-                  <img src="${cat.coverImg}" class="w-12 h-12 rounded-xl object-cover border border-slate-100 shrink-0" alt="${cat.title}">
+                  <img src="${folderCoverUrl(cat)}" class="w-12 h-12 rounded-xl object-cover border border-slate-100 shrink-0" alt="${cat.title}">
                   <div class="flex-1 min-w-0">
                     <div class="flex justify-between items-baseline">
                       <h3 class="font-bold text-xs text-slate-900 truncate">${cat.title}</h3>
@@ -1061,6 +1342,9 @@
                       <div class="bg-brand-blue h-full rounded-full transition-all duration-300" style="width: ${progress}%"></div>
                     </div>
                   </div>
+                  <button onclick="event.stopPropagation(); openFolderSheet('${cat.id}')" class="p-1 text-slate-400 hover:text-slate-700 shrink-0" title="폴더 수정">
+                    <i data-lucide="more-horizontal" class="w-4 h-4"></i>
+                  </button>
                   <i data-lucide="${cat.collapsed ? 'chevron-down' : 'chevron-up'}" class="w-4 h-4 text-slate-400 shrink-0"></i>
                 </div>
 
@@ -1141,19 +1425,22 @@
       const ev = state.events.find(e => e.id === id);
       if (!ev) return;
 
-      if (ev.owner === '함께') {
+      if (ownerOf(ev) === '함께') {
         showToast('이미 함께하는 공통 일정입니다!');
         return;
       }
 
-      ev.owner = '함께';
-      ev.showDetails = true;
+      // 대상(subject)·제목·공개 설정은 그대로 두고 참석자에 나만 추가한다 (요청서 2-3)
+      const me = state.currentUser;
+      if (!ev.participants.includes(me)) ev.participants.push(me);
+      ev.joinedBy = me;
+      ev.joinedFromPersonal = true;
       ev.version = (ev.version || 1) + 1;
       ev.changeStatus = null;
 
       state.notifications.unshift({
         id: Date.now(),
-        text: `'${ev.title}' 일정이 함께하는 커플 일정으로 연동되었습니다! 🎉`,
+        text: `${me}이 ${ev.subject}의 '${ev.title}' 일정에 함께 참여했어요`,
         timeAgo: '방금 전',
         read: false,
         type: 'calendar',
@@ -1161,7 +1448,32 @@
       });
 
       saveState();
-      showToast(`🎉 '${ev.title}' 일정을 둘이 함께하는 일정으로 연동했습니다!`);
+      showToast(`'${ev.title}' 일정에 함께 참여했습니다`);
+      renderActiveScreen();
+    }
+
+    // 나중에 참여한 사람만 참석자에서 빠지고, 원래 상대방 개인 일정으로 돌아간다. 삭제가 아니다
+    function unjoinEvent(id) {
+      const ev = state.events.find(e => e.id === id);
+      if (!ev || !canUnjoin(ev)) return;
+      const me = state.currentUser;
+      ev.participants = ev.participants.filter(p => p !== me);
+      delete ev.joinedBy;
+      ev.joinedFromPersonal = false;
+      ev.version = (ev.version || 1) + 1;
+      ev.changeStatus = null;
+
+      state.notifications.unshift({
+        id: Date.now(),
+        text: `${me}이 '${ev.title}' 일정 함께하기를 해제했어요`,
+        timeAgo: '방금 전',
+        read: false,
+        type: 'calendar',
+        color: 'bg-brand-blue'
+      });
+
+      saveState();
+      showToast(`'${ev.title}'이 ${ev.subject}의 개인 일정으로 돌아갔습니다`);
       renderActiveScreen();
     }
 
@@ -1269,20 +1581,334 @@
       }
     }
 
-    function promptAddNewCategory() {
-      const title = prompt('새 버킷리스트 폴더 제목:');
-      if (title && title.trim()) {
-        state.todoCategories.push({
-          id: 'cat_' + Date.now(),
-          title: title.trim(),
-          subtitle: '함께할 우리만의 버킷리스트',
-          coverImg: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&auto=format&fit=crop&q=80',
-          items: []
-        });
-        saveState();
-        showToast('새 버킷리스트 폴더가 생성되었습니다');
-        renderActiveScreen();
+    /* ----- 함께할 일 폴더 생성·수정 (요청서 2-2) ----- */
+    // 시트에서 편집 중인 값. 저장 전까지 실제 데이터에 반영하지 않는다
+    let folderDraft = null;
+
+    function openFolderSheet(catId) {
+      const cat = catId ? state.todoCategories.find(c => c.id === catId) : null;
+      folderDraft = cat
+        ? { id: cat.id, title: cat.title, coverMode: cat.coverMode || 'auto', coverAuto: cat.coverAuto || 'sea', coverImg: cat.coverImg || null }
+        : { id: null, title: '', coverMode: 'auto', coverAuto: 'sea', coverImg: null };
+      renderFolderSheet();
+      openSheet('sheet-folder');
+    }
+
+    function renderFolderSheet() {
+      const d = folderDraft;
+      document.getElementById('folder-sheet-title').textContent = d.id ? '폴더 수정' : '새 폴더';
+      document.getElementById('folder-title-input').value = d.title;
+      const preview = d.coverMode === 'direct' && d.coverImg ? d.coverImg : autoImageDataUrl(d.coverAuto);
+      document.getElementById('folder-cover-body').innerHTML = `
+        <img src="${preview}" class="w-full h-24 rounded-xl object-cover border border-slate-100" alt="표지 미리보기">
+        ${coverModeTabsHTML(d.coverMode, 'setFolderCoverMode')}
+        ${d.coverMode === 'direct' ? `
+          <button onclick="document.getElementById('folder-photo-file').click()" class="w-full py-2.5 border border-dashed border-slate-300 rounded-xl text-xs font-bold text-slate-600">${d.coverImg ? '다른 사진 선택' : '기기에서 사진 선택'}</button>
+        ` : autoPickerHTML(d.coverAuto, 'setFolderCoverAuto')}
+        ${d.coverMode === 'direct' && d.coverImg ? `<button onclick="resetFolderCover()" class="text-[11px] font-bold text-slate-500 underline">기본 이미지로 되돌리기</button>` : ''}
+      `;
+    }
+
+    function coverModeTabsHTML(mode, handler) {
+      return `
+        <div class="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+          <button onclick="${handler}('direct')" class="py-1.5 rounded-lg ${mode === 'direct' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}">사진 직접 선택</button>
+          <button onclick="${handler}('auto')" class="py-1.5 rounded-lg ${mode === 'auto' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}">자동 설정</button>
+        </div>`;
+    }
+
+    function autoPickerHTML(selected, handler) {
+      return `
+        <div class="grid grid-cols-5 gap-1.5">
+          ${Object.keys(AUTO_IMAGES).map(k => `
+            <button onclick="${handler}('${k}')" class="flex flex-col items-center gap-0.5">
+              <img src="${autoImageDataUrl(k)}" class="w-full h-10 rounded-lg object-cover border-2 ${selected === k ? 'border-slate-900' : 'border-transparent'}" alt="${AUTO_IMAGES[k].label}">
+              <span class="text-[9px] text-slate-500">${AUTO_IMAGES[k].label}</span>
+            </button>
+          `).join('')}
+        </div>`;
+    }
+
+    function setFolderCoverMode(mode) {
+      folderDraft.title = document.getElementById('folder-title-input').value;
+      folderDraft.coverMode = mode;
+      renderFolderSheet();
+    }
+
+    function setFolderCoverAuto(key) {
+      folderDraft.title = document.getElementById('folder-title-input').value;
+      folderDraft.coverAuto = key;
+      renderFolderSheet();
+    }
+
+    function resetFolderCover() {
+      folderDraft.title = document.getElementById('folder-title-input').value;
+      folderDraft.coverMode = 'auto';
+      folderDraft.coverImg = null;
+      renderFolderSheet();
+    }
+
+    function handleFolderPhotoUpload(input) {
+      const file = input.files && input.files[0];
+      input.value = '';
+      if (!file || !folderDraft) return;
+      compressImage(file, 600, (dataUrl) => {
+        folderDraft.title = document.getElementById('folder-title-input').value;
+        folderDraft.coverImg = dataUrl;
+        folderDraft.coverMode = 'direct';
+        renderFolderSheet();
+      }, () => showToast('사진을 불러오지 못했어요. 기존 표지를 유지합니다'));
+    }
+
+    function saveFolder() {
+      const title = document.getElementById('folder-title-input').value.trim();
+      if (!title) {
+        showToast('폴더 이름을 입력해 주세요');
+        return;
       }
+      const d = folderDraft;
+      const cover = {
+        coverMode: d.coverMode === 'direct' && d.coverImg ? 'direct' : 'auto',
+        coverAuto: d.coverAuto,
+        coverImg: d.coverMode === 'direct' ? d.coverImg : null
+      };
+      const snapshot = JSON.stringify(state.todoCategories);
+      if (d.id) {
+        Object.assign(state.todoCategories.find(c => c.id === d.id), { title }, cover);
+      } else {
+        state.todoCategories.push({ id: 'cat_' + Date.now(), title, subtitle: '함께할 우리만의 버킷리스트', ...cover, items: [] });
+      }
+      if (!saveState()) {
+        state.todoCategories = JSON.parse(snapshot);
+        saveState();
+        showToast('사진을 저장하지 못했어요. 기존 표지를 유지합니다');
+        return;
+      }
+      closeAllSheets();
+      showToast(d.id ? '폴더를 수정했습니다' : '새 폴더를 만들었습니다');
+      renderActiveScreen();
+    }
+
+    /* ----- 공간 설정 (요청서 2-1) ----- */
+    function openSettingsSheet() {
+      renderSettingsSheet();
+      openSheet('sheet-settings');
+    }
+
+    function renderSettingsSheet() {
+      const device = loadDeviceUser();
+      const personBtns = (active, handler) => PEOPLE.map(p => `
+        <button onclick="${handler}('${p}')" class="flex-1 py-2 rounded-xl text-xs font-bold border ${active === p ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-200 text-slate-600'}">${p}</button>
+      `).join('');
+
+      document.getElementById('settings-body').innerHTML = `
+        <section class="space-y-2">
+          <h4 class="text-xs font-bold text-slate-700">이 휴대폰의 사용자</h4>
+          <p class="text-[10px] text-slate-400">이 브라우저를 열면 선택한 사람의 시점으로 시작합니다.</p>
+          <div class="flex gap-2">${personBtns(device, 'setDeviceUser')}</div>
+        </section>
+
+        <section class="space-y-2">
+          <h4 class="text-xs font-bold text-slate-700">대표 사진</h4>
+          ${coverModeTabsHTML(state.heroMode, 'setHeroMode')}
+          ${state.heroMode === 'direct' ? `
+            <button onclick="document.getElementById('hero-photo-file').click()" class="w-full py-2.5 border border-dashed border-slate-300 rounded-xl text-xs font-bold text-slate-600">${state.heroPhoto ? '다른 사진 선택' : '기기에서 사진 선택'}</button>
+          ` : autoPickerHTML(state.heroAuto, 'setHeroAuto')}
+        </section>
+
+        <section class="space-y-2">
+          <h4 class="text-xs font-bold text-slate-700">기념일 · D-day</h4>
+          <div class="flex gap-2">
+            <input type="date" id="anniversary-input" value="${state.anniversary || ''}" onchange="setAnniversary(this.value)" class="flex-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none">
+            ${state.anniversary ? `<button onclick="setAnniversary('')" class="px-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-600">해제</button>` : ''}
+          </div>
+          ${state.anniversary ? `
+            <div class="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+              <button onclick="setDdayFormat('dplus')" class="py-1.5 rounded-lg ${state.ddayFormat !== 'nth' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}">D+N</button>
+              <button onclick="setDdayFormat('nth')" class="py-1.5 rounded-lg ${state.ddayFormat === 'nth' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}">N일째</button>
+            </div>
+            <p class="text-[11px] text-slate-500">대표 사진에 <b>${ddayText()}</b>로 표시됩니다.</p>
+          ` : '<p class="text-[10px] text-slate-400">날짜를 정하지 않으면 D-day를 표시하지 않습니다.</p>'}
+        </section>
+
+        <section class="space-y-2 p-3 rounded-xl border border-dashed border-amber-300 bg-amber-50/60">
+          <h4 class="text-xs font-bold text-amber-800">테스트 시점 전환 <span class="font-medium">(개발·테스트 전용)</span></h4>
+          <p class="text-[10px] text-amber-700">지금 화면만 다른 사람 시점으로 바꿔 봅니다. 휴대폰 기본 사용자는 바뀌지 않습니다.</p>
+          <div class="flex gap-2">${personBtns(state.currentUser, 'setCurrentUser')}</div>
+        </section>
+      `;
+    }
+
+    function setHeroMode(mode) {
+      state.heroMode = mode;
+      saveState();
+      renderSettingsSheet();
+      renderActiveScreen();
+    }
+
+    function setHeroAuto(key) {
+      state.heroAuto = key;
+      state.heroMode = 'auto';
+      saveState();
+      renderSettingsSheet();
+      renderActiveScreen();
+    }
+
+    function setAnniversary(value) {
+      state.anniversary = value || null;
+      saveState();
+      renderSettingsSheet();
+      renderActiveScreen();
+    }
+
+    function setDdayFormat(fmt) {
+      state.ddayFormat = fmt;
+      saveState();
+      renderSettingsSheet();
+      renderActiveScreen();
+    }
+
+    /* ----- 이모지·주기 표시 (요청서 2-4, 2-5) ----- */
+    const EMOJI_CHOICES = ['😊', '🥰', '😴', '😢', '😤', '🍽️', '☕', '🏃', '🎉', '💪', '🤒', '📚', '🎬', '🌙', '❤️', '🙏'];
+    let markerDraft = null;
+
+    function openMarkerSheet(date) {
+      markerDraft = { kind: 'emoji', date: date || state.selectedDate, emojis: [], cycleType: 'period_start', visibility: 'private', note: '' };
+      renderMarkerSheet();
+      openSheet('sheet-marker');
+    }
+
+    function renderMarkerSheet() {
+      const d = markerDraft;
+      document.getElementById('marker-body').innerHTML = `
+        <div class="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+          <button onclick="setMarkerKind('emoji')" class="py-1.5 rounded-lg ${d.kind === 'emoji' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}">이모지 표시</button>
+          <button onclick="setMarkerKind('cycle')" class="py-1.5 rounded-lg ${d.kind === 'cycle' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}">주기 표시</button>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1 text-xs">날짜</label>
+          <input type="date" id="marker-date" value="${d.date}" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-xs">
+        </div>
+
+        ${d.kind === 'emoji' ? `
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="font-bold text-slate-700 text-xs">이모지 (1~3개)</label>
+              <span class="text-lg tracking-wider">${d.emojis.join('') || '<span class="text-[11px] text-slate-400">선택 안 함</span>'}</span>
+            </div>
+            <div class="grid grid-cols-8 gap-1">
+              ${EMOJI_CHOICES.map(e => `
+                <button onclick="toggleMarkerEmoji('${e}')" class="h-9 rounded-lg text-lg border ${d.emojis.includes(e) ? 'border-slate-900 bg-slate-100' : 'border-slate-100'}">${e}</button>
+              `).join('')}
+            </div>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">메모 (선택)</label>
+            <input type="text" id="marker-note" value="${d.note}" placeholder="비워 둬도 저장할 수 있어요" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-xs">
+          </div>
+        ` : `
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">종류</label>
+            <div class="grid grid-cols-3 gap-2">
+              ${Object.keys(CYCLE_TYPES).map(t => `
+                <button onclick="setMarkerCycleType('${t}')" class="py-2 rounded-xl text-xs font-bold border ${d.cycleType === t ? 'border-slate-900 bg-slate-100' : 'border-slate-200 text-slate-600'}">${CYCLE_TYPES[t].icon} ${CYCLE_TYPES[t].label}</button>
+              `).join('')}
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1.5">직접 남기는 표시입니다. 예측·분석·알림은 하지 않아요.</p>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">메모 (선택)</label>
+            <input type="text" id="marker-note" value="${d.note}" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-xs">
+          </div>
+        `}
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1 text-xs">공개 범위</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="setMarkerVisibility('private')" class="py-2 rounded-xl text-xs font-bold border ${d.visibility === 'private' ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-200 text-slate-600'}">🔒 나만 보기</button>
+            <button onclick="setMarkerVisibility('shared')" class="py-2 rounded-xl text-xs font-bold border ${d.visibility === 'shared' ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-200 text-slate-600'}">함께 보기</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function syncMarkerInputs() {
+      const dateEl = document.getElementById('marker-date');
+      const noteEl = document.getElementById('marker-note');
+      if (dateEl) markerDraft.date = dateEl.value || markerDraft.date;
+      if (noteEl) markerDraft.note = noteEl.value;
+    }
+
+    function setMarkerKind(kind) {
+      syncMarkerInputs();
+      markerDraft.kind = kind;
+      // 주기 표시로 바꾸면 공개 범위를 기본값(나만 보기)으로 되돌린다
+      if (kind === 'cycle') markerDraft.visibility = 'private';
+      renderMarkerSheet();
+    }
+
+    function toggleMarkerEmoji(e) {
+      syncMarkerInputs();
+      const list = markerDraft.emojis;
+      if (list.includes(e)) markerDraft.emojis = list.filter(x => x !== e);
+      else if (list.length < 3) list.push(e);
+      else showToast('이모지는 3개까지 고를 수 있어요');
+      renderMarkerSheet();
+    }
+
+    function setMarkerCycleType(t) {
+      syncMarkerInputs();
+      markerDraft.cycleType = t;
+      renderMarkerSheet();
+    }
+
+    function setMarkerVisibility(v) {
+      syncMarkerInputs();
+      markerDraft.visibility = v;
+      renderMarkerSheet();
+    }
+
+    // 표시는 알림을 만들지 않는다 (특히 주기 표시는 상대방에게 어떤 알림도 보내지 않음)
+    function saveMarker() {
+      syncMarkerInputs();
+      const d = markerDraft;
+      if (d.kind === 'emoji') {
+        if (!d.emojis.length) {
+          showToast('이모지를 하나 이상 골라 주세요');
+          return;
+        }
+        state.dailyMarkers.push({ id: Date.now(), date: d.date, author: state.currentUser, emoji: d.emojis.join(''), visibility: d.visibility, note: d.note.trim(), kind: 'emoji' });
+      } else {
+        state.cycleMarkers.push({ id: Date.now(), date: d.date, author: state.currentUser, type: d.cycleType, visibility: d.visibility, note: d.note.trim() });
+      }
+      saveState();
+      closeAllSheets();
+      showToast(d.visibility === 'shared' ? '표시를 남겼어요 (함께 보기)' : '표시를 남겼어요 (나만 보기)');
+      renderActiveScreen();
+    }
+
+    function markerList(kind) {
+      return kind === 'cycle' ? state.cycleMarkers : state.dailyMarkers;
+    }
+
+    function toggleMarkerVisibility(kind, id) {
+      const m = markerList(kind).find(x => x.id === id);
+      if (!m || m.author !== state.currentUser) return;
+      m.visibility = m.visibility === 'shared' ? 'private' : 'shared';
+      saveState();
+      renderActiveScreen();
+    }
+
+    function deleteMarker(kind, id) {
+      const list = markerList(kind);
+      const m = list.find(x => x.id === id);
+      if (!m || m.author !== state.currentUser) return;
+      if (kind === 'cycle') state.cycleMarkers = list.filter(x => x.id !== id);
+      else state.dailyMarkers = list.filter(x => x.id !== id);
+      saveState();
+      showToast('표시를 삭제했습니다');
+      renderActiveScreen();
     }
 
     function clearAllNotifications() {
@@ -1299,7 +1925,7 @@
 
     function closeAllSheets() {
       document.getElementById('sheet-backdrop').classList.add('hidden');
-      ['sheet-create-event', 'sheet-edit-event', 'sheet-mood', 'sheet-create-post', 'sheet-ai-assistant', 'sheet-github-guide']
+      ['sheet-create-event', 'sheet-edit-event', 'sheet-mood', 'sheet-create-post', 'sheet-ai-assistant', 'sheet-github-guide', 'sheet-folder', 'sheet-settings', 'sheet-marker']
         .forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('hidden'); });
     }
 
@@ -1325,7 +1951,7 @@
       document.getElementById('edit-place').value = ev.place || '';
       document.getElementById('edit-show-details').checked = !!ev.showDetails;
       // 공개 토글은 개인 일정에만 의미가 있다 (함께 일정은 항상 전체 공개)
-      document.getElementById('edit-detail-toggle-wrap').classList.toggle('hidden', ev.owner === '함께');
+      document.getElementById('edit-detail-toggle-wrap').classList.toggle('hidden', ownerOf(ev) === '함께');
       openSheet('sheet-edit-event');
     }
 
@@ -1401,7 +2027,9 @@
         title: title,
         date: date || '2026-09-16',
         time: time || '12:00',
-        owner: currentOwnerType,
+        subject: currentOwnerType,
+        participants: currentOwnerType === '함께' ? ['준영', '아정'] : [currentOwnerType],
+        joinedFromPersonal: false,
         place: place || '',
         createdBy: state.currentUser,
         showDetails: currentOwnerType === '함께' ? true : !!(detailEl && detailEl.checked),
@@ -1642,6 +2270,7 @@
 
     window.onload = function() {
       renderActiveScreen();
+      if (!loadDeviceUser()) document.getElementById('device-user-modal').classList.remove('hidden');
     };
   </script>
 </body>
