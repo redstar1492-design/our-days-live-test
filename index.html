@@ -1144,7 +1144,7 @@
                     </div>
                   ` : ''}
                   <div class="mt-2.5 flex items-center gap-4 text-slate-500">
-                    <button onclick="togglePostLike(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold hover:text-brand-red active:scale-95"><i data-lucide="heart" class="w-4 h-4"></i>${post.likes}</button>
+                    <button onclick="togglePostLike(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold hover:text-brand-red active:scale-95"><i data-lucide="heart" class="w-4 h-4"></i><span id="like-count-${post.id}">${post.likes}</span></button>
                     <button onclick="toggleCommentBox(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold hover:text-brand-blue"><i data-lucide="message-circle" class="w-4 h-4"></i><span id="comment-count-${post.id}">${post.comments.length}</span></button>
                     <button class="hover:text-slate-900" aria-label="공유"><i data-lucide="send" class="w-4 h-4"></i></button>
                   </div>
@@ -1816,7 +1816,9 @@
       if (!post) return;
       post.likes = (post.likes || 0) + 1;
       saveState();
-      renderActiveScreen();
+      // 좋아요는 숫자만 바꾼다. 열린 답글·입력 내용 등 다른 화면 상태를 건드리지 않는다.
+      const count = document.getElementById(`like-count-${id}`);
+      if (count) count.textContent = String(post.likes);
     }
 
     function deletePost(id) {
