@@ -416,24 +416,11 @@
     </div>
 
     <div class="space-y-4 text-xs">
-      <!-- 사진이 맨 위: photo dump 먼저, 이야기는 그 아래 (요구사항 6·9) -->
-      <input type="hidden" id="post-photo-input" value="">
-      <div id="post-media-preview" class="flex gap-2 overflow-x-auto no-scrollbar items-center"></div>
-      <button onclick="document.getElementById('post-photo-file').click()" class="w-full h-16 rounded-2xl bg-slate-50 border border-dashed border-slate-300 text-sm font-bold text-slate-500 flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> photo dump</button>
-
-      <textarea id="post-text-input" rows="4" placeholder="오늘 뭐 했음?" class="w-full resize-none text-[15px] leading-relaxed outline-none placeholder:text-slate-300"></textarea>
-
       <div>
-        <label class="block font-bold text-slate-700 mb-1.5">오늘 분위기 (선택)</label>
-        <input type="hidden" id="post-vibe-input" value="">
-        <div id="post-vibe-chips" class="grid grid-cols-5 gap-1.5"></div>
-      </div>
-
-      <div>
-        <label class="block font-bold text-slate-700 mb-1.5">어디였음? (직접입력)</label>
-        <input id="post-location-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-medium outline-none" placeholder="장소 이름을 적어주세요">
+        <label class="block font-bold text-slate-700 mb-1.5">장소</label>
+        <input id="post-location-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-medium outline-none" placeholder="장소 이름">
         <select id="post-category-select" class="mt-1.5 w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-600 outline-none">
-          <option value="">분류 선택</option>
+          <option value="">장소 유형</option>
           <option>카페/디저트</option>
           <option>맛집 탐방</option>
           <option>산책/데이트</option>
@@ -443,7 +430,26 @@
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1.5">내 별점 (선택)</label>
+        <label class="block font-bold text-slate-700 mb-1.5">분위기</label>
+        <input type="hidden" id="post-vibe-input" value="">
+        <div id="post-vibe-chips" class="grid grid-cols-5 gap-1.5"></div>
+      </div>
+
+      <div>
+        <label class="block font-bold text-slate-700 mb-1.5">내용</label>
+        <textarea id="post-text-input" rows="3" placeholder="소소한 하루를 남겨보세요" class="w-full resize-none text-[15px] leading-relaxed outline-none placeholder:text-slate-300"></textarea>
+      </div>
+
+      <div>
+        <input type="hidden" id="post-photo-input" value="">
+        <div class="flex items-center gap-2">
+          <button onclick="document.getElementById('post-photo-file').click()" class="shrink-0 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-500 flex items-center gap-1"><i data-lucide="image-plus" class="w-3.5 h-3.5"></i> 사진 추가</button>
+          <div id="post-media-preview" class="flex gap-2 overflow-x-auto no-scrollbar items-center"></div>
+        </div>
+      </div>
+
+      <div>
+        <label class="block font-bold text-slate-700 mb-1.5">별점</label>
         <input type="hidden" id="post-rating-input" value="0">
         <div id="post-rating-stars" class="flex gap-1"></div>
       </div>
