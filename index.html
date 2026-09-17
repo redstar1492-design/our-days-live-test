@@ -1263,7 +1263,7 @@
               <h3 class="text-sm font-black tracking-tight text-slate-900">DUMP</h3>
             </div>
             <div class="flex items-center gap-2">
-              <button onclick="toggleEndorsedOnly()" id="endorsed-filter-btn" class="flex items-center gap-1 text-[10px] font-bold ${dumpShowEndorsedOnly ? 'text-amber-500' : 'text-slate-400 hover:text-slate-600'}">🏅 모아보기</button>
+              <button onclick="toggleEndorsedOnly()" id="endorsed-filter-btn" class="flex items-center gap-1 text-[10px] font-bold ${dumpShowEndorsedOnly ? 'text-amber-500' : 'text-slate-400 hover:text-slate-600'}">모아보기</button>
               <button onclick="openNewPostSheet()" class="w-8 h-8 rounded-full border border-slate-200 text-lg leading-none font-light text-slate-700 hover:bg-slate-100">+</button>
             </div>
           </div>
@@ -1296,7 +1296,7 @@
                     const mediaList = post.media || [post.photoUrl];
                     return `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${mediaList.map((url, index) => `<div class="relative h-48 shrink-0 w-full"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${isEndorsed(post) ? '' : 'hidden'} endorse-badge-anim absolute top-3 right-2 text-[28px] leading-none">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}</div>`).join('')}</div>`;
                   })() : ''}
-                  <div id="heart-row-${post.id}" class="mt-2.5 flex items-center gap-4 text-slate-500">${heartRowHTML(post)}</div>
+                  <div id="heart-row-${post.id}" class="mt-2 flex items-center gap-2 text-slate-500">${heartRowHTML(post)}</div>
                   <div id="comment-section-${post.id}" class="comment-panel mt-3 text-sm">
                     <div class="space-y-2">
                     <div id="comment-list-${post.id}" class="space-y-2">${post.comments.map(c => `<div class="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs"><span class="font-bold text-slate-900">${escapeHtml(c.author)}</span><span class="ml-1 font-medium text-slate-600">${escapeHtml(c.text)}</span><span class="ml-2 text-[10px] text-slate-400">${c.timeAgo}</span></div>`).join('')}</div>
@@ -2018,9 +2018,9 @@
       const bothHearted = !!(post.hearts && post.hearts['준영'] && post.hearts['아정']);
       const myRating = post.ratings ? post.ratings[state.currentUser] : null;
       return `
-        <button onclick="toggleHeart(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold w-[68px] shrink-0 ${mine ? 'text-brand-red' : 'hover:text-brand-red'} active:scale-95">
+        <button onclick="toggleHeart(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold w-[40px] shrink-0 ${mine ? 'text-brand-red' : 'hover:text-brand-red'} active:scale-95">
           <i data-lucide="heart" class="w-4 h-4 shrink-0" style="${mine ? 'fill:currentColor' : ''}"></i>
-          <span class="truncate">${bothHearted ? '서로 하트' : (mine ? '하트 보냄' : '하트')}</span>
+          <span class="truncate">하트</span>
         </button>
         <button onclick="toggleCommentBox(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold w-[36px] shrink-0 hover:text-brand-blue"><i data-lucide="message-circle" class="w-4 h-4 shrink-0"></i><span id="comment-count-${post.id}">${post.comments.length}</span></button>
         <button onclick="openRatingPicker(${post.id})" id="rating-btn-${post.id}" class="inline-flex items-center gap-1 text-xs font-bold w-[44px] shrink-0 hover:text-amber-500 ${myRating ? 'text-amber-500' : ''}"><i data-lucide="star" class="w-4 h-4 shrink-0" style="${myRating ? 'fill:currentColor' : ''}"></i><span class="truncate">${myRating ? myRating + '점' : '별점'}</span></button>
