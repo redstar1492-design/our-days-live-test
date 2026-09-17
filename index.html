@@ -418,7 +418,7 @@
     <div class="space-y-4 text-xs">
       <!-- 사진이 맨 위: photo dump 먼저, 이야기는 그 아래 (요구사항 6·9) -->
       <input type="hidden" id="post-photo-input" value="">
-      <div id="post-media-preview" class="flex gap-2 overflow-x-auto no-scrollbar min-h-[96px] items-center"></div>
+      <div id="post-media-preview" class="flex gap-2 overflow-x-auto no-scrollbar items-center"></div>
       <button onclick="document.getElementById('post-photo-file').click()" class="w-full h-16 rounded-2xl bg-slate-50 border border-dashed border-slate-300 text-sm font-bold text-slate-500 flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> photo dump</button>
 
       <textarea id="post-text-input" rows="4" placeholder="오늘 뭐 했음?" class="w-full resize-none text-[15px] leading-relaxed outline-none placeholder:text-slate-300"></textarea>
@@ -581,7 +581,7 @@
           date: '2026-09-16',
           text: '운동 끝나고 다녀온 분위기 좋은 성수동 테라스 카페 ☕️ 주말에 준영이랑 같이 올래!',
           location: '성수동 · 감성 카페',
-          meta: { spot: '성수동 · 감성 카페', vibe: '야름다움', category: '카페/디저트' },
+          meta: { spot: '성수동 · 감성 카페', vibe: '완전좋았음', category: '카페/디저트' },
           photoUrl: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&auto=format&fit=crop&q=80',
           hearts: { '아정': true, '준영': false },
           ratings: { '아정': 5, '준영': null },
@@ -598,7 +598,7 @@
           date: '2026-09-16',
           text: '퇴근하고 혼자 들렀는데 존나힘듬... 그래도 여기 파스타는 진짜 존나좋음',
           location: '강남 · 파스타 맛집',
-          meta: { spot: '강남 · 파스타 맛집', vibe: '존나좋음', category: '맛집 탐방' },
+          meta: { spot: '강남 · 파스타 맛집', vibe: '힐링그자체', category: '맛집 탐방' },
           photoUrl: 'https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=600&auto=format&fit=crop&q=80',
           hearts: { '준영': true, '아정': false },
           ratings: { '준영': 4, '아정': null },
@@ -628,7 +628,7 @@
           date: '2026-09-14',
           text: '영화 보고 나왔는데 결말 때문에 머리터짐. 근데 재밌었음',
           location: 'CGV 성수',
-          meta: { spot: 'CGV 성수', vibe: '머리터짐', category: '영화/문화' },
+          meta: { spot: 'CGV 성수', vibe: '신세계였음', category: '영화/문화' },
           photoUrl: 'https://images.unsplash.com/photo-1489599162946-9b6b1a2a3b9a?w=600&auto=format&fit=crop&q=80',
           hearts: { '준영': true, '아정': false },
           ratings: { '준영': 3, '아정': null },
@@ -1124,7 +1124,7 @@
       if (!preview) return;
       preview.innerHTML = postMediaDraft.length
         ? postMediaDraft.map((url, i) => `<div class="relative shrink-0"><img src="${url}" class="w-24 h-24 object-cover rounded-2xl border border-slate-200"><button onclick="removeDumpPhoto(${i})" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-900 text-white text-[11px]">×</button></div>`).join('')
-        : `<div class="w-full h-24 flex items-center justify-center text-[11px] text-slate-300 font-bold">아직 담은 사진이 없어요</div>`;
+        : `<p class="text-[11px] text-slate-300 font-bold">아직 담은 사진이 없어요</p>`;
       if (window.lucide) lucide.createIcons();
     }
     function removeDumpPhoto(i) { postMediaDraft.splice(i, 1); renderPostMediaDraft(); }
@@ -1917,7 +1917,7 @@
     }
 
     // 우리가 정한 10가지 분위기 표현 (요구사항 8)
-    const DUMP_VIBES = ['야름다움', '오이쉬에', 'ㅈㄴ힘듬', '두근두근', '나른한걸', '개뿌듯함', '머리터짐', '우울한날', '존나좋음', '빡침폭발'];
+    const DUMP_VIBES = ['완전좋았음', '두근두근', '활기찼음', '다정했음', '인생샷각', '힐링그자체', '신세계였음', '그냥그랬음', '아쉬웠음', '별로였음'];
 
     function openNewPostSheet() {
       ['post-text-input', 'post-location-input', 'post-vibe-input', 'post-photo-input', 'post-rating-input', 'post-category-select'].forEach(id => {
