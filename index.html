@@ -1200,7 +1200,7 @@
       // 우측 칸은 최초 등록자 이모지 하나만 고정한다. 참여 표시만 그 왼쪽에서 바뀐다.
       const ownerPill = (ev) => {
         const originalOwner = ev.subjectMemberId || ownerOf(ev);
-        if (originalOwner === '함께') return `<span class="shrink-0 text-[16px] leading-none tracking-[-0.16em]" title="함께">🤵🏻<span class="relative -top-px text-[8px] text-rose-500">♥</span>👰🏻</span>`;
+        if (originalOwner === '함께') return `<span class="shrink-0 inline-flex items-center justify-center gap-0.5 leading-none whitespace-nowrap" title="함께"><span class="inline-flex h-5 w-5 items-center justify-center text-[16px] leading-none">🤵🏻</span><span class="inline-flex h-3 w-3 items-center justify-center text-[9px] leading-none text-rose-500">♥</span><span class="inline-flex h-5 w-5 items-center justify-center text-[16px] leading-none">👰🏻</span></span>`;
         return `<span class="shrink-0 text-xl leading-none" title="${originalOwner}">${emojiOf(originalOwner)}</span>`;
       };
       const joinedMark = (ev) => {
