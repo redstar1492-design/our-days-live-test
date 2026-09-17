@@ -241,9 +241,15 @@
           <label class="block font-bold text-slate-700 mb-1">날짜</label>
           <input type="date" id="event-date-input" value="2026-09-16" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
         </div>
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">시간</label>
-          <input type="time" id="event-time-input" value="15:00" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
+        <div class="grid grid-cols-2 gap-1">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">시작</label>
+            <input type="time" id="event-time-input" value="15:00" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">종료</label>
+            <input type="time" id="event-endtime-input" value="16:00" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
+          </div>
         </div>
       </div>
 
@@ -290,9 +296,15 @@
           <label class="block font-bold text-slate-700 mb-1">날짜</label>
           <input type="date" id="edit-date" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
         </div>
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">시간</label>
-          <input type="time" id="edit-time" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
+        <div class="grid grid-cols-2 gap-1">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">시작</label>
+            <input type="time" id="edit-time" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">종료</label>
+            <input type="time" id="edit-endtime" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
+          </div>
         </div>
       </div>
       <div>
@@ -476,10 +488,10 @@
 
       // Schedule Events — subject(원래 대상)와 participants(실제 참석자)를 분리 (요청서 2-3)
       events: [
-        { id: 1, title: '성수동 맛집 점심', date: '2026-09-16', time: '12:30', subject: '함께', subjectMemberId: null, participants: ['준영', '아정'], participation: {}, place: '성수동', createdBy: '준영', detailVisibility: 'shared', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '예약 완료' },
-        { id: 2, title: '퇴근 후 저녁 모임', date: '2026-09-16', time: '19:00', subject: '준영', subjectMemberId: '준영', participants: ['준영'], participation: {}, place: '강남', createdBy: '준영', detailVisibility: 'busy_only', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '' },
-        { id: 3, title: '필라테스 운동', date: '2026-09-16', time: '20:00', subject: '아정', subjectMemberId: '아정', participants: ['아정'], participation: {}, place: '센트럴', createdBy: '아정', detailVisibility: 'busy_only', lifecycle: 'active', changeStatus: 'changed', version: 2, revisions: [], note: '' },
-        { id: 4, title: '부모님 저녁 식사', date: '2026-09-18', time: '18:30', subject: '아정', subjectMemberId: '아정', participants: ['아정'], participation: {}, place: '분당', createdBy: '아정', detailVisibility: 'shared', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '' }
+        { id: 1, title: '성수동 맛집 점심', date: '2026-09-16', time: '12:30', endTime: '14:00', subject: '함께', subjectMemberId: null, participants: ['준영', '아정'], participation: {}, place: '성수동', createdBy: '준영', detailVisibility: 'shared', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '예약 완료' },
+        { id: 2, title: '퇴근 후 저녁 모임', date: '2026-09-16', time: '19:00', endTime: '21:30', subject: '준영', subjectMemberId: '준영', participants: ['준영'], participation: {}, place: '강남', createdBy: '준영', detailVisibility: 'busy_only', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '' },
+        { id: 3, title: '필라테스 운동', date: '2026-09-16', time: '20:00', endTime: '21:00', subject: '아정', subjectMemberId: '아정', participants: ['아정'], participation: {}, place: '센트럴', createdBy: '아정', detailVisibility: 'busy_only', lifecycle: 'active', changeStatus: 'changed', version: 2, revisions: [], note: '' },
+        { id: 4, title: '부모님 저녁 식사', date: '2026-09-18', time: '18:30', endTime: '20:30', subject: '아정', subjectMemberId: '아정', participants: ['아정'], participation: {}, place: '분당', createdBy: '아정', detailVisibility: 'shared', lifecycle: 'active', changeStatus: null, version: 1, revisions: [], note: '' }
       ],
 
       // 이모지 빠른 표시 (요청서 2-4) — 기본 공개 범위는 나만 보기
@@ -587,6 +599,8 @@
         delete ev.showDetails;
         if (!ev.lifecycle) ev.lifecycle = 'active';
         if (!Array.isArray(ev.revisions)) ev.revisions = [];
+        // 기존 데이터(끝 시간 없음) 호환: 시작 시간 + 1시간을 기본 종료 시간으로 채운다
+        if (!ev.endTime) ev.endTime = addMinutesToTime(ev.time, 60);
         return ev;
       });
       s.todoCategories = (s.todoCategories || []).map(cat => {
@@ -624,6 +638,19 @@
     /* ===== 개인화·표시 기능 (CLAUDE_PERSONALIZATION_AND_PRIVATE_MARKERS_REQUEST) ===== */
 
     const PEOPLE = ['준영', '아정'];
+
+    // 시간 문자열(HH:MM) <-> 분 변환. 일간 타임라인 배치·공통 가능 시간 계산에 공용으로 쓴다
+    function timeToMinutes(t) {
+      const [h, m] = (t || '00:00').split(':').map(Number);
+      return h * 60 + m;
+    }
+    function minutesToTime(min) {
+      const h = Math.floor(min / 60), m = min % 60;
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    }
+    function addMinutesToTime(t, delta) {
+      return minutesToTime(Math.min(23 * 60 + 59, timeToMinutes(t) + delta));
+    }
 
     // 앱에 준비된 기본 이미지. 외부 URL을 새 폴더에 고정으로 넣지 않기 위해 SVG로 직접 그린다.
     const AUTO_IMAGES = {
@@ -884,6 +911,10 @@
     function renderActiveScreen() {
       const container = document.getElementById('main-viewport');
       if (!container) return;
+
+      // 다른 화면 동작(탭 전환, 날짜 선택 등)을 하면 열려 있던 알림 팝오버를 닫는다
+      const notifPop = document.getElementById('notif-popover');
+      if (notifPop) notifPop.classList.add('hidden');
 
       let html = '';
       if (state.activeTab === 'our') {
@@ -1168,80 +1199,129 @@
 
           ${markersSectionHTML(state.selectedDate)}
 
-          <!-- 시간순 단일 목록: 좌측=본인, 우측=상대방, 함께는 전체 폭. private는 목록에서 아예 제외 (요구사항 2) -->
-          <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-soft space-y-2">
-            ${state.events.filter(e => e.date === state.selectedDate && !isHiddenFromMe(e)).sort((a, b) => a.time.localeCompare(b.time)).map(ev => {
-              const isTogether = ownerOf(ev) === '함께';
-              const mine = isMine(ev);
-              const hidden = !canSeeDetails(ev);
-              const cancelled = ev.lifecycle === 'cancelled';
-              const strike = cancelled ? 'line-through text-slate-400' : '';
+          ${getDailyTimelineHTML(state.selectedDate)}
 
-              if (isTogether) {
-                const joinedInfo = Object.keys(ev.participation || {}).find(p => ev.participation[p].joinedFromPersonal);
-                return `
-                  <div class="${personCardClasses('함께').bg} border ${personCardClasses('함께').border} rounded-2xl p-2.5 shadow-sm text-xs ${cancelled ? 'opacity-60' : ''}">
-                    <div class="flex items-center justify-between font-extrabold text-slate-900 gap-1">
-                      <span class="flex items-center gap-1 text-xs truncate ${strike}">💚 ${escapeHtml(titleOf(ev))}</span>
-                      <span class="flex items-center gap-1 shrink-0">${cancelled ? '<span class="text-[10px] font-bold text-slate-400">취소됨</span>' : badgeHTML(ev)}<span class="font-mono text-[10px] text-emerald-700">${ev.time}</span></span>
-                    </div>
-                    <p class="text-[10px] text-slate-500 mt-1">${placeOf(ev) ? '📍 ' + escapeHtml(placeOf(ev)) : '공통 커플 일정'}${joinedInfo ? ` · ${ev.subject} 일정에 ${joinedInfo} 참여` : ''}</p>
-                    ${cancelled ? '' : `
-                    <div class="flex justify-end gap-1 mt-2">
-                      ${canUnjoin(ev) ? `<button onclick="unjoinEvent(${ev.id})" class="px-2 py-0.5 text-emerald-700 border border-emerald-300 rounded-md text-[10px] font-bold">함께 해제</button>` : ''}
-                      <button onclick="openEditEvent(${ev.id})" class="px-2 py-0.5 text-slate-500 text-[10px] font-bold">수정</button>
-                      ${canDelete(ev) ? `<button onclick="cancelEvent(${ev.id})" class="px-2 py-0.5 text-rose-500 text-[10px] font-bold">취소</button>` : ''}
-                    </div>`}
-                  </div>
-                `;
-              }
-
-              const owner = ownerOf(ev);
-              const oc = personCardClasses(owner);
-              const busy = isBusyOnlyToMe(ev);
-              const mineCard = `
-                <div class="${oc.bg} border ${oc.border} rounded-2xl p-2.5 text-xs space-y-1 ${cancelled ? 'opacity-60' : ''}">
-                  <div class="flex items-start justify-between gap-1">
-                    <div class="font-bold text-slate-900 text-xs truncate ${strike}">${escapeHtml(titleOf(ev))}</div>
-                    ${cancelled ? '<span class="text-[10px] font-bold text-slate-400">취소됨</span>' : badgeHTML(ev)}
-                  </div>
-                  <div class="text-[10px] font-mono ${oc.accent}">${ev.time} ${placeOf(ev) ? '· ' + escapeHtml(placeOf(ev)) : ''}</div>
-                  ${cancelled ? '' : `<div class="flex gap-1 mt-1">
-                    <button onclick="openEditEvent(${ev.id})" class="flex-1 py-1 border ${oc.border} ${oc.accent} rounded-lg text-[10px] font-bold">수정</button>
-                    ${canDelete(ev) ? `<button onclick="cancelEvent(${ev.id})" class="px-2 py-1 text-rose-500 text-[10px] font-bold">취소</button>` : ''}
-                  </div>`}
-                </div>`;
-              const theirCard = `
-                <div class="${oc.bg} border ${oc.border} rounded-2xl p-2.5 text-xs space-y-1 text-right ${cancelled ? 'opacity-60' : ''}">
-                  <div class="flex items-start justify-between gap-1">
-                    ${cancelled ? '<span class="text-[10px] font-bold text-slate-400">취소됨</span>' : badgeHTML(ev)}
-                    <div class="font-bold ${hidden ? 'text-slate-500' : 'text-slate-900'} text-xs truncate ml-auto flex items-center gap-1 ${strike}">
-                      ${hidden ? '<i data-lucide="lock" class="w-3 h-3 text-slate-400"></i>' : ''}${escapeHtml(titleOf(ev))}
-                    </div>
-                  </div>
-                  <div class="text-[10px] font-mono ${oc.accent}">${ev.time} ${placeOf(ev) ? '· ' + escapeHtml(placeOf(ev)) : (busy ? '· 바쁜 시간' : '')}</div>
-                  ${cancelled ? '' : `<button onclick="promptJoinTogether(${ev.id})" class="w-full py-1 ${oc.btn} text-white rounded-lg text-[10px] font-bold transition-all mt-1">나도 함께!</button>`}
-                </div>`;
-
-              return `
-                <div class="grid grid-cols-2 gap-2">
-                  <div>${mine ? mineCard : ''}</div>
-                  <div>${!mine ? theirCard : ''}</div>
-                </div>
-              `;
-            }).join('') || '<div class="text-center py-6 text-slate-400 text-xs">이 날짜에 등록된 일정이 없습니다.</div>'}
-
-            <div class="pt-2 text-center">
-              <button onclick="openSheet('sheet-create-event')" class="px-4 py-2 bg-slate-900 text-white font-bold rounded-xl text-xs hover:bg-black transition-all shadow-md">
-                + 새 일정 추가
-              </button>
-            </div>
-          </div>
+          ${getCommonFreeTimeHTML(state.selectedDate)}
 
         </div>
       `;
     }
 
+    // 하루 08:00~24:00을 좌(나)/우(상대) 두 트랙으로 나눈 시간축 타임라인 (요구사항 2)
+    const TIMELINE_START_MIN = 8 * 60;
+    const TIMELINE_END_MIN = 24 * 60;
+    const TIMELINE_PX_PER_MIN = 0.9; // 시간당 54px
+
+    function getDailyTimelineHTML(date) {
+      const totalHeight = (TIMELINE_END_MIN - TIMELINE_START_MIN) * TIMELINE_PX_PER_MIN;
+      const clampMin = (min) => Math.max(TIMELINE_START_MIN, Math.min(TIMELINE_END_MIN, min));
+      const posOf = (ev) => {
+        const startMin = clampMin(timeToMinutes(ev.time));
+        const rawEndMin = clampMin(timeToMinutes(ev.endTime || addMinutesToTime(ev.time, 60)));
+        const endMin = Math.max(startMin + 20, rawEndMin);
+        return { top: (startMin - TIMELINE_START_MIN) * TIMELINE_PX_PER_MIN, height: Math.max(26, (endMin - startMin) * TIMELINE_PX_PER_MIN) };
+      };
+
+      const hours = [];
+      for (let h = 8; h <= 23; h++) hours.push(h);
+      const hourLines = hours.map(h => `<div class="absolute left-0 right-0 border-t border-slate-100" style="top:${(h * 60 - TIMELINE_START_MIN) * TIMELINE_PX_PER_MIN}px"></div>`).join('');
+      const hourLabels = hours.map(h => `<div class="absolute -left-7 text-[9px] text-slate-300 font-mono" style="top:${(h * 60 - TIMELINE_START_MIN) * TIMELINE_PX_PER_MIN - 5}px">${String(h).padStart(2, '0')}</div>`).join('');
+
+      // private은 상대의 일간 타임라인에서 완전히 제외한다 (요구사항 2-2)
+      const events = state.events.filter(e => e.date === date && !isHiddenFromMe(e));
+
+      const blocks = events.map(ev => {
+        const { top, height } = posOf(ev);
+        const cancelled = ev.lifecycle === 'cancelled';
+        const isTogether = ownerOf(ev) === '함께';
+        const mine = isMine(ev);
+        const changeMark = (!cancelled && ev.changeStatus) ? `<span class="absolute top-0.5 right-1 text-[10px] leading-none" title="${ev.changeStatus === 'needsConfirm' ? '확인 필요' : '변경됨'}">${ev.changeStatus === 'needsConfirm' ? '❗' : '●'}</span>` : '';
+        const actions = () => {
+          if (cancelled) return '';
+          const btns = [];
+          if (isTogether && canUnjoin(ev)) btns.push(`<button onclick="event.stopPropagation();unjoinEvent(${ev.id})" class="text-[9px] font-bold text-emerald-700 underline">함께 해제</button>`);
+          if (!isTogether && !mine && !isBusyOnlyToMe(ev) && canSeeDetails(ev)) btns.push(`<button onclick="event.stopPropagation();promptJoinTogether(${ev.id})" class="text-[9px] font-bold text-white bg-slate-900/80 rounded px-1">나도 함께</button>`);
+          if (mine || (isTogether && canDelete(ev))) btns.push(`<button onclick="event.stopPropagation();openEditEvent(${ev.id})" class="text-[9px] font-bold underline opacity-70">수정</button>`);
+          if (canDelete(ev)) btns.push(`<button onclick="event.stopPropagation();cancelEvent(${ev.id})" class="text-[9px] font-bold text-rose-500 underline">취소</button>`);
+          return btns.length ? `<div class="flex flex-wrap gap-1.5 mt-0.5">${btns.join('')}</div>` : '';
+        };
+
+        if (isTogether) {
+          const joinedInfo = Object.keys(ev.participation || {}).find(p => ev.participation[p].joinedFromPersonal);
+          return `
+            <div class="absolute rounded-xl ${personCardClasses('함께').bg} border ${personCardClasses('함께').border} px-2 py-1 text-[10px] overflow-hidden ${cancelled ? 'opacity-50' : ''}" style="top:${top}px;height:${height}px;left:1px;right:1px;z-index:5">
+              ${changeMark}
+              <div class="font-bold text-emerald-800 truncate ${cancelled ? 'line-through' : ''}">💚 ${escapeHtml(titleOf(ev))}</div>
+              <div class="text-emerald-600 font-mono truncate">${ev.time}–${ev.endTime}${placeOf(ev) ? ' · ' + escapeHtml(placeOf(ev)) : ''}${joinedInfo ? ` · ${joinedInfo} 함께` : ''}</div>
+              ${cancelled ? '<span class="text-slate-400 font-bold">취소됨</span>' : actions()}
+            </div>`;
+        }
+
+        const owner = ownerOf(ev);
+        const oc = personCardClasses(owner);
+        const busy = isBusyOnlyToMe(ev);
+        const onMySide = owner === state.currentUser;
+        const sideStyle = onMySide ? 'left:1px;right:52%' : 'left:52%;right:1px';
+        const label = busy ? '바쁜 시간' : escapeHtml(titleOf(ev));
+
+        return `
+          <div class="absolute rounded-xl border px-2 py-1 text-[10px] overflow-hidden ${busy ? 'bg-slate-100 border-slate-200' : oc.bg + ' ' + oc.border} ${cancelled ? 'opacity-50' : ''}" style="top:${top}px;height:${height}px;${sideStyle};z-index:4">
+            ${changeMark}
+            <div class="font-bold truncate ${busy ? 'text-slate-400' : oc.accent} ${cancelled ? 'line-through' : ''}">${label}</div>
+            <div class="font-mono truncate ${busy ? 'text-slate-400' : oc.accent}">${ev.time}–${ev.endTime}${(!busy && placeOf(ev)) ? ' · ' + escapeHtml(placeOf(ev)) : ''}</div>
+            ${cancelled ? '<span class="text-slate-400 font-bold">취소됨</span>' : actions()}
+          </div>`;
+      }).join('');
+
+      return `
+        <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-soft">
+          <div class="flex text-[9px] font-bold text-slate-400 mb-1 pl-7">
+            <span class="flex-1">${state.currentUser} (나)</span><span class="flex-1 text-right">${otherUser()}</span>
+          </div>
+          <div class="relative ml-7" style="height:${totalHeight}px">
+            ${hourLines}${hourLabels}${blocks}
+          </div>
+          ${!events.length ? '<div class="text-center py-3 text-slate-400 text-xs">이 날짜에 등록된 일정이 없습니다.</div>' : ''}
+          <div class="pt-3 text-center">
+            <button onclick="openSheet('sheet-create-event')" class="px-4 py-2 bg-slate-900 text-white font-bold rounded-xl text-xs hover:bg-black transition-all shadow-md">+ 새 일정 추가</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // 오늘 둘 다 비는 시간(공개한 일정 기준). private은 계산에서 제외한다 (요구사항 3)
+    function getCommonFreeTimeHTML(date) {
+      const relevant = state.events.filter(e => e.date === date && e.lifecycle !== 'cancelled' && (e.detailVisibility === 'shared' || e.detailVisibility === 'busy_only' || ownerOf(e) === '함께'));
+      const busyRanges = relevant.map(e => [timeToMinutes(e.time), timeToMinutes(e.endTime || addMinutesToTime(e.time, 60))]).sort((a, b) => a[0] - b[0]);
+
+      const merged = [];
+      for (const r of busyRanges) {
+        if (merged.length && r[0] <= merged[merged.length - 1][1]) {
+          merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], r[1]);
+        } else {
+          merged.push([...r]);
+        }
+      }
+
+      const freeRanges = [];
+      let cursor = TIMELINE_START_MIN;
+      for (const [s, e] of merged) {
+        if (s > cursor) freeRanges.push([cursor, Math.min(s, TIMELINE_END_MIN)]);
+        cursor = Math.max(cursor, e);
+      }
+      if (cursor < TIMELINE_END_MIN) freeRanges.push([cursor, TIMELINE_END_MIN]);
+      const meaningful = freeRanges.filter(([s, e]) => e - s >= 30);
+
+      return `
+        <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-soft space-y-1">
+          <h3 class="text-xs font-bold text-slate-700">오늘 둘 다 비는 시간</h3>
+          ${meaningful.length ? meaningful.slice(0, 3).map(([s, e]) => `
+            <div class="text-sm font-black text-slate-900">${minutesToTime(s)}–${minutesToTime(e)}</div>
+          `).join('') : '<div class="text-xs text-slate-400">공개한 일정 기준으로 겹치지 않는 시간이 없습니다</div>'}
+          <p class="text-[9px] text-slate-400">공개한 일정(함께 보기·바쁜 시간) 기준이며, 나만 보기 일정은 포함하지 않습니다</p>
+        </div>
+      `;
+    }
     function getMonthlyCalendarHTML() {
       const [yy, mm] = state.calendarMonth.split('-').map(Number);
       const firstWeekday = new Date(yy, mm - 1, 1).getDay();     // 0=일
@@ -1298,7 +1378,7 @@
                   <span class="text-[11px] ${weekday === 0 ? 'text-rose-500' : weekday === 6 ? 'text-blue-500' : 'text-slate-700'}">${d}</span>
                   <div class="flex flex-col gap-0.5 w-full px-0.5">
                     ${dayEvents.slice(0, 3).map(e => `
-                      <span class="h-1.5 rounded-full ${ownerDotClass(e)}"></span>
+                      <span class="h-1.5 rounded-full ${ownerDotClass(e)} ${e.lifecycle === 'cancelled' ? 'opacity-30' : ''} ${e.changeStatus && e.lifecycle !== 'cancelled' ? 'ring-1 ring-offset-1 ring-slate-300' : ''}"></span>
                     `).join('')}
                   </div>
                 </div>
@@ -1306,32 +1386,13 @@
             }).join('')}
           </div>
 
-          <!-- 선택한 날짜 상세: 이동하지 않고 하단에 간결하게 -->
-          <div class="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-soft space-y-2">
-            <div class="flex justify-between items-center">
-              <h3 class="text-sm font-bold text-slate-900">${Number(state.selectedDate.split('-')[2])}일 주요 일정${filt !== '전체' ? ` · ${filt}` : ''}</h3>
-              <button onclick="openAddEventForSelectedDate()" class="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center hover:bg-black transition-all">
-                <i data-lucide="plus" class="w-4 h-4"></i>
-              </button>
-            </div>
-            ${(() => {
-              const dayEvents = state.events.filter(e => e.date === state.selectedDate && matchFilter(e)).sort((a, b) => a.time.localeCompare(b.time));
-              if (dayEvents.length === 0) {
-                return `<div class="text-center py-3 text-slate-400 text-xs">등록된 일정이 없습니다.</div>`;
-              }
-              return `<div class="space-y-1.5">${dayEvents.map(e => `
-                <div class="flex items-center gap-2 text-xs p-2 rounded-lg bg-slate-50 border border-slate-100 ${e.lifecycle === 'cancelled' ? 'opacity-60' : ''}">
-                  <span class="w-2 h-2 rounded-full shrink-0 ${ownerDotClass(e)}"></span>
-                  <span class="font-mono font-bold text-slate-900 w-10 shrink-0">${e.time}</span>
-                  ${canSeeDetails(e) ? '' : '<i data-lucide="lock" class="w-3 h-3 text-slate-400 shrink-0"></i>'}
-                  <span class="font-bold ${canSeeDetails(e) ? 'text-slate-700' : 'text-slate-500'} truncate ${e.lifecycle === 'cancelled' ? 'line-through' : ''}">${escapeHtml(titleOf(e))}</span>
-                  <span class="ml-auto shrink-0">${e.lifecycle === 'cancelled' ? '<span class="text-[10px] font-bold text-slate-400">취소됨</span>' : badgeHTML(e)}</span>
-                </div>
-              `).join('')}</div>`;
-            })()}
+          <!-- 날짜를 누르면 바로 일간 타임라인으로 이동한다. 월간에는 요약 배지만 둔다 -->
+          <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-soft flex items-center justify-between">
+            <p class="text-xs text-slate-500">${Number(state.selectedDate.split('-')[2])}일 일정 ${state.events.filter(e => e.date === state.selectedDate && matchFilter(e) && e.lifecycle !== 'cancelled').length}개 · 날짜를 누르면 일간 화면으로 이동합니다</p>
+            <button onclick="openAddEventForSelectedDate()" class="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center hover:bg-black transition-all shrink-0">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+            </button>
           </div>
-
-          ${markersSectionHTML(state.selectedDate)}
         </div>
       `;
     }
@@ -1598,8 +1659,10 @@
       renderActiveScreen();
     }
 
+    // 월간에서 날짜를 고르면 그 날짜의 일간 듀얼 타임라인으로 이동한다 (요구사항 5)
     function selectCalendarDate(dateStr) {
       state.selectedDate = dateStr;
+      state.activeCalendarView = 'daily';
       saveState();
       renderActiveScreen();
     }
@@ -2057,6 +2120,7 @@
       document.getElementById('edit-title').value = ev.title;
       document.getElementById('edit-date').value = ev.date;
       document.getElementById('edit-time').value = ev.time;
+      document.getElementById('edit-endtime').value = ev.endTime || addMinutesToTime(ev.time, 60);
       document.getElementById('edit-place').value = ev.place || '';
       document.getElementById('edit-detail-visibility').value = ev.detailVisibility || 'busy_only';
       // 공개 범위 선택은 개인 일정에만 의미가 있다 (함께 일정은 항상 전체 공개)
@@ -2079,10 +2143,16 @@
         title: document.getElementById('edit-title').value.trim() || ev.title,
         date: document.getElementById('edit-date').value || ev.date,
         time: document.getElementById('edit-time').value || ev.time,
+        endTime: document.getElementById('edit-endtime').value || ev.endTime,
         place: document.getElementById('edit-place').value.trim(),
         detailVisibility: isTogether ? 'shared' : document.getElementById('edit-detail-visibility').value
       };
-      const changed = ['title', 'date', 'time', 'place', 'detailVisibility'].filter(k => (ev[k] || '') !== (next[k] || ''));
+      // 종료 시간은 시작 시간보다 늦어야 한다. 잘못 입력하면 저장하지 않고 안내한다
+      if (timeToMinutes(next.endTime) <= timeToMinutes(next.time)) {
+        showToast('종료 시간은 시작 시간보다 늦어야 해요');
+        return;
+      }
+      const changed = ['title', 'date', 'time', 'endTime', 'place', 'detailVisibility'].filter(k => (ev[k] || '') !== (next[k] || ''));
 
       if (!changed.length) {
         closeAllSheets();
@@ -2136,10 +2206,16 @@
       const title = document.getElementById('event-title-input').value.trim();
       const date = document.getElementById('event-date-input').value;
       const time = document.getElementById('event-time-input').value;
+      const endTime = document.getElementById('event-endtime-input').value;
       const place = document.getElementById('event-place-input').value.trim();
 
       if (!title) {
         showToast('일정 제목을 입력해 주세요!');
+        return;
+      }
+      // 종료 시간은 시작 시간보다 늦어야 한다 (요구사항 2-1)
+      if (timeToMinutes(endTime || '00:00') <= timeToMinutes(time || '00:00')) {
+        showToast('종료 시간은 시작 시간보다 늦어야 해요');
         return;
       }
 
@@ -2151,6 +2227,7 @@
         title: title,
         date: date || '2026-09-16',
         time: time || '12:00',
+        endTime: endTime || addMinutesToTime(time || '12:00', 60),
         subject: currentOwnerType,
         subjectMemberId: isTogether ? null : currentOwnerType,
         participants: isTogether ? ['준영', '아정'] : [currentOwnerType],
