@@ -122,6 +122,7 @@
     </div>
     <input type="file" id="hero-photo-file" accept="image/*" class="hidden" onchange="handleHeroPhotoUpload(this)">
     <input type="file" id="folder-photo-file" accept="image/*" class="hidden" onchange="handleFolderPhotoUpload(this)">
+    <input type="file" id="post-photo-file" accept="image/*" class="hidden" onchange="handlePostPhotoUpload(this)">
 
     <nav class="absolute bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-100 px-2 py-2 flex justify-around items-center z-30 shadow-lg">
       <button onclick="switchTab('our')" id="nav-btn-our" class="flex flex-col items-center gap-0.5 text-slate-900 font-bold transition-all px-2 py-1">
@@ -357,7 +358,7 @@
     <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
     <div class="flex justify-between items-center mb-3">
       <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
-        <i data-lucide="image" class="w-5 h-5 text-brand-pink"></i> 새 피드 기록 남기기
+        <i data-lucide="camera" class="w-5 h-5 text-brand-pink"></i> 새 순간
       </h3>
       <button onclick="closeAllSheets()" class="text-slate-400 hover:text-slate-600 p-1">
         <i data-lucide="x" class="w-5 h-5"></i>
@@ -366,37 +367,30 @@
 
     <div class="space-y-3 text-xs">
       <div>
-        <label class="block font-bold text-slate-700 mb-1">작성자</label>
-        <select id="post-author-input" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-slate-800">
-          <option value="아정">👩🏻‍🦰 아정</option>
-          <option value="준영">👨🏻 준영</option>
-        </select>
+        <label class="block font-bold text-slate-700 mb-1">어디에서였나요?</label>
+        <input type="text" id="post-location-input" placeholder="예: 우리가 결혼한 곳, 뚝섬 한강공원" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-brand-red font-medium">
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1">오늘의 한마디 / 추억 이야기</label>
-        <textarea id="post-text-input" rows="3" placeholder="오늘 남기고 싶은 이야기나 상대방에게 보여주고 싶은 사진 소식을 남겨보세요..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-brand-red font-medium leading-relaxed"></textarea>
+        <label class="block font-bold text-slate-700 mb-1">이 순간의 이름 <span class="text-slate-400 font-medium">(선택)</span></label>
+        <input type="text" id="post-moment-input" placeholder="예: 우리의 첫 데이트, 결혼식 날" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-brand-red font-medium">
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1">위치 태그</label>
-        <input type="text" id="post-location-input" placeholder="예: 성수동 카페거리 · 서울" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
+        <label class="block font-bold text-slate-700 mb-1">사진</label>
+        <input type="hidden" id="post-photo-input" value="">
+        <button onclick="document.getElementById('post-photo-file').click()" id="post-photo-select-btn" class="w-full h-20 border border-dashed border-slate-300 rounded-xl text-xs font-bold text-slate-500 flex flex-col items-center justify-center gap-1 hover:bg-slate-50"><i data-lucide="image-plus" class="w-5 h-5"></i><span>사진 선택</span></button>
       </div>
 
       <div>
-        <div class="flex justify-between items-center mb-1">
-          <label class="font-bold text-slate-700">사진 이미지 URL</label>
-          <button onclick="generateAIPostImage()" class="text-[10px] text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded-md hover:bg-indigo-100 flex items-center gap-1 transition-all">
-            <i data-lucide="sparkles" class="w-3 h-3"></i> AI 일러스트 생성
-          </button>
-        </div>
-        <input type="text" id="post-photo-input" value="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&auto=format&fit=crop&q=80" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-slate-500 font-mono text-[10px]">
+        <label class="block font-bold text-slate-700 mb-1">한마디 <span class="text-slate-400 font-medium">(선택)</span></label>
+        <textarea id="post-text-input" rows="2" placeholder="이 순간에 남기고 싶은 말을 적어보세요" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-brand-red font-medium leading-relaxed"></textarea>
       </div>
     </div>
 
     <div class="pt-4">
       <button onclick="saveNewPost()" class="w-full py-3 bg-brand-red text-white rounded-xl text-xs font-bold shadow-md hover:bg-rose-600 transition-all">
-        피드에 기록 공유하기
+        순간 남기기
       </button>
     </div>
   </div>
@@ -1009,6 +1003,19 @@
       }, (msg) => showToast(`${msg}. 기존 사진을 유지합니다`));
     }
 
+    function handlePostPhotoUpload(input) {
+      const file = input.files && input.files[0];
+      input.value = '';
+      if (!file) return;
+      compressImage(file, 1200, (dataUrl) => {
+        const field = document.getElementById('post-photo-input');
+        const button = document.getElementById('post-photo-select-btn');
+        if (field) field.value = dataUrl;
+        if (button) button.innerHTML = '<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i><span>사진 선택됨 · 다시 선택</span>';
+        if (window.lucide) lucide.createIcons();
+      }, (msg) => showToast(msg));
+    }
+
     // 대표 사진을 자동 설정으로 되돌린다 (요구사항 7)
     function resetHeroPhoto() {
       state.heroMode = 'auto';
@@ -1110,8 +1117,8 @@
           <div class="flex justify-between items-center px-1 pt-1">
             <h3 class="text-sm font-extrabold text-slate-900">우리의 소식 피드</h3>
             <div class="flex items-center gap-3">
-              <button onclick="openSheet('sheet-create-post')" class="text-sm text-brand-red font-bold flex items-center gap-1 hover:underline">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i> 글 쓰기
+              <button onclick="openNewPostSheet()" class="text-sm text-brand-red font-bold flex items-center gap-1 hover:underline">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> 새 순간
               </button>
             </div>
           </div>
@@ -1133,7 +1140,7 @@
                     <div class="relative mt-2.5 h-48 overflow-hidden rounded-2xl bg-slate-100 border border-slate-200 shadow-sm">
                       <img src="${post.photoUrl}" class="w-full h-full object-cover" alt="소식 사진" onerror="this.src='https://placehold.co/600x300/f8fafc/475569?text=Diary+Photo'">
                       ${post.location ? `<span class="absolute top-2 left-2 inline-flex items-center gap-1 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white"><i data-lucide="map-pin" class="w-3 h-3 text-rose-300"></i>${escapeHtml(post.location)}</span>` : ''}
-                      <span class="absolute right-2 bottom-2 rounded-full bg-white/90 px-2 py-1 text-[10px] font-bold text-slate-700">우리의 순간</span>
+                      ${post.moment ? `<span class="absolute top-2 right-2 rounded-full bg-rose-500/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">${escapeHtml(post.moment)}</span>` : ''}
                     </div>
                   ` : ''}
                   <div class="mt-2.5 flex items-center gap-4 text-slate-500">
@@ -1793,6 +1800,16 @@
       if (endDateInput) endDateInput.value = '';
     }
 
+    function openNewPostSheet() {
+      ['post-text-input', 'post-location-input', 'post-moment-input', 'post-photo-input'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+      });
+      const button = document.getElementById('post-photo-select-btn');
+      if (button) button.innerHTML = '<i data-lucide="image-plus" class="w-5 h-5"></i><span>사진 선택</span>';
+      openSheet('sheet-create-post');
+      if (window.lucide) lucide.createIcons();
+    }
+
     // 좋아요는 취소 토글이 아니라, 누를 때마다 한 번씩 남기는 응원 카운터다.
     function togglePostLike(id) {
       const post = state.posts.find(p => p.id === id);
@@ -2408,13 +2425,14 @@
     }
 
     function saveNewPost() {
-      const author = document.getElementById('post-author-input').value;
+      const author = state.currentUser;
       const text = document.getElementById('post-text-input').value.trim();
       const location = document.getElementById('post-location-input').value.trim();
+      const moment = document.getElementById('post-moment-input').value.trim();
       const photoUrl = document.getElementById('post-photo-input').value.trim();
 
-      if (!text) {
-        showToast('내용을 작성해 주세요!');
+      if (!text && !location && !photoUrl) {
+        showToast('사진, 장소, 한마디 중 하나를 남겨 주세요');
         return;
       }
 
@@ -2426,6 +2444,7 @@
         date: demoTodayStr(),
         text: text,
         location: location,
+        moment: moment,
         photoUrl: photoUrl,
         likes: 0,
         userLiked: false,
@@ -2434,8 +2453,11 @@
 
       saveState();
       document.getElementById('post-text-input').value = '';
+      document.getElementById('post-location-input').value = '';
+      document.getElementById('post-moment-input').value = '';
+      document.getElementById('post-photo-input').value = '';
       closeAllSheets();
-      showToast('새 소식 기록이 등록되었습니다!');
+      showToast('새 순간을 남겼어요');
       renderActiveScreen();
     }
 
