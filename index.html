@@ -193,6 +193,32 @@
     </div>
   </div>
 
+  <!-- 서로 하트가 둘 다 채워진 순간에만 뜨는 인정 확인. 하트만으로 자동 인정되지 않게 한 단계를 둔다 -->
+  <div id="endorse-confirm-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-slate-950/45 p-6">
+    <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl text-center">
+      <div class="text-3xl mb-2">🏅</div>
+      <h3 class="text-base font-black text-slate-900">서로 하트를 눌렀어요!</h3>
+      <p class="mt-1 text-xs leading-relaxed text-slate-500">이 장소, 우리 둘 다의 '인정'으로 도장 찍을까요?</p>
+      <div class="mt-5 flex gap-2">
+        <button onclick="closeEndorseConfirm()" class="flex-1 rounded-xl bg-slate-100 py-2.5 text-xs font-bold text-slate-600">나중에</button>
+        <button onclick="confirmEndorse()" class="flex-1 rounded-xl bg-emerald-500 py-2.5 text-xs font-bold text-white">인정!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 별점은 각자 남긴다. 카드의 ⭐ 버튼을 누르면 여기서 1~5를 고른다 -->
+  <div id="rating-picker-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-slate-950/45 p-6">
+    <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl text-center">
+      <h3 class="text-sm font-black text-slate-900 mb-3">내 별점 남기기</h3>
+      <input type="hidden" id="rating-picker-value" value="0">
+      <div id="rating-picker-stars" class="flex justify-center gap-1"></div>
+      <div class="mt-5 flex gap-2">
+        <button onclick="closeRatingPicker()" class="flex-1 rounded-xl bg-slate-100 py-2.5 text-xs font-bold text-slate-600">취소</button>
+        <button onclick="saveRatingDraft()" class="flex-1 rounded-xl bg-slate-900 py-2.5 text-xs font-bold text-white">저장</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal 1: Create Event Sheet -->
   <div id="sheet-folder" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[85vh] overflow-y-auto">
     <div class="flex justify-between items-center mb-4">
@@ -390,22 +416,29 @@
     </div>
 
     <div class="space-y-4 text-xs">
-      <div class="flex gap-2">
-        <button onclick="togglePlaceEditor()" id="dump-spot-btn" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600">장소 추가</button>
-        <select id="post-vibe-select" onchange="setDumpVibe(this.value)" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-600 outline-none"><option value="">분위기 선택</option><option>야름답다</option><option>바람 좋다</option><option>웃음 만개</option><option>느슨한 오후</option><option>조용한 설렘</option><option>낯선 재미</option><option>단단한 하루</option></select>
-      </div>
-      <div id="place-editor" class="hidden rounded-2xl bg-slate-50 border border-slate-100 p-3 space-y-2">
-        <input id="post-location-input" class="w-full bg-transparent text-xs font-medium outline-none" placeholder="장소 이름을 적어주세요">
-        <select id="post-place-type" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-600 outline-none"><option value="음식점">음식점</option><option value="카페">카페</option><option value="직접입력">직접입력</option></select>
-      </div>
-      <div class="flex items-start gap-2.5">
-        <span id="post-compose-avatar" class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 shrink-0"></span>
-        <textarea id="post-text-input" rows="4" placeholder="주절주절 기록하기" class="flex-1 resize-none pt-1 text-[15px] leading-relaxed outline-none placeholder:text-slate-300"></textarea>
-      </div>
+      <!-- 사진이 맨 위: photo dump 먼저, 이야기는 그 아래 (요구사항 6·9) -->
       <input type="hidden" id="post-photo-input" value="">
-      <input type="hidden" id="post-vibe-input" value="">
       <div id="post-media-preview" class="flex gap-2 overflow-x-auto no-scrollbar"></div>
       <button onclick="document.getElementById('post-photo-file').click()" class="w-full h-16 rounded-2xl bg-slate-50 border border-dashed border-slate-300 text-xs font-bold text-slate-500 flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> photo dump 📸</button>
+
+      <textarea id="post-text-input" rows="4" placeholder="오늘 뭐 했음?" class="w-full resize-none text-[15px] leading-relaxed outline-none placeholder:text-slate-300"></textarea>
+
+      <div>
+        <label class="block font-bold text-slate-700 mb-1.5">오늘 분위기 (선택)</label>
+        <input type="hidden" id="post-vibe-input" value="">
+        <div id="post-vibe-chips" class="grid grid-cols-5 gap-1.5"></div>
+      </div>
+
+      <div>
+        <label class="block font-bold text-slate-700 mb-1.5">어디였음? (직접입력)</label>
+        <input id="post-location-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-medium outline-none" placeholder="장소 이름을 적어주세요">
+      </div>
+
+      <div>
+        <label class="block font-bold text-slate-700 mb-1.5">내 별점 (선택)</label>
+        <input type="hidden" id="post-rating-input" value="0">
+        <div id="post-rating-stars" class="flex gap-1"></div>
+      </div>
     </div>
   </div>
 
@@ -540,9 +573,11 @@
           date: '2026-09-16',
           text: '운동 끝나고 다녀온 분위기 좋은 성수동 테라스 카페 ☕️ 주말에 준영이랑 같이 올래!',
           location: '성수동 · 감성 카페',
+          meta: { spot: '성수동 · 감성 카페', vibe: '야름다움' },
           photoUrl: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&auto=format&fit=crop&q=80',
-          likes: 5,
-          userLiked: true,
+          hearts: { '아정': true, '준영': false },
+          ratings: { '아정': 5, '준영': null },
+          endorsed: false,
           comments: [
             { id: 1, author: '준영', text: '오 위치 대박이다! 이번 토요일 오후 3시 어때?', timeAgo: '2시간 전' }
           ]
@@ -602,6 +637,13 @@
     function normalizeState(raw) {
       const s = Object.assign(JSON.parse(JSON.stringify(defaultData)), raw || {});
       ['dailyMarkers', 'cycleMarkers', 'joinRequests'].forEach(k => { if (!Array.isArray(s[k])) s[k] = []; });
+      // 옛 좋아요 카운터·인정 배열 데이터를 하트/별점/인정 구조로 이관한다
+      s.posts = (s.posts || []).map(post => {
+        if (!post.hearts) post.hearts = { '준영': false, '아정': false };
+        if (!post.ratings) post.ratings = { '준영': null, '아정': null };
+        if (post.endorsed === undefined) post.endorsed = Array.isArray(post.endorsements) && post.endorsements.length >= 2;
+        return post;
+      });
       if (!s.moodStatus) s.moodStatus = { '준영': '맑음', '아정': '흐림' };
       s.events = (s.events || []).map(ev => {
         if (!ev.subject) {
@@ -1143,7 +1185,10 @@
 
           <!-- Section: Feed Feed Posts -->
           <div class="flex justify-between items-center px-1 pt-1">
-            <h3 class="text-base font-black tracking-tight text-slate-900">DUMP</h3>
+            <div class="flex items-center gap-1.5">
+              <h3 class="text-base font-black tracking-tight text-slate-900">DUMP</h3>
+              ${state.anniversary ? `<span class="text-[10px] font-bold text-slate-400">함께한 지 ${ddayText()}</span>` : ''}
+            </div>
             <button onclick="openNewPostSheet()" class="w-8 h-8 rounded-full border border-slate-200 text-lg leading-none font-light text-slate-700 hover:bg-slate-100">+</button>
           </div>
 
@@ -1159,13 +1204,9 @@
                     ${post.author === state.currentUser ? `<button onclick="requestDeletePost(${post.id})" class="text-slate-300 hover:text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
                   </div>
                   <p class="mt-2 text-[13px] text-slate-800 font-medium leading-relaxed whitespace-pre-wrap">${escapeHtml(post.text)}</p>
-                  ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${(post.media || [post.photoUrl]).map((url, index) => `<div class="relative h-48 min-w-[78%]"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">⚡ ${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${(post.endorsements || []).length ? '' : 'hidden'} absolute top-1 right-2 text-[28px] leading-none drop-shadow-md">🏅</span>` : ''}</div>`).join('')}</div>` : ''}
-                  <div class="mt-2.5 flex items-center gap-4 text-slate-500">
-                    <button onclick="togglePostLike(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold hover:text-brand-red active:scale-95"><i data-lucide="heart" class="w-4 h-4"></i><span id="like-count-${post.id}">${post.likes}</span></button>
-                    <button onclick="toggleCommentBox(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold hover:text-brand-blue"><i data-lucide="message-circle" class="w-4 h-4"></i><span id="comment-count-${post.id}">${post.comments.length}</span></button>
-                    <button onclick="endorsePost(${post.id})" id="endorse-btn-${post.id}" class="inline-flex items-center gap-1 text-xs font-bold hover:text-emerald-600 ${(post.endorsements || []).includes(state.currentUser) ? 'text-emerald-600' : ''}"><i data-lucide="badge-check" class="w-4 h-4"></i><span>인정</span></button>
-                    <button class="hover:text-slate-900" aria-label="공유"><i data-lucide="send" class="w-4 h-4"></i></button>
-                  </div>
+                  ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${(post.media || [post.photoUrl]).map((url, index) => `<div class="relative h-48 min-w-[78%]"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">⚡ ${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${post.endorsed ? '' : 'hidden'} absolute top-1 right-2 text-[28px] leading-none drop-shadow-md">🏅</span>` : ''}</div>`).join('')}</div>` : ''}
+                  <div id="heart-row-${post.id}" class="mt-2.5 flex items-center gap-4 text-slate-500">${heartRowHTML(post)}</div>
+                  ${ratingSummaryHTML(post)}
                   <div id="comment-section-${post.id}" class="comment-panel mt-3 text-sm">
                     <div class="space-y-2">
                     <div id="comment-list-${post.id}" class="space-y-2">${post.comments.map(c => `<div class="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2"><span class="font-bold text-slate-900">${escapeHtml(c.author)}</span><span class="ml-1 text-slate-700">${escapeHtml(c.text)}</span><span class="ml-2 text-[10px] text-slate-400">${c.timeAgo}</span></div>`).join('')}</div>
@@ -1820,50 +1861,154 @@
       if (endDateInput) endDateInput.value = '';
     }
 
+    // 우리가 정한 10가지 분위기 표현 (요구사항 8)
+    const DUMP_VIBES = ['야름다움', '오이쉬에', 'ㅈㄴ힘듬', '두근두근', '나른한걸', '개뿌듯함', '머리터짐', '우울한날', '존나좋음', '빡침폭발'];
+
     function openNewPostSheet() {
-      ['post-text-input', 'post-location-input', 'post-vibe-input', 'post-photo-input'].forEach(id => {
+      ['post-text-input', 'post-location-input', 'post-vibe-input', 'post-photo-input', 'post-rating-input'].forEach(id => {
         const el = document.getElementById(id); if (el) el.value = '';
       });
-      const placeType = document.getElementById('post-place-type'); if (placeType) placeType.value = '음식점';
-      document.getElementById('post-vibe-select').value = '';
-      document.getElementById('place-editor')?.classList.add('hidden');
-      const spotBtn = document.getElementById('dump-spot-btn'); if (spotBtn) spotBtn.textContent = '📍 장소 추가';
       postMediaDraft = [];
+      renderVibeChips();
+      renderPostRatingStars(0);
       openSheet('sheet-create-post');
       renderPostMediaDraft();
       if (window.lucide) lucide.createIcons();
     }
 
-    function togglePlaceEditor() {
-      const editor = document.getElementById('place-editor');
-      editor.classList.toggle('hidden');
-      if (!editor.classList.contains('hidden')) document.getElementById('post-location-input').focus();
+    // 분위기는 칩 형태로 하나만 고른다 (요구사항 8)
+    function renderVibeChips() {
+      const cur = document.getElementById('post-vibe-input').value;
+      document.getElementById('post-vibe-chips').innerHTML = DUMP_VIBES.map(v => `
+        <button type="button" onclick="setDumpVibe('${v}')" class="dump-vibe ${v === cur ? 'is-selected' : ''}">${v}</button>
+      `).join('');
     }
+
+    // 새 게시물의 별점도 클릭해서 1~5 선택 (요구사항 8)
+    function renderPostRatingStars(value) {
+      document.getElementById('post-rating-stars').innerHTML = [1, 2, 3, 4, 5].map(n => `
+        <button type="button" onclick="setPostRating(${n})" class="text-2xl leading-none ${n <= value ? 'text-amber-400' : 'text-slate-200'}">★</button>
+      `).join('');
+    }
+
+    function setPostRating(n) {
+      const cur = Number(document.getElementById('post-rating-input').value) || 0;
+      const next = cur === n ? 0 : n; // 같은 별 다시 누르면 취소
+      document.getElementById('post-rating-input').value = String(next);
+      renderPostRatingStars(next);
+    }
+
     function setDumpVibe(vibe) {
-      document.getElementById('post-vibe-input').value = vibe;
+      const cur = document.getElementById('post-vibe-input').value;
+      document.getElementById('post-vibe-input').value = (cur === vibe) ? '' : vibe;
+      renderVibeChips();
     }
 
-    function endorsePost(id) {
-      const post = state.posts.find(p => p.id === id);
-      if (!post) return;
-      post.endorsements = post.endorsements || [];
-      const hadEndorsed = post.endorsements.includes(state.currentUser);
-      post.endorsements = hadEndorsed ? post.endorsements.filter(x => x !== state.currentUser) : [...post.endorsements, state.currentUser];
-      saveState();
-      const btn = document.getElementById(`endorse-btn-${id}`);
-      if (btn) btn.classList.toggle('text-emerald-600', !hadEndorsed);
-      document.getElementById(`endorse-badge-${id}`)?.classList.toggle('hidden', hadEndorsed && post.endorsements.length === 0);
+    // 하트 한 줄 렌더: '나' 하트 상태, 답글, 별점 버튼을 함께 그린다
+    function heartRowHTML(post) {
+      const mine = !!(post.hearts && post.hearts[state.currentUser]);
+      const bothHearted = !!(post.hearts && post.hearts['준영'] && post.hearts['아정']);
+      const myRating = post.ratings ? post.ratings[state.currentUser] : null;
+      return `
+        <button onclick="toggleHeart(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold ${mine ? 'text-brand-red' : 'hover:text-brand-red'} active:scale-95">
+          <i data-lucide="heart" class="w-4 h-4" style="${mine ? 'fill:currentColor' : ''}"></i>
+          <span>${bothHearted ? '서로 하트' : (mine ? '하트 보냄' : '하트')}</span>
+        </button>
+        <button onclick="toggleCommentBox(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold hover:text-brand-blue"><i data-lucide="message-circle" class="w-4 h-4"></i><span id="comment-count-${post.id}">${post.comments.length}</span></button>
+        <button onclick="openRatingPicker(${post.id})" id="rating-btn-${post.id}" class="inline-flex items-center gap-1 text-xs font-bold hover:text-amber-500 ${myRating ? 'text-amber-500' : ''}"><i data-lucide="star" class="w-4 h-4" style="${myRating ? 'fill:currentColor' : ''}"></i><span>${myRating ? myRating + '점' : '별점'}</span></button>
+      `;
     }
 
-    // 좋아요는 취소 토글이 아니라, 누를 때마다 한 번씩 남기는 응원 카운터다.
-    function togglePostLike(id) {
+    // 카드 하단에 각자 남긴 별점을 나란히 보여준다 (평균 내지 않음 — 취향은 다를 수 있으니까)
+    function ratingSummaryHTML(post) {
+      const r = post.ratings || {};
+      const parts = PEOPLE.filter(p => r[p]).map(p => `${p} ${'★'.repeat(r[p])}${'☆'.repeat(5 - r[p])}`);
+      return parts.length ? `<p class="mt-1.5 text-[10px] font-bold text-amber-600">${parts.join(' · ')}</p>` : '';
+    }
+
+    let pendingEndorsePostId = null;
+
+    // 서로 하트는 1인 1회 토글이다. 둘 다 하트를 누른 순간에만 '인정' 확인을 한 번 물어본다 (무분별한 인정 방지)
+    function toggleHeart(id) {
       const post = state.posts.find(p => p.id === id);
       if (!post) return;
-      post.likes = (post.likes || 0) + 1;
+      post.hearts = post.hearts || {};
+      const wasBoth = !!(post.hearts['준영'] && post.hearts['아정']);
+      post.hearts[state.currentUser] = !post.hearts[state.currentUser];
+      const isBoth = !!(post.hearts['준영'] && post.hearts['아정']);
       saveState();
-      // 좋아요는 숫자만 바꾼다. 열린 답글·입력 내용 등 다른 화면 상태를 건드리지 않는다.
-      const count = document.getElementById(`like-count-${id}`);
-      if (count) count.textContent = String(post.likes);
+      const row = document.getElementById(`heart-row-${id}`);
+      if (row) row.innerHTML = heartRowHTML(post);
+      if (window.lucide) lucide.createIcons();
+      if (!wasBoth && isBoth && !post.endorsed) {
+        pendingEndorsePostId = id;
+        const modal = document.getElementById('endorse-confirm-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeEndorseConfirm() {
+      pendingEndorsePostId = null;
+      const modal = document.getElementById('endorse-confirm-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function confirmEndorse() {
+      const id = pendingEndorsePostId;
+      closeEndorseConfirm();
+      const post = state.posts.find(p => p.id === id);
+      if (!post) return;
+      post.endorsed = true;
+      saveState();
+      document.getElementById(`endorse-badge-${id}`)?.classList.remove('hidden');
+      showToast('이 장소, 인정 도장 꽝!');
+    }
+
+    let ratingDraftPostId = null;
+
+    // 별점은 각자 따로 남긴다. 인라인으로 1~5 선택창을 펼친다
+    function openRatingPicker(id) {
+      ratingDraftPostId = id;
+      const post = state.posts.find(p => p.id === id);
+      const cur = post?.ratings?.[state.currentUser] || 0;
+      document.getElementById('rating-picker-value').value = String(cur);
+      renderRatingPicker(cur);
+      const modal = document.getElementById('rating-picker-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function renderRatingPicker(value) {
+      document.getElementById('rating-picker-stars').innerHTML = [1, 2, 3, 4, 5].map(n => `
+        <button onclick="setRatingDraft(${n})" class="text-3xl leading-none ${n <= value ? 'text-amber-400' : 'text-slate-200'}">★</button>
+      `).join('');
+    }
+
+    function setRatingDraft(n) {
+      document.getElementById('rating-picker-value').value = String(n);
+      renderRatingPicker(n);
+    }
+
+    function closeRatingPicker() {
+      ratingDraftPostId = null;
+      const modal = document.getElementById('rating-picker-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function saveRatingDraft() {
+      const id = ratingDraftPostId;
+      const value = Number(document.getElementById('rating-picker-value').value) || 0;
+      closeRatingPicker();
+      if (!id || !value) return;
+      const post = state.posts.find(p => p.id === id);
+      if (!post) return;
+      post.ratings = post.ratings || {};
+      post.ratings[state.currentUser] = value;
+      saveState();
+      renderActiveScreen();
     }
 
     let pendingPostDeleteId = null;
@@ -2528,8 +2673,8 @@
       const text = document.getElementById('post-text-input').value.trim();
       const location = document.getElementById('post-location-input').value.trim();
       const vibe = document.getElementById('post-vibe-input').value.trim();
-      const placeType = document.getElementById('post-place-type').value;
       const photoUrl = document.getElementById('post-photo-input').value.trim();
+      const myRating = Number(document.getElementById('post-rating-input').value) || 0;
 
       if (!text && !location && !photoUrl) {
         showToast('사진, 장소, 한마디 중 하나를 남겨 주세요');
@@ -2544,12 +2689,12 @@
         date: demoTodayStr(),
         text: text,
         location: location,
-        meta: { spot: location, placeType, vibe },
+        meta: { spot: location, vibe },
         photoUrl: photoUrl,
         media: [...postMediaDraft],
-        likes: 0,
-        userLiked: false,
-        endorsements: [],
+        hearts: { '준영': false, '아정': false },
+        ratings: { '준영': null, '아정': null, [author]: myRating || null },
+        endorsed: false,
         comments: []
       });
 
@@ -2558,6 +2703,7 @@
       document.getElementById('post-location-input').value = '';
       document.getElementById('post-vibe-input').value = '';
       document.getElementById('post-photo-input').value = '';
+      document.getElementById('post-rating-input').value = '0';
       postMediaDraft = [];
       closeAllSheets();
       showToast('새 순간을 남겼어요');
