@@ -1143,7 +1143,7 @@
                   </div>
                   <div id="comment-section-${post.id}" class="hidden mt-3 space-y-2 text-sm">
                     ${post.comments.map(c => `<div class="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2"><span class="font-bold text-slate-900">${escapeHtml(c.author)}</span><span class="ml-1 text-slate-700">${escapeHtml(c.text)}</span><span class="ml-2 text-[10px] text-slate-400">${c.timeAgo}</span></div>`).join('')}
-                    <div class="flex gap-1.5"><input type="text" id="comment-input-${post.id}" placeholder="답글 남기기..." class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-full text-xs outline-none focus:border-brand-blue"><button onclick="addComment(${post.id})" class="px-3 py-2 bg-slate-900 text-white font-bold rounded-full text-xs">게시</button></div>
+                    <div class="flex gap-1.5"><input type="text" id="comment-input-${post.id}" placeholder="${escapeHtml(post.author)}님이 올린 피드에 답글 달기" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-full text-xs outline-none focus:border-brand-blue"><button onclick="addComment(${post.id})" class="px-3 py-2 bg-slate-900 text-white font-bold rounded-full text-xs">게시</button></div>
                   </div>
                 </div>
               </div>
