@@ -1058,10 +1058,13 @@
                 </div>
               </div>
 
-              <div>
-                <h2 class="text-3xl font-black tracking-tight leading-tight" style="font-family:'Noto Serif KR',serif">${escapeHtml(state.heroTitle || '함께 쌓아가는 하루')}</h2>
-                <p class="mt-1.5 text-sm text-white/85 font-medium leading-snug">${escapeHtml(state.heroSubtitle || '오늘도 우리답게, 천천히 기록해요.')}</p>
-                ${dday ? `<p id="hero-dday" class="mt-2 inline-block text-xs font-bold bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-full">${dday}</p>` : ''}
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center -space-x-2">
+                  <span class="w-9 h-9 rounded-full border-2 border-white/90 bg-rose-400 text-white text-[10px] font-black flex items-center justify-center shadow-sm">준</span>
+                  <span class="w-9 h-9 rounded-full border-2 border-white/90 bg-blue-400 text-white text-[10px] font-black flex items-center justify-center shadow-sm">아</span>
+                  <span class="ml-3 text-[11px] font-bold tracking-wide text-white/90">준영 · 아정</span>
+                </div>
+                ${dday ? `<span id="hero-dday" class="text-[11px] font-bold bg-black/25 backdrop-blur-md px-2.5 py-1.5 rounded-full border border-white/15">${dday}</span>` : ''}
               </div>
             </div>
           </div>
@@ -2038,16 +2041,6 @@
         </section>
 
         <section class="space-y-2">
-          <h4 class="text-xs font-bold text-slate-700">대표 사진 문구</h4>
-          <p class="text-[10px] text-slate-400">사진을 바꾸듯, 홈 화면의 제목과 한 줄 문구도 직접 바꿀 수 있어요.</p>
-          <input id="hero-title-input" value="${escapeHtml(state.heroTitle || '')}" maxlength="28" placeholder="제목" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none">
-          <div class="flex gap-2">
-            <input id="hero-subtitle-input" value="${escapeHtml(state.heroSubtitle || '')}" maxlength="52" placeholder="한 줄 문구" class="flex-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none">
-            <button onclick="saveHeroCopy()" class="px-3 rounded-xl bg-slate-900 text-white text-xs font-bold">저장</button>
-          </div>
-        </section>
-
-        <section class="space-y-2">
           <h4 class="text-xs font-bold text-slate-700">기념일 · D-day</h4>
           <div class="flex gap-2">
             <input type="date" id="anniversary-input" value="${state.anniversary || ''}" onchange="setAnniversary(this.value)" class="flex-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none">
@@ -2083,17 +2076,6 @@
       saveState();
       renderSettingsSheet();
       renderActiveScreen();
-    }
-
-    function saveHeroCopy() {
-      const title = document.getElementById('hero-title-input');
-      const subtitle = document.getElementById('hero-subtitle-input');
-      state.heroTitle = (title && title.value.trim()) || '함께 쌓아가는 하루';
-      state.heroSubtitle = (subtitle && subtitle.value.trim()) || '오늘도 우리답게, 천천히 기록해요.';
-      saveState();
-      renderActiveScreen();
-      renderSettingsSheet();
-      showToast('대표 사진 문구를 바꿨어요');
     }
 
     function setAnniversary(value) {
