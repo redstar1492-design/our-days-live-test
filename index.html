@@ -1230,8 +1230,8 @@
           <div class="p-4 space-y-4 text-slate-900">
 
           <!-- Section: Today's Overview — DUMP와 같은 글자 밀도로 정리 -->
-          <div class="space-y-1">
-            <div class="flex justify-between items-baseline px-1 pt-0.5 pb-1">
+          <div class="space-y-0">
+            <div class="flex justify-between items-baseline px-1 pt-0 pb-0.5">
               <h3 class="text-[11px] font-semibold tracking-[0.08em] text-slate-500 uppercase">TODAY · ${String(NOW.getMonth() + 1).padStart(2, '0')}.${String(NOW.getDate()).padStart(2, '0')}</h3>
               <button onclick="switchTab('calendar')" class="text-[11px] text-slate-500 font-medium hover:text-slate-700 flex items-center gap-0.5">전체보기 <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
             </div>
@@ -1239,12 +1239,9 @@
             ${todayEvents.length === 0 ? `
               <div class="py-2 text-slate-400 text-[13px]">오늘 약속된 일정이 없습니다.</div>
             ` : todayEvents.map(ev => `
-              <div class="grid grid-cols-[54px_minmax(0,1fr)_auto] items-center min-h-10 gap-2 px-1">
-                <span class="tabular-nums font-semibold tracking-tight text-slate-900 text-[13px] shrink-0 translate-x-2">${ev.time}</span>
-                <div class="flex min-w-0 items-center gap-1.5">
-                  ${joinedMark(ev)}
-                  <span class="font-medium text-slate-800 text-[13px] leading-5 truncate">${titleOf(ev)}</span>
-                </div>
+              <div class="grid grid-cols-[54px_minmax(0,1fr)_auto] items-center min-h-8 gap-2 px-1">
+                <span class="tabular-nums font-semibold tracking-tight text-slate-900 text-[13px] shrink-0 translate-x-4">${ev.time}</span>
+                <span class="font-medium text-slate-800 text-[13px] leading-5 truncate">${titleOf(ev)}</span>
                 <div class="flex items-center gap-2 shrink-0">
                   ${(!isMine(ev) && ownerOf(ev) !== '함께' && ev.lifecycle !== 'cancelled' && ev.detailVisibility !== 'private') ? `
                     <button onclick="requestJoinTogether(${ev.id})" class="text-[10px] bg-slate-900 text-white px-2.5 py-1 rounded-full font-bold hover:bg-black">같이 보내기</button>
