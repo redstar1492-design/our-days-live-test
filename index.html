@@ -432,6 +432,14 @@
       <div>
         <label class="block font-bold text-slate-700 mb-1.5">어디였음? (직접입력)</label>
         <input id="post-location-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-medium outline-none" placeholder="장소 이름을 적어주세요">
+        <select id="post-category-select" class="mt-1.5 w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-600 outline-none">
+          <option value="">분류 선택</option>
+          <option>카페/디저트</option>
+          <option>맛집 탐방</option>
+          <option>산책/데이트</option>
+          <option>영화/문화</option>
+          <option>기타</option>
+        </select>
       </div>
 
       <div>
@@ -544,7 +552,7 @@
       heroAuto: 'couple',        // 자동 설정일 때 쓰는 기본 이미지 키
       heroTitle: '함께 쌓아가는 하루',
       heroSubtitle: '오늘도 우리답게, 천천히 기록해요.',
-      anniversary: null,         // 'YYYY-MM-DD' 또는 null
+      anniversary: '2022-10-16', // 'YYYY-MM-DD' 또는 null — 양쪽 시점 테스트를 위해 기본값으로 채워둠
       ddayFormat: 'dplus',       // 'dplus'(D+N) | 'nth'(N일째)
 
       // Schedule Events — subject(원래 대상)와 participants(실제 참석자)를 분리 (요청서 2-3)
@@ -573,7 +581,7 @@
           date: '2026-09-16',
           text: '운동 끝나고 다녀온 분위기 좋은 성수동 테라스 카페 ☕️ 주말에 준영이랑 같이 올래!',
           location: '성수동 · 감성 카페',
-          meta: { spot: '성수동 · 감성 카페', vibe: '야름다움' },
+          meta: { spot: '성수동 · 감성 카페', vibe: '야름다움', category: '카페/디저트' },
           photoUrl: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&auto=format&fit=crop&q=80',
           hearts: { '아정': true, '준영': false },
           ratings: { '아정': 5, '준영': null },
@@ -581,6 +589,51 @@
           comments: [
             { id: 1, author: '준영', text: '오 위치 대박이다! 이번 토요일 오후 3시 어때?', timeAgo: '2시간 전' }
           ]
+        },
+        {
+          id: 102,
+          author: '준영',
+          authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
+          timeAgo: '5시간 전',
+          date: '2026-09-16',
+          text: '퇴근하고 혼자 들렀는데 존나힘듬... 그래도 여기 파스타는 진짜 존나좋음',
+          location: '강남 · 파스타 맛집',
+          meta: { spot: '강남 · 파스타 맛집', vibe: '존나좋음', category: '맛집 탐방' },
+          photoUrl: 'https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=600&auto=format&fit=crop&q=80',
+          hearts: { '준영': true, '아정': false },
+          ratings: { '준영': 4, '아정': null },
+          endorsed: false,
+          comments: []
+        },
+        {
+          id: 103,
+          author: '아정',
+          authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
+          timeAgo: '1일 전',
+          date: '2026-09-15',
+          text: '한강 산책하는데 바람이 미쳤다 두근두근 설렜음',
+          location: '뚝섬 한강공원',
+          meta: { spot: '뚝섬 한강공원', vibe: '두근두근', category: '산책/데이트' },
+          photoUrl: 'https://images.unsplash.com/photo-1519669417670-68775a50919a?w=600&auto=format&fit=crop&q=80',
+          hearts: { '아정': true, '준영': false },
+          ratings: { '아정': 5, '준영': null },
+          endorsed: false,
+          comments: []
+        },
+        {
+          id: 104,
+          author: '준영',
+          authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
+          timeAgo: '2일 전',
+          date: '2026-09-14',
+          text: '영화 보고 나왔는데 결말 때문에 머리터짐. 근데 재밌었음',
+          location: 'CGV 성수',
+          meta: { spot: 'CGV 성수', vibe: '머리터짐', category: '영화/문화' },
+          photoUrl: 'https://images.unsplash.com/photo-1489599162946-9b6b1a2a3b9a?w=600&auto=format&fit=crop&q=80',
+          hearts: { '준영': true, '아정': false },
+          ratings: { '준영': 3, '아정': null },
+          endorsed: false,
+          comments: []
         }
       ],
 
@@ -1207,9 +1260,8 @@
                     ${post.author === state.currentUser ? `<button onclick="requestDeletePost(${post.id})" class="text-slate-300 hover:text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
                   </div>
                   <p class="mt-2 text-[13px] text-slate-800 font-medium leading-relaxed whitespace-pre-wrap">${escapeHtml(post.text)}</p>
-                  ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${(post.media || [post.photoUrl]).map((url, index) => `<div class="relative h-48 min-w-[78%]"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">⚡ ${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${post.endorsed ? '' : 'hidden'} absolute top-1 right-2 text-[28px] leading-none drop-shadow-md">🏅</span>` : ''}</div>`).join('')}</div>` : ''}
+                  ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${(post.media || [post.photoUrl]).map((url, index) => `<div class="relative h-48 min-w-[78%]"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${post.endorsed ? '' : 'hidden'} absolute top-1 right-2 text-[28px] leading-none drop-shadow-md">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}</div>`).join('')}</div>` : ''}
                   <div id="heart-row-${post.id}" class="mt-2.5 flex items-center gap-4 text-slate-500">${heartRowHTML(post)}</div>
-                  ${ratingSummaryHTML(post)}
                   <div id="comment-section-${post.id}" class="comment-panel mt-3 text-sm">
                     <div class="space-y-2">
                     <div id="comment-list-${post.id}" class="space-y-2">${post.comments.map(c => `<div class="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2"><span class="font-bold text-slate-900">${escapeHtml(c.author)}</span><span class="ml-1 text-slate-700">${escapeHtml(c.text)}</span><span class="ml-2 text-[10px] text-slate-400">${c.timeAgo}</span></div>`).join('')}</div>
@@ -1868,7 +1920,7 @@
     const DUMP_VIBES = ['야름다움', '오이쉬에', 'ㅈㄴ힘듬', '두근두근', '나른한걸', '개뿌듯함', '머리터짐', '우울한날', '존나좋음', '빡침폭발'];
 
     function openNewPostSheet() {
-      ['post-text-input', 'post-location-input', 'post-vibe-input', 'post-photo-input', 'post-rating-input'].forEach(id => {
+      ['post-text-input', 'post-location-input', 'post-vibe-input', 'post-photo-input', 'post-rating-input', 'post-category-select'].forEach(id => {
         const el = document.getElementById(id); if (el) el.value = '';
       });
       postMediaDraft = [];
@@ -1926,12 +1978,15 @@
     // 등록자 별점은 블라인드: 상대가 아직 별점을 안 남겼으면 숨긴다.
     // 내 별점은 하트 옆 버튼에 이미 '4점'으로 보이므로 여기서 다시 보여주지 않는다.
     // 둘 다 채워지면 그제서야 상대방(등록자) 쪽 별점만 좌측 하단에 공개한다.
-    function ratingSummaryHTML(post) {
+    // 별점 블라인드 공개: 상대방(등록자) 별점은 내가 별점을 남겨야만 사진 좌측 하단에 드러난다
+    function partnerRatingRevealed(post) {
       const r = post.ratings || {};
-      if (!r['준영'] || !r['아정']) return '';
-      const other = otherUser();
-      const n = r[other];
-      return `<p class="mt-1.5 text-[10px] font-bold text-amber-600">${other} ${'★'.repeat(n)}${'☆'.repeat(5 - n)}</p>`;
+      return !!(r['준영'] && r['아정']);
+    }
+    function partnerRatingStars(post) {
+      if (!partnerRatingRevealed(post)) return '';
+      const n = (post.ratings || {})[otherUser()] || 0;
+      return '★'.repeat(n) + '☆'.repeat(5 - n);
     }
 
     let pendingEndorsePostId = null;
@@ -2681,6 +2736,7 @@
       const text = document.getElementById('post-text-input').value.trim();
       const location = document.getElementById('post-location-input').value.trim();
       const vibe = document.getElementById('post-vibe-input').value.trim();
+      const category = document.getElementById('post-category-select').value;
       const photoUrl = document.getElementById('post-photo-input').value.trim();
       const myRating = Number(document.getElementById('post-rating-input').value) || 0;
 
@@ -2697,7 +2753,7 @@
         date: demoTodayStr(),
         text: text,
         location: location,
-        meta: { spot: location, vibe },
+        meta: { spot: location, vibe, category },
         photoUrl: photoUrl,
         media: [...postMediaDraft],
         hearts: { '준영': false, '아정': false },
@@ -2822,7 +2878,9 @@
 
     window.onload = function() {
       renderActiveScreen();
-      if (!loadDeviceUser()) document.getElementById('device-user-modal').classList.remove('hidden');
+      // 테스트 편의: 새로고침할 때마다 '이 휴대폰은 누구의 것인가요' 선택창을 다시 띄운다
+      // (양쪽 시점을 번갈아 빠르게 테스트할 수 있도록. 선택하면 그 값은 그대로 저장됨)
+      document.getElementById('device-user-modal').classList.remove('hidden');
     };
   </script>
 </body>
