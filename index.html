@@ -1145,11 +1145,11 @@
                   ` : ''}
                   <div class="mt-2.5 flex items-center gap-4 text-slate-500">
                     <button onclick="togglePostLike(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold hover:text-brand-red active:scale-95"><i data-lucide="heart" class="w-4 h-4"></i>${post.likes}</button>
-                    <button onclick="toggleCommentBox(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold hover:text-brand-blue"><i data-lucide="message-circle" class="w-4 h-4"></i>${post.comments.length}</button>
+                    <button onclick="toggleCommentBox(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold hover:text-brand-blue"><i data-lucide="message-circle" class="w-4 h-4"></i><span id="comment-count-${post.id}">${post.comments.length}</span></button>
                     <button class="hover:text-slate-900" aria-label="공유"><i data-lucide="send" class="w-4 h-4"></i></button>
                   </div>
                   <div id="comment-section-${post.id}" class="hidden mt-3 space-y-2 text-sm">
-                    ${post.comments.map(c => `<div class="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2"><span class="font-bold text-slate-900">${escapeHtml(c.author)}</span><span class="ml-1 text-slate-700">${escapeHtml(c.text)}</span><span class="ml-2 text-[10px] text-slate-400">${c.timeAgo}</span></div>`).join('')}
+                    <div id="comment-list-${post.id}" class="space-y-2">${post.comments.map(c => `<div class="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2"><span class="font-bold text-slate-900">${escapeHtml(c.author)}</span><span class="ml-1 text-slate-700">${escapeHtml(c.text)}</span><span class="ml-2 text-[10px] text-slate-400">${c.timeAgo}</span></div>`).join('')}</div>
                     <div class="flex gap-1.5"><input type="text" id="comment-input-${post.id}" placeholder="${escapeHtml(post.author)}님이 올린 피드에 답글 달기" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-full text-xs outline-none focus:border-brand-blue"><button onclick="addComment(${post.id})" class="px-3 py-2 bg-slate-900 text-white font-bold rounded-full text-xs">게시</button></div>
                   </div>
                 </div>
@@ -1839,15 +1839,27 @@
 
       const post = state.posts.find(p => p.id === postId);
       if (post) {
-        post.comments.push({
+        const comment = {
           id: Date.now(),
           author: state.currentUser || '준영',
           text: input.value.trim(),
           timeAgo: '방금 전'
-        });
+        };
+        post.comments.push(comment);
         saveState();
-        showToast('답글이 작성되었습니다');
-        renderActiveScreen();
+        // 현재 열린 답글 영역만 갱신한다. 전체 화면을 다시 그리지 않아 접히거나 깜빡이지 않는다.
+        const list = document.getElementById(`comment-list-${postId}`);
+        if (list) {
+          const row = document.createElement('div');
+          row.className = 'rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2';
+          const author = document.createElement('span'); author.className = 'font-bold text-slate-900'; author.textContent = comment.author;
+          const text = document.createElement('span'); text.className = 'ml-1 text-slate-700'; text.textContent = comment.text;
+          const time = document.createElement('span'); time.className = 'ml-2 text-[10px] text-slate-400'; time.textContent = comment.timeAgo;
+          row.append(author, text, time); list.appendChild(row);
+        }
+        const count = document.getElementById(`comment-count-${postId}`);
+        if (count) count.textContent = String(post.comments.length);
+        input.value = '';
       }
     }
 
