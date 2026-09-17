@@ -168,7 +168,7 @@
     </nav>
 
     <!-- 알림 팝오버: 탭 이동 없이 종 위에 떠서 표시 (슬랙 스타일) -->
-    <div id="notif-popover" class="hidden absolute bottom-16 right-2 w-64 max-h-80 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden animate-pop">
+    <div id="notif-popover" class="hidden absolute bottom-16 right-2 w-64 max-h-80 bg-white rounded-2xl shadow-[0_20px_50px_-8px_rgba(0,0,0,0.45)] ring-1 ring-black/5 border border-slate-100 z-50 overflow-hidden animate-pop">
       <div class="flex items-center justify-between px-3.5 py-2.5 border-b border-slate-100">
         <span class="font-extrabold text-xs text-slate-900">알림</span>
         <button onclick="clearAllNotifications()" class="text-[10px] font-bold text-slate-500 hover:text-slate-800">모두 읽음</button>
@@ -185,7 +185,7 @@
     <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl">
       <div class="text-lg mb-2">🗑️</div>
       <h3 class="text-base font-black text-slate-900">이 덤프를 삭제할까요?</h3>
-      <p class="mt-1 text-xs leading-relaxed text-slate-500">삭제하면 이 피드와 답글을 되돌릴 수 없어요.</p>
+      <p class="mt-1 text-xs leading-relaxed text-slate-500">삭제하면 이 DUMP와 답글을 되돌릴 수 없어요.</p>
       <div class="mt-5 flex gap-2">
         <button onclick="closeDeletePostModal()" class="flex-1 rounded-xl bg-slate-100 py-2.5 text-xs font-bold text-slate-600">취소</button>
         <button onclick="confirmDeletePost()" class="flex-1 rounded-xl bg-rose-500 py-2.5 text-xs font-bold text-white">삭제</button>
@@ -646,9 +646,8 @@
 
       // Notifications. recipientId가 없으면(기존 시스템 알림) 두 사람 모두에게 보인다
       notifications: [
-        { id: 201, recipientId: null, text: '아정이 필라테스 일정을 20시로 업데이트했습니다.', timeAgo: '10분 전', read: false, type: 'calendar', color: 'bg-brand-blue' },
-        { id: 202, recipientId: null, text: '아정이 새 소식 피드를 남겼습니다.', timeAgo: '3시간 전', read: false, type: 'post', color: 'bg-brand-red' },
-        { id: 203, recipientId: null, text: '우리가 함께한 지 1,432일째 되는 날입니다 💕', timeAgo: '오늘', read: true, type: 'system', color: 'bg-emerald-500' }
+        { id: 201, recipientId: null, text: '아정님이 테니스 치기 일정을 20시로 업데이트했습니다.', timeAgo: '10분 전', read: false, type: 'calendar', color: 'bg-brand-blue' },
+        { id: 202, recipientId: null, text: '아정님이 새 DUMP를 남겼습니다.', timeAgo: '3시간 전', read: false, type: 'post', color: 'bg-brand-red' }
       ],
 
       // 나도 함께 요청. 작성자가 '함께하기'로 승인해야 함께 일정이 된다 (요구사항 2)
@@ -1279,7 +1278,7 @@
                   <div id="comment-section-${post.id}" class="comment-panel mt-3 text-sm">
                     <div class="space-y-2">
                     <div id="comment-list-${post.id}" class="space-y-2">${post.comments.map(c => `<div class="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2"><span class="font-bold text-slate-900">${escapeHtml(c.author)}</span><span class="ml-1 text-slate-700">${escapeHtml(c.text)}</span><span class="ml-2 text-[10px] text-slate-400">${c.timeAgo}</span></div>`).join('')}</div>
-                    <div class="flex gap-1.5"><input type="text" id="comment-input-${post.id}" placeholder="${escapeHtml(post.author)}님이 올린 피드에 답글 달기" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-full text-xs outline-none focus:border-brand-blue"><button onclick="addComment(${post.id})" class="px-3 py-2 bg-slate-900 text-white font-bold rounded-full text-xs">게시</button></div>
+                    <div class="flex gap-1.5"><input type="text" id="comment-input-${post.id}" placeholder="${escapeHtml(post.author)}님의 DUMP에 답글 달기" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-full text-xs outline-none focus:border-brand-blue"><button onclick="addComment(${post.id})" class="px-3 py-2 bg-slate-900 text-white font-bold rounded-full text-xs">게시</button></div>
                     </div>
                   </div>
                 </div>
@@ -1780,7 +1779,7 @@
         type: 'join_request',
         eventId: ev.id,
         requestId: reqId,
-        text: `${me}이 '${ev.title}'에 함께하고 싶어해요`,
+        text: `${me}님이 '${ev.title}'에 함께하고 싶어해요`,
         timeAgo: '방금 전',
         read: false,
         color: 'bg-emerald-500'
@@ -1826,14 +1825,14 @@
         id: Date.now(),
         recipientId: state.currentUser,
         type: 'calendar',
-        text: `${requester}이 '${ev.title}'에 함께해요`,
+        text: `${requester}님이 '${ev.title}'에 함께해요`,
         timeAgo: '방금 전', read: false, color: 'bg-emerald-500'
       });
       state.notifications.unshift({
         id: Date.now() + 1,
         recipientId: requester,
         type: 'calendar',
-        text: `${state.currentUser}이 '${ev.title}'에 함께해요`,
+        text: `${state.currentUser}님이 '${ev.title}'에 함께해요`,
         timeAgo: '방금 전', read: false, color: 'bg-emerald-500'
       });
 
@@ -1861,7 +1860,7 @@
 
       state.notifications.unshift({
         id: Date.now(),
-        text: `${me}이 '${ev.title}' 일정 함께하기를 해제했어요`,
+        text: `${me}님이 '${ev.title}' 일정 함께하기를 해제했어요`,
         timeAgo: '방금 전',
         read: false,
         type: 'calendar',
@@ -1892,7 +1891,7 @@
       });
       state.notifications.unshift({
         id: Date.now(),
-        text: `${state.currentUser}이 '${titleOf(ev)}' 일정을 취소했어요`,
+        text: `${state.currentUser}님이 '${titleOf(ev)}' 일정을 취소했어요`,
         timeAgo: '방금 전', read: false, type: 'calendar', color: 'bg-brand-blue'
       });
       saveState();
@@ -2650,10 +2649,10 @@
       // 알림은 무엇이 바뀌었는지 짧게만 알린다. 수락·확인 행동을 요구하지 않는다 (요구사항 4)
       const mainField = changed.find(f => ['time', 'date', 'title', 'place'].includes(f)) || changed[0];
       let changeText;
-      if (mainField === 'time') changeText = `${state.currentUser}이 '${titleOf(ev)}' 시간을 ${before.time} → ${after.time}으로 변경했어요`;
-      else if (mainField === 'date') changeText = `${state.currentUser}이 '${titleOf(ev)}' 날짜를 ${before.date} → ${after.date}으로 변경했어요`;
-      else if (mainField === 'detailVisibility') changeText = `${state.currentUser}이 '${titleOf(ev)}' 공개 범위를 ${DETAIL_VIS_LABELS[after.detailVisibility]}(으)로 바꿨어요`;
-      else changeText = `${state.currentUser}이 '${titleOf(ev)}' 일정을 수정했어요`;
+      if (mainField === 'time') changeText = `${state.currentUser}님이 '${titleOf(ev)}' 시간을 ${before.time} → ${after.time}으로 변경했어요`;
+      else if (mainField === 'date') changeText = `${state.currentUser}님이 '${titleOf(ev)}' 날짜를 ${before.date} → ${after.date}으로 변경했어요`;
+      else if (mainField === 'detailVisibility') changeText = `${state.currentUser}님이 '${titleOf(ev)}' 공개 범위를 ${DETAIL_VIS_LABELS[after.detailVisibility]}(으)로 바꿨어요`;
+      else changeText = `${state.currentUser}님이 '${titleOf(ev)}' 일정을 수정했어요`;
 
       state.notifications.unshift({
         id: Date.now(),
@@ -2730,7 +2729,7 @@
 
       state.notifications.unshift({
         id: Date.now(),
-        text: `${currentOwnerType}이 '${title}' 일정을 새로 추가했어요`,
+        text: `${currentOwnerType}님이 '${title}' 일정을 새로 추가했어요`,
         timeAgo: '방금 전',
         read: false,
         type: 'calendar',
