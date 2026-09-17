@@ -2018,7 +2018,7 @@
       const bothHearted = !!(post.hearts && post.hearts['준영'] && post.hearts['아정']);
       const myRating = post.ratings ? post.ratings[state.currentUser] : null;
       return `
-        <button onclick="toggleHeart(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold w-[40px] shrink-0 ${mine ? 'text-brand-red' : 'hover:text-brand-red'} active:scale-95">
+        <button onclick="toggleHeart(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold w-[52px] shrink-0 ${mine ? 'text-brand-red' : 'hover:text-brand-red'} active:scale-95">
           <i data-lucide="heart" class="w-4 h-4 shrink-0" style="${mine ? 'fill:currentColor' : ''}"></i>
           <span class="truncate">하트</span>
         </button>
