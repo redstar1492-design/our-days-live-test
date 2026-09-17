@@ -197,7 +197,7 @@
     <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl">
       <div class="text-lg mb-2">🗑️</div>
       <h3 class="text-base font-black text-slate-900">이 덤프를 삭제할까요?</h3>
-      <p class="mt-1 text-xs leading-relaxed text-slate-500">삭제하면 이 DUMP와 답글을 되돌릴 수 없어요.</p>
+      <p class="mt-1 text-xs leading-relaxed text-slate-500">삭제하면 이 덤프와 답글을 되돌릴 수 없어요.</p>
       <div class="mt-5 flex gap-2">
         <button onclick="closeDeletePostModal()" class="flex-1 rounded-xl bg-slate-100 py-2.5 text-xs font-bold text-slate-600">취소</button>
         <button onclick="confirmDeletePost()" class="flex-1 rounded-xl bg-rose-500 py-2.5 text-xs font-bold text-white">삭제</button>
@@ -661,7 +661,7 @@
       // Notifications. recipientId가 없으면(기존 시스템 알림) 두 사람 모두에게 보인다
       notifications: [
         { id: 201, recipientId: null, text: '아정님이 테니스 치기 일정을 20시로 업데이트했습니다.', timeAgo: '10분 전', read: false, type: 'calendar', color: 'bg-brand-blue' },
-        { id: 202, recipientId: null, text: '아정님이 새 DUMP를 남겼습니다.', timeAgo: '3시간 전', read: false, type: 'post', color: 'bg-brand-red' }
+        { id: 202, recipientId: null, text: '아정님이 새 덤프를 남겼습니다.', timeAgo: '3시간 전', read: false, type: 'post', color: 'bg-brand-red' }
       ],
 
       // 나도 함께 요청. 작성자가 '함께하기'로 승인해야 함께 일정이 된다 (요구사항 2)
@@ -1258,7 +1258,7 @@
           <!-- Section: Feed Feed Posts -->
           <div class="flex justify-between items-center px-1 pt-2">
             <div class="flex items-center gap-1.5">
-              <h3 class="text-sm font-black tracking-tight text-slate-900">DUMP</h3>
+              <h3 class="text-sm font-black tracking-tight text-slate-900">덤프</h3>
             </div>
             <div class="flex items-center gap-2">
               <button onclick="toggleEndorsedOnly()" id="endorsed-filter-btn" class="flex items-center gap-1 text-[10px] font-bold ${dumpShowEndorsedOnly ? 'text-amber-500' : 'text-slate-400 hover:text-slate-600'}">모아보기</button>
@@ -1298,7 +1298,7 @@
                   <div id="comment-section-${post.id}" class="comment-panel mt-3 text-sm">
                     <div class="space-y-2">
                     <div id="comment-list-${post.id}" class="space-y-2">${post.comments.map(c => `<div class="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs"><span class="font-bold text-slate-900">${escapeHtml(c.author)}</span><span class="ml-1 font-medium text-slate-600">${escapeHtml(c.text)}</span><span class="ml-2 text-[10px] text-slate-400">${c.timeAgo}</span></div>`).join('')}</div>
-                    <div class="flex gap-1.5"><input type="text" id="comment-input-${post.id}" placeholder="${escapeHtml(post.author)}님의 DUMP에 답글 달기" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-full text-xs outline-none focus:border-brand-blue"><button onclick="addComment(${post.id})" class="px-3 py-2 bg-slate-900 text-white font-bold rounded-full text-xs">게시</button></div>
+                    <div class="flex gap-1.5"><input type="text" id="comment-input-${post.id}" placeholder="${escapeHtml(post.author)}님의 덤프에 답글 달기" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-full text-xs outline-none focus:border-brand-blue"><button onclick="addComment(${post.id})" class="px-3 py-2 bg-slate-900 text-white font-bold rounded-full text-xs">게시</button></div>
                     </div>
                   </div>
                 </div>
@@ -1993,7 +1993,7 @@
       
       document.getElementById('post-rating-input').value = String((post.ratings && post.ratings[state.currentUser]) || 0);
       postMediaDraft = post.media ? [...post.media] : (post.photoUrl ? [post.photoUrl] : []);
-      document.getElementById('post-sheet-title').textContent = 'DUMP 수정';
+      document.getElementById('post-sheet-title').textContent = '덤프 수정';
       document.getElementById('post-sheet-submit').textContent = '저장';
       setPostSheetAuthor();
       renderVibeChips();
