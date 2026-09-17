@@ -1245,6 +1245,7 @@
                   ${(!isMine(ev) && ownerOf(ev) !== '함께' && ev.lifecycle !== 'cancelled' && ev.detailVisibility !== 'private') ? `
                     <button onclick="requestJoinTogether(${ev.id})" class="text-[9px] bg-slate-900 text-white px-1.5 py-0.5 rounded-full font-bold hover:bg-black">같이 보내기</button>
                   ` : ''}
+                  ${(() => { const req = isMine(ev) ? pendingRequestForMyEvent(ev.id) : null; return req ? `<button onclick="approveJoinRequest(${req.id})" class="text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-bold hover:bg-emerald-600">수락하기</button>` : ''; })()}
                   ${ownerPill(ownerOf(ev))}
                 </div>
               </div>
@@ -1401,6 +1402,10 @@
           actionBtn = pending
             ? `<button onclick="event.stopPropagation();cancelJoinRequest(${pending.id})" class="text-[9px] font-bold text-slate-500 bg-slate-100 rounded px-1.5 py-0.5 shrink-0">요청 보냄</button>`
             : `<button onclick="event.stopPropagation();requestJoinTogether(${ev.id})" class="text-[9px] font-bold text-white bg-slate-900/80 rounded px-1.5 py-0.5 shrink-0">같이 보내기</button>`;
+        } else if (mine && !cancelled) {
+          // 내 일정에 대기 중인 함께 요청이 있으면 알림이 아니라 이 자리에서 바로 수락 (요구사항: 알림엔 버튼 없음)
+          const myReq = pendingRequestForMyEvent(ev.id);
+          if (myReq) actionBtn = `<button onclick="event.stopPropagation();approveJoinRequest(${myReq.id})" class="text-[9px] font-bold text-white bg-emerald-500 rounded px-1.5 py-0.5 shrink-0 hover:bg-emerald-600">수락하기</button>`;
         }
         return `
           <div${clickAttr} class="rounded-lg border px-1.5 py-1 text-[10px] flex items-center gap-1 ${busy ? 'bg-slate-100 border-slate-200' : oc.bg + ' ' + oc.border} ${cancelled ? 'opacity-50' : ''} ${mine && !cancelled ? 'cursor-pointer' : ''}">
@@ -1706,30 +1711,11 @@
       const list = document.getElementById('notif-popover-list');
       if (!list) return;
       const mine = myNotifications();
+      // 알림은 어떤 기능(버튼)도 넣지 않는다. 텍스트로만 안내한다.
+      // 함께 요청 수락은 알림이 아니라 해당 일정 자리의 '수락하기' 버튼에서 한다.
       list.innerHTML = mine.length === 0
         ? `<div class="p-6 text-center text-xs text-slate-400">새로운 알림이 없습니다.</div>`
         : mine.map(n => {
-            // 함께 요청 알림: 아직 대기 중이면 '함께하기 / 나중에' 행동을 보여준다 (요구사항 2)
-            if (n.type === 'join_request') {
-              const req = (state.joinRequests || []).find(r => r.id === n.requestId);
-              const pending = req && req.status === 'pending';
-              return `
-                <div class="px-3.5 py-2.5 ${n.read ? 'opacity-50' : ''}">
-                  <div onclick="markNotifRead(${n.id})" class="flex items-start gap-2.5 cursor-pointer">
-                    <div class="w-2 h-2 rounded-full ${n.color || 'bg-emerald-500'} mt-1.5 shrink-0"></div>
-                    <div class="flex-1 text-xs">
-                      <p class="font-bold text-slate-800 leading-snug">${escapeHtml(n.text)}</p>
-                      <span class="text-[10px] text-slate-400 mt-0.5 block">${n.timeAgo}</span>
-                    </div>
-                  </div>
-                  ${pending ? `
-                    <div class="flex gap-1.5 mt-1.5 pl-4">
-                      <button onclick="event.stopPropagation();approveJoinRequest(${req.id})" class="flex-1 py-1 bg-slate-900 text-white rounded-lg text-[10px] font-bold">함께하기</button>
-                      <button onclick="event.stopPropagation();dismissJoinRequestNotif(${req.id},${n.id})" class="px-2 py-1 text-slate-400 text-[10px] font-bold">나중에</button>
-                    </div>
-                  ` : ''}
-                </div>`;
-            }
             return `
             <div onclick="markNotifRead(${n.id})" class="flex items-start gap-2.5 px-3.5 py-2.5 cursor-pointer hover:bg-slate-50 transition-all ${n.read ? 'opacity-50' : ''}">
               <div class="w-2 h-2 rounded-full ${n.color || 'bg-brand-red'} mt-1.5 shrink-0"></div>
@@ -1764,6 +1750,11 @@
     // '나도 함께'는 즉시 참여가 아니라 작성자에게 가는 가벼운 요청이다 (요구사항 2)
     function pendingJoinRequestOf(eventId, requesterId) {
       return (state.joinRequests || []).find(r => r.eventId === eventId && r.requesterId === requesterId && r.status === 'pending');
+    }
+
+    // 내 일정에 대기 중인 함께 요청이 있는지 (수락하기 버튼용)
+    function pendingRequestForMyEvent(eventId) {
+      return (state.joinRequests || []).find(r => r.eventId === eventId && r.ownerId === state.currentUser && r.status === 'pending');
     }
 
     function requestJoinTogether(id) {
