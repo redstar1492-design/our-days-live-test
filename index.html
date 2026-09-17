@@ -181,6 +181,18 @@
   <!-- Global Modal Sheet Backdrop -->
   <div id="sheet-backdrop" onclick="closeAllSheets()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] z-40 hidden transition-opacity"></div>
 
+  <div id="delete-post-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-slate-950/45 p-6">
+    <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl">
+      <div class="text-lg mb-2">🗑️</div>
+      <h3 class="text-base font-black text-slate-900">이 덤프를 삭제할까요?</h3>
+      <p class="mt-1 text-xs leading-relaxed text-slate-500">삭제하면 이 피드와 답글을 되돌릴 수 없어요.</p>
+      <div class="mt-5 flex gap-2">
+        <button onclick="closeDeletePostModal()" class="flex-1 rounded-xl bg-slate-100 py-2.5 text-xs font-bold text-slate-600">취소</button>
+        <button onclick="confirmDeletePost()" class="flex-1 rounded-xl bg-rose-500 py-2.5 text-xs font-bold text-white">삭제</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal 1: Create Event Sheet -->
   <div id="sheet-folder" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[85vh] overflow-y-auto">
     <div class="flex justify-between items-center mb-4">
@@ -1050,8 +1062,9 @@
     function getOurScreenHTML() {
       const todayEvents = state.events.filter(e => occursOn(e, state.selectedDate));
       const ownerPill = (person) => {
-        const cls = person === '준영' ? 'bg-rose-100 text-brand-red' : person === '아정' ? 'bg-blue-100 text-brand-blue' : 'bg-emerald-100 text-emerald-700';
-        return `<span class="shrink-0 px-1.5 py-0.5 rounded-full text-[9px] font-bold ${cls}">${person}</span>`;
+        if (person === '준영') return `<span class="shrink-0 text-sm leading-none" title="준영">🤵🏻</span>`;
+        if (person === '아정') return `<span class="shrink-0 text-sm leading-none" title="아정">👰🏻</span>`;
+        return `<span class="shrink-0 text-sm leading-none tracking-[-0.2em]" title="함께">🤵🏻<span class="relative -top-px text-[9px] text-rose-500">♥</span>👰🏻</span>`;
       };
 
       const heroBg = `background-image:url('${heroImageUrl()}');background-size:cover;background-position:center 58%;`;
@@ -1143,7 +1156,7 @@
                   <div class="flex items-center gap-1.5 leading-none">
                     <span class="text-sm font-extrabold text-slate-900">${nicknameOf(post.author)}</span>
                     <span class="text-[10px] text-slate-400">🕒 ${post.timeAgo.replace('시간 전','h').replace('분 전','m')}</span>
-                    ${post.author === state.currentUser ? `<button onclick="deletePost(${post.id})" class="text-slate-300 hover:text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
+                    ${post.author === state.currentUser ? `<button onclick="requestDeletePost(${post.id})" class="text-slate-300 hover:text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
                   </div>
                   <p class="mt-2 text-[13px] text-slate-800 font-medium leading-relaxed whitespace-pre-wrap">${escapeHtml(post.text)}</p>
                   ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${(post.media || [post.photoUrl]).map((url, index) => `<div class="relative h-48 min-w-[78%]"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">⚡ ${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${(post.endorsements || []).length ? '' : 'hidden'} absolute top-1 right-2 text-[28px] leading-none drop-shadow-md">🏅</span>` : ''}</div>`).join('')}</div>` : ''}
@@ -1851,6 +1864,30 @@
       // 좋아요는 숫자만 바꾼다. 열린 답글·입력 내용 등 다른 화면 상태를 건드리지 않는다.
       const count = document.getElementById(`like-count-${id}`);
       if (count) count.textContent = String(post.likes);
+    }
+
+    let pendingPostDeleteId = null;
+
+    function requestDeletePost(id) {
+      const post = state.posts.find(p => p.id === id);
+      if (!post || post.author !== state.currentUser) return;
+      pendingPostDeleteId = id;
+      const modal = document.getElementById('delete-post-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeDeletePostModal() {
+      pendingPostDeleteId = null;
+      const modal = document.getElementById('delete-post-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function confirmDeletePost() {
+      const id = pendingPostDeleteId;
+      closeDeletePostModal();
+      if (id !== null) deletePost(id);
     }
 
     function deletePost(id) {
