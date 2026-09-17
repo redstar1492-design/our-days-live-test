@@ -1271,7 +1271,7 @@
                   ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? (() => {
                     const mediaList = post.media || [post.photoUrl];
                     const multi = mediaList.length > 1;
-                    return `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${mediaList.map((url, index) => `<div class="relative h-48 shrink-0" style="width:${multi ? '70%' : '100%'}"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${post.endorsed ? '' : 'hidden'} absolute top-1 right-2 text-[28px] leading-none drop-shadow-md">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}${multi ? `<span class="absolute top-2 left-1/2 -translate-x-1/2 rounded-full bg-black/65 backdrop-blur-md px-2 py-0.5 text-[10px] font-bold text-white">${index + 1}/${mediaList.length}</span>` : ''}</div>`).join('')}</div>`;
+                    return `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${mediaList.map((url, index) => `<div class="relative h-48 shrink-0" style="width:${multi ? '70%' : '100%'}"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${post.endorsed ? '' : 'hidden'} absolute top-1 right-2 text-[28px] leading-none drop-shadow-md">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}</div>`).join('')}</div>`;
                   })() : ''}
                   <div id="heart-row-${post.id}" class="mt-2.5 flex items-center gap-4 text-slate-500">${heartRowHTML(post)}</div>
                   <div id="comment-section-${post.id}" class="comment-panel mt-3 text-sm">
@@ -1972,17 +1972,18 @@
     }
 
     // 하트 한 줄 렌더: '나' 하트 상태, 답글, 별점 버튼을 함께 그린다
+    // 버튼 라벨 글자수가 바뀌어도(하트/하트 보냄/서로 하트 등) 폭이 고정되어 옆 요소가 밀리지 않는다
     function heartRowHTML(post) {
       const mine = !!(post.hearts && post.hearts[state.currentUser]);
       const bothHearted = !!(post.hearts && post.hearts['준영'] && post.hearts['아정']);
       const myRating = post.ratings ? post.ratings[state.currentUser] : null;
       return `
-        <button onclick="toggleHeart(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold ${mine ? 'text-brand-red' : 'hover:text-brand-red'} active:scale-95">
-          <i data-lucide="heart" class="w-4 h-4" style="${mine ? 'fill:currentColor' : ''}"></i>
-          <span>${bothHearted ? '서로 하트' : (mine ? '하트 보냄' : '하트')}</span>
+        <button onclick="toggleHeart(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold w-[68px] shrink-0 ${mine ? 'text-brand-red' : 'hover:text-brand-red'} active:scale-95">
+          <i data-lucide="heart" class="w-4 h-4 shrink-0" style="${mine ? 'fill:currentColor' : ''}"></i>
+          <span class="truncate">${bothHearted ? '서로 하트' : (mine ? '하트 보냄' : '하트')}</span>
         </button>
-        <button onclick="toggleCommentBox(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold hover:text-brand-blue"><i data-lucide="message-circle" class="w-4 h-4"></i><span id="comment-count-${post.id}">${post.comments.length}</span></button>
-        <button onclick="openRatingPicker(${post.id})" id="rating-btn-${post.id}" class="inline-flex items-center gap-1 text-xs font-bold hover:text-amber-500 ${myRating ? 'text-amber-500' : ''}"><i data-lucide="star" class="w-4 h-4" style="${myRating ? 'fill:currentColor' : ''}"></i><span>${myRating ? myRating + '점' : '별점'}</span></button>
+        <button onclick="toggleCommentBox(${post.id})" class="inline-flex items-center gap-1 text-xs font-bold w-[36px] shrink-0 hover:text-brand-blue"><i data-lucide="message-circle" class="w-4 h-4 shrink-0"></i><span id="comment-count-${post.id}">${post.comments.length}</span></button>
+        <button onclick="openRatingPicker(${post.id})" id="rating-btn-${post.id}" class="inline-flex items-center gap-1 text-xs font-bold w-[44px] shrink-0 hover:text-amber-500 ${myRating ? 'text-amber-500' : ''}"><i data-lucide="star" class="w-4 h-4 shrink-0" style="${myRating ? 'fill:currentColor' : ''}"></i><span class="truncate">${myRating ? myRating + '점' : '별점'}</span></button>
       `;
     }
 
