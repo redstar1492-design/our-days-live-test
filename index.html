@@ -1289,19 +1289,19 @@
                 <img src="${post.authorAvatar}" class="w-9 h-9 rounded-full object-cover ring-2 ring-white border border-slate-100 shrink-0" alt="${post.author}">
                 <div class="flex-1 min-w-0 pb-4">
                   <div class="flex items-center gap-1.5 leading-none">
-                    <span class="text-sm font-bold text-slate-900">${nicknameOf(post.author)}</span>
-                    <span class="text-[10px] text-slate-400">🕒 ${post.timeAgo.replace('시간 전','h').replace('분 전','m')}</span>
+                    <span class="text-[15px] font-bold text-slate-900">${nicknameOf(post.author)}</span>
+                    <span class="text-xs text-slate-400">🕒 ${post.timeAgo.replace('시간 전','h').replace('분 전','m')}</span>
                     ${post.author === state.currentUser ? `<button onclick="openEditPostSheet(${post.id})" class="text-slate-300 hover:text-slate-600 mr-1"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button><button onclick="requestDeletePost(${post.id})" class="text-slate-300 hover:text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
                   </div>
-                  <p class="mt-2 text-[13px] text-slate-800 font-medium leading-relaxed whitespace-pre-wrap">${escapeHtml(post.text)}</p>
+                  <p class="mt-2 text-[15px] text-slate-800 font-medium leading-relaxed whitespace-pre-wrap">${escapeHtml(post.text)}</p>
                   ${(post.media || (post.photoUrl ? [post.photoUrl] : [])).length ? (() => {
                     const mediaList = post.media || [post.photoUrl];
-                    return `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${mediaList.map((url, index) => `<div class="relative h-48 shrink-0 w-full"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${isEndorsed(post) ? '' : 'hidden'} endorse-badge-anim absolute top-3 right-2 text-[28px] leading-none">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-[10px] font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}</div>`).join('')}</div>`;
+                    return `<div class="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar">${mediaList.map((url, index) => `<div class="relative h-48 shrink-0 w-full"><img src="${url}" class="w-full h-full rounded-2xl object-cover border border-slate-200" alt="dump photo">${index === 0 && (post.meta?.spot || post.location) ? `<span class="absolute top-2 left-2 rounded-full bg-black/65 backdrop-blur-md px-2 py-1 text-xs font-bold text-white">📍 ${escapeHtml(post.meta?.spot || post.location)}${post.meta?.category ? ' · ' + escapeHtml(post.meta.category) : ''}</span>` : ''}${index === 0 && post.meta?.vibe ? `<span class="absolute right-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-xs font-bold text-slate-700">${escapeHtml(post.meta.vibe)}</span>` : ''}${index === 0 ? `<span id="endorse-badge-${post.id}" class="${isEndorsed(post) ? '' : 'hidden'} endorse-badge-anim absolute top-3 right-2 text-[28px] leading-none">🏅</span>` : ''}${index === 0 ? `<span id="partner-rating-badge-${post.id}" class="${partnerRatingRevealed(post) ? '' : 'hidden'} absolute left-2 bottom-2 rounded-full bg-white/90 backdrop-blur-md px-2 py-1 text-xs font-bold text-amber-500">${partnerRatingStars(post)}</span>` : ''}</div>`).join('')}</div>`;
                   })() : ''}
                   <div id="heart-row-${post.id}" class="mt-2.5 flex items-center gap-4 text-slate-500">${heartRowHTML(post)}</div>
                   <div id="comment-section-${post.id}" class="comment-panel mt-3 text-sm">
                     <div class="space-y-2">
-                    <div id="comment-list-${post.id}" class="space-y-2">${post.comments.map(c => `<div class="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs"><span class="font-bold text-slate-900">${escapeHtml(c.author)}</span><span class="ml-1 font-medium text-slate-600">${escapeHtml(c.text)}</span><span class="ml-2 text-[10px] text-slate-400">${c.timeAgo}</span></div>`).join('')}</div>
+                    <div id="comment-list-${post.id}" class="space-y-2">${post.comments.map(c => `<div class="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-[13px]"><span class="font-bold text-slate-900">${escapeHtml(c.author)}</span><span class="ml-1 font-medium text-slate-600">${escapeHtml(c.text)}</span><span class="ml-2 text-[10px] text-slate-400">${c.timeAgo}</span></div>`).join('')}</div>
                     <div class="flex gap-1.5"><input type="text" id="comment-input-${post.id}" placeholder="${escapeHtml(post.author)}님의 DUMP에 답글 달기" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-full text-xs outline-none focus:border-brand-blue"><button onclick="addComment(${post.id})" class="px-3 py-2 bg-slate-900 text-white font-bold rounded-full text-xs">게시</button></div>
                     </div>
                   </div>
@@ -2200,7 +2200,7 @@
         const list = document.getElementById(`comment-list-${postId}`);
         if (list) {
           const row = document.createElement('div');
-          row.className = 'rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs';
+          row.className = 'rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-[13px]';
           const author = document.createElement('span'); author.className = 'font-bold text-slate-900'; author.textContent = comment.author;
           const text = document.createElement('span'); text.className = 'ml-1 font-medium text-slate-600'; text.textContent = comment.text;
           const time = document.createElement('span'); time.className = 'ml-2 text-[10px] text-slate-400'; time.textContent = comment.timeAgo;
