@@ -1206,7 +1206,7 @@
       const joinedMark = (ev) => {
         if (ownerOf(ev) !== '함께' || !ev.subjectMemberId) return '';
         const partner = ev.subjectMemberId === '준영' ? '아정' : '준영';
-        return `<span class="text-lg leading-none whitespace-nowrap"><span class="relative -top-px text-[10px] text-rose-500">♥</span>${emojiOf(partner)}</span>`;
+        return `<span class="text-lg leading-none whitespace-nowrap">${emojiOf(partner)}<span class="relative -top-px text-[10px] text-rose-500">♥</span></span>`;
       };
 
       const heroBg = `background-image:url('${heroImageUrl()}');background-size:cover;background-position:center 58%;`;
