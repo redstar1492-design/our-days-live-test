@@ -1960,6 +1960,8 @@
         const el = document.getElementById(id); if (el) el.value = '';
       });
       postMediaDraft = [];
+      const catSel = document.getElementById('post-category-select');
+      catSel.classList.add('text-slate-400'); catSel.classList.remove('text-slate-600');
       document.getElementById('post-sheet-title').textContent = '새 덤프';
       document.getElementById('post-sheet-submit').textContent = '던지기';
       renderVibeChips();
@@ -1977,7 +1979,10 @@
       document.getElementById('post-text-input').value = post.text || '';
       document.getElementById('post-location-input').value = post.location || post.meta?.spot || '';
       document.getElementById('post-vibe-input').value = post.meta?.vibe || '';
-      document.getElementById('post-category-select').value = post.meta?.category || '';
+      const catSel = document.getElementById('post-category-select');
+      catSel.value = post.meta?.category || '';
+      catSel.classList.toggle('text-slate-600', !!catSel.value);
+      catSel.classList.toggle('text-slate-400', !catSel.value);
       document.getElementById('post-rating-input').value = String((post.ratings && post.ratings[state.currentUser]) || 0);
       postMediaDraft = post.media ? [...post.media] : (post.photoUrl ? [post.photoUrl] : []);
       document.getElementById('post-sheet-title').textContent = 'DUMP 수정';
