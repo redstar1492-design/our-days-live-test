@@ -945,7 +945,7 @@
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const diff = Math.round((today - start) / 864e5);
       if (diff < 0) return `D${diff}`;
-      return state.ddayFormat === 'nth' ? `${(diff + 1).toLocaleString()}일째` : `D+${diff.toLocaleString()}`;
+      return state.ddayFormat === 'nth' ? `${(diff + 1).toLocaleString()}일째` : `D+${(diff + 1).toLocaleString()}`;
     }
 
     /* ===== 02-1-1 달력 기획서 확정 규칙 구현 ===== */
