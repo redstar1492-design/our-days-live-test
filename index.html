@@ -1282,7 +1282,7 @@
             ${todayEvents.length === 0 ? `
               <div class="py-2 text-slate-400 text-[13px]">오늘 약속된 일정이 없습니다.</div>
             ` : todayEvents.map(ev => `
-              <div class="flex items-center py-2.5 gap-2 px-1">
+              <div class="flex items-center py-1.5 gap-2 px-1 -mx-1 rounded-lg active:bg-slate-50 transition-colors">
                 <span class="font-mono font-bold text-slate-900 text-[13px] w-11 shrink-0 ml-11">${ev.time}</span>
                 <span class="font-medium text-slate-800 text-[13px] truncate flex-1 min-w-0">${titleOf(ev)}</span>
                 <div class="flex items-center gap-1.5 shrink-0">
