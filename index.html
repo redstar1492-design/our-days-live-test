@@ -1284,7 +1284,7 @@
             ` : todayEvents.map(ev => `
               <div class="flex items-center py-1.5 gap-2 px-1">
                 <span class="font-mono font-bold text-slate-900 text-[13px] w-11 shrink-0 ml-11">${ev.time}</span>
-                <span class="font-medium text-slate-700 text-[13px] truncate flex-1 min-w-0">${titleOf(ev)}</span>
+                <span class="font-medium text-slate-800 text-[13px] truncate flex-1 min-w-0">${titleOf(ev)}</span>
                 <div class="flex items-center gap-1.5 shrink-0">
                   ${(!isMine(ev) && ownerOf(ev) !== '함께' && ev.lifecycle !== 'cancelled' && ev.detailVisibility !== 'private') ? `
                     <button onclick="requestJoinTogether(${ev.id})" class="text-[10px] bg-slate-900 text-white px-2.5 py-1 rounded-full font-bold hover:bg-black">같이 보내기</button>
