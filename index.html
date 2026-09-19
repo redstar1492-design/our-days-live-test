@@ -111,20 +111,6 @@
       50% { filter: drop-shadow(0 0 9px rgba(255,196,0,.95)); }
     }
 
-    /* 화면(탭) 전환: 아주 짧게 아래에서 살짝 떠오르며 페이드 */
-    @keyframes screenIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .screen-enter { animation: screenIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both; }
-
-    /* 덤프 카드 리스트 진입: 살짝 아래->위로 페이드 인 */
-    @keyframes cardIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .card-enter { animation: cardIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
-
     /* 하트/별점 탭 피드백: 눌렀을 때 통통 튀는 스프링 팝 */
     @keyframes heartPop {
       0% { transform: scale(1); }
@@ -1118,9 +1104,6 @@
       }
 
       container.innerHTML = html;
-      container.classList.remove('screen-enter');
-      void container.offsetWidth;
-      container.classList.add('screen-enter');
 
       // Update Navigation Styles (알림은 탭이 아니라 팝오버라 제외)
       const tabs = ['our', 'calendar', 'todo'];
@@ -1281,7 +1264,7 @@
               <div class="py-2 text-slate-400 text-[13px]">오늘 약속된 일정이 없습니다.</div>
             ` : todayEvents.map(ev => `
               <div class="flex items-center py-1.5 gap-2 px-1">
-                <span class="font-mono font-bold text-slate-900 text-[13px] w-11 shrink-0">${ev.time}</span>
+                <span class="font-mono font-bold text-slate-900 text-[13px] w-11 shrink-0 ml-11">${ev.time}</span>
                 <span class="font-medium text-slate-700 text-[13px] truncate flex-1 min-w-0">${titleOf(ev)}</span>
                 <div class="flex items-center gap-1.5 shrink-0">
                   ${(!isMine(ev) && ownerOf(ev) !== '함께' && ev.lifecycle !== 'cancelled' && ev.detailVisibility !== 'private') ? `
@@ -1317,8 +1300,8 @@
     function dumpPostsListHTML() {
       const list = dumpShowEndorsedOnly ? state.posts.filter(isEndorsed) : state.posts;
       const empty = list.length === 0 && dumpShowEndorsedOnly ? '<div class="text-center py-6 text-slate-400 text-xs">아직은 서로가 공감가는 덤프가 없는 것 같아요..</div>' : '';
-      return empty + list.map((post, idx) => `
-            <article class="relative py-1 card-enter" style="animation-delay:${Math.min(idx,6)*45}ms">
+      return empty + list.map(post => `
+            <article class="relative py-1">
               <span class="absolute left-[17px] top-10 bottom-0 w-px bg-slate-200"></span>
               <div class="relative flex gap-3">
                 <img src="${post.authorAvatar}" class="w-9 h-9 rounded-full object-cover ring-2 ring-white border border-slate-100 shrink-0" alt="${post.author}">
