@@ -9,6 +9,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- FontAwesome (레퍼런스 코드가 쓰던 아이콘) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <script>
     tailwind.config = {
@@ -563,7 +565,7 @@
   <div id="sheet-thread-add" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[85vh] overflow-y-auto">
     <div class="flex justify-between items-center pb-2 mb-3 border-b border-slate-100">
       <h3 class="text-sm font-extrabold text-slate-900" id="thread-modal-title">새 일정 등록</h3>
-      <button onclick="closeAllSheets()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+      <button onclick="closeAllSheets()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"><i class="fa-solid fa-xmark text-xs"></i></button>
     </div>
 
     <div class="space-y-3.5">
@@ -806,9 +808,9 @@
           coverAuto: 'rose',
           coverImg: null,
           items: [
-            { id: 306, text: '남산타워 야경 자전거 라이딩', date: '날씨 좋은 날', done: false },
-            { id: 307, text: '도쿄 여행 일정 짜기', date: '10월 휴가용', done: false },
-            { id: 308, text: '아정 신작 에세이 구매', date: '교보문고', done: false }
+            { id: 306, text: '남산타워 야경 자전거 라이딩', date: '날씨 좋은 날', done: false, who: '함께' },
+            { id: 307, text: '도쿄 여행 일정 짜기', date: '10월 휴가용', done: false, who: '함께' },
+            { id: 308, text: '아정 신작 에세이 구매', date: '교보문고', done: false, who: '아정' }
           ]
         }
       ]
@@ -1399,12 +1401,12 @@
                 <img class="w-8 h-8 rounded-full object-cover ring-2 ring-threads-ajung bg-slate-200" src="${avatarUrlOf('아정')}">
               </div>
               <div class="min-w-0">
-                <h1 class="text-base font-extrabold text-slate-900 tracking-tight leading-tight truncate">준영 & 아정</h1>
+                <h1 class="text-base font-extrabold text-slate-900 tracking-tight leading-tight truncate flex items-center gap-1.5">준영 & 아정 <i class="fa-solid fa-circle-check text-blue-500 text-xs"></i></h1>
                 <p class="text-[11px] text-slate-400 font-medium truncate">우리 둘만의 공유 타임라인</p>
               </div>
             </div>
             <button onclick="openThreadAddModal()" class="px-3 py-1.5 bg-slate-900 text-white rounded-full text-xs font-bold hover:bg-black transition-all flex items-center gap-1 shrink-0">
-              <i data-lucide="plus" class="w-3.5 h-3.5"></i> 일정 작성
+              <i class="fa-solid fa-plus text-[10px]"></i> 일정 작성
             </button>
           </div>
           <nav class="flex border-b border-slate-100 text-xs font-bold text-center -mx-4 px-4">
@@ -1449,10 +1451,10 @@
       const label = escapeHtml(titleOf(ev));
       const place = placeOf(ev);
       const completeBtn = mine
-        ? `<button onclick="event.stopPropagation();toggleEventComplete(${ev.id})" class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${ev.completed ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-50 text-slate-500 border-slate-200'} shrink-0">${ev.completed ? '완료' : '진행중'}</button>`
+        ? `<button onclick="event.stopPropagation();toggleEventComplete(${ev.id})" class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${ev.completed ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-50 text-slate-500 border-slate-200'} shrink-0 inline-flex items-center gap-1"><i class="fa-solid ${ev.completed ? 'fa-check-double' : 'fa-check'} text-[10px]"></i>${ev.completed ? '완료' : '진행중'}</button>`
         : '';
       const deleteBtn = mine
-        ? `<button onclick="event.stopPropagation();deleteEvent(${ev.id})" class="text-slate-300 hover:text-rose-500 p-1 shrink-0"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>`
+        ? `<button onclick="event.stopPropagation();hardDeleteEvent(${ev.id})" class="text-slate-300 hover:text-rose-500 p-1 shrink-0"><i class="fa-solid fa-trash-can text-xs"></i></button>`
         : '';
       const joinBtn = (!mine && owner !== '함께' && ev.lifecycle !== 'cancelled' && ev.detailVisibility !== 'private')
         ? `<button onclick="event.stopPropagation();requestJoinTogether(${ev.id})" class="text-[10px] font-bold text-white bg-slate-900 rounded-full px-2.5 py-1">같이 하기</button>`
@@ -1479,7 +1481,10 @@
               <div class="flex items-center gap-1.5 shrink-0">${ev.lifecycle === 'cancelled' ? '<span class="text-[10px] font-bold text-slate-400">취소됨</span>' : completeBtn}${deleteBtn}</div>
             </div>
             <h3 class="text-[13px] font-medium text-slate-800 leading-relaxed${ev.lifecycle === 'cancelled' ? ' line-through text-slate-400' : ''}">${label}</h3>
-            ${place ? `<div class="mt-1.5"><span class="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-md text-[10px] text-slate-500 font-bold">📍 ${escapeHtml(place)}</span></div>` : ''}
+            ${(place || ev.note) ? `<div class="mt-1.5 flex flex-wrap gap-2 text-[11px] text-slate-600 font-medium">
+              ${place ? `<span class="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-md text-[10px] text-slate-500 font-bold"><i class="fa-solid fa-location-dot text-slate-400 text-[10px]"></i>${escapeHtml(place)}</span>` : ''}
+              ${ev.note ? `<span class="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-md text-[10px] text-slate-500 font-bold"><i class="fa-solid fa-note-sticky text-slate-400 text-[10px]"></i>${escapeHtml(ev.note)}</span>` : ''}
+            </div>` : ''}
             ${joinBtn ? `<div class="mt-2">${joinBtn}</div>` : ''}
             <div class="mt-3 pt-2 border-t border-slate-100 space-y-1.5">
               ${commentsHtml}
@@ -1530,8 +1535,8 @@
             <h2 class="text-base font-extrabold text-slate-900">${yy}년 ${mm}월</h2>
             <div class="flex items-center gap-1">
               <button onclick="goToToday()" class="px-2.5 py-1 text-[11px] font-bold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200">오늘</button>
-              <button onclick="shiftMonth(-1)" class="w-7 h-7 rounded-lg border border-slate-100 flex items-center justify-center text-xs text-slate-600"><i data-lucide="chevron-left" class="w-3.5 h-3.5"></i></button>
-              <button onclick="shiftMonth(1)" class="w-7 h-7 rounded-lg border border-slate-100 flex items-center justify-center text-xs text-slate-600"><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
+              <button onclick="shiftMonth(-1)" class="w-7 h-7 rounded-lg border border-slate-100 flex items-center justify-center text-xs text-slate-600"><i class="fa-solid fa-chevron-left"></i></button>
+              <button onclick="shiftMonth(1)" class="w-7 h-7 rounded-lg border border-slate-100 flex items-center justify-center text-xs text-slate-600"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
           </div>
 
@@ -1580,7 +1585,7 @@
                       <span class="text-[10px] text-slate-400 font-medium">${ev.time}${place ? ' · ' + escapeHtml(place) : ''}</span>
                     </div>
                   </div>
-                  ${mine ? `<button onclick="toggleEventComplete(${ev.id})" class="text-slate-400 hover:text-slate-900 shrink-0"><i data-lucide="${ev.completed ? 'check-circle-2' : 'circle'}" class="w-5 h-5 ${ev.completed ? 'text-emerald-500' : ''}"></i></button>` : ''}
+                  ${mine ? `<button onclick="toggleEventComplete(${ev.id})" class="text-slate-400 hover:text-slate-900 shrink-0"><i class="fa-solid ${ev.completed ? 'fa-circle-check text-emerald-500' : 'fa-circle'} text-base"></i></button>` : ''}
                 </div>`;
               }).join('');
             })()}
@@ -1651,6 +1656,41 @@
     }
 
     function getTodoScreenHTML() {
+      const wishCat = state.todoCategories.find(c => c.id === 'wishlist');
+      const folderCats = state.todoCategories.filter(c => c.id !== 'wishlist');
+
+      const wishSectionHTML = !wishCat ? '' : `
+        <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-soft mb-1">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-extrabold text-slate-900">${escapeHtml(wishCat.title.replace(/\s*[\u{1F300}-\u{1FAFF}\u2600-\u27BF]\s*$/gu, ''))}</h3>
+            <span class="text-xs font-bold bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full">${wishCat.items.length}개</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">${escapeHtml(wishCat.subtitle)}</p>
+        </div>
+        <div class="space-y-2.5">
+          ${wishCat.items.length === 0 ? `<p class="text-xs text-slate-400 text-center py-8">위시리스트가 비어있습니다.</p>` : wishCat.items.map(item => {
+            const who = item.who || '함께';
+            return `
+            <div class="bg-white border border-slate-100 rounded-2xl p-3.5 flex justify-between items-center gap-2">
+              <div class="flex items-center gap-3 min-w-0">
+                ${avatarBlockHTML(who)}
+                <div class="min-w-0">
+                  <h4 class="text-xs font-bold text-slate-900 truncate">${escapeHtml(item.text)}</h4>
+                  <span class="text-[10px] text-slate-400 font-medium truncate">${escapeHtml(item.date || '메모 없음')}</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button onclick="convertWishItemToSchedule(${item.id})" class="px-2.5 py-1 bg-slate-900 text-white rounded-lg text-[10px] font-bold hover:bg-black whitespace-nowrap">일정으로 등록</button>
+                <button onclick="removeWishItem(${item.id})" class="text-slate-300 hover:text-rose-500 text-xs p-1"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+            </div>`;
+          }).join('')}
+          <button onclick="promptAddTodoItem('wishlist')" class="w-full py-2 border border-dashed border-slate-200 rounded-xl text-slate-400 text-xs font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-1">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> 항목 추가하기
+          </button>
+        </div>
+      `;
+
       return `
         <div class="pt-12 px-4 pb-4 space-y-3.5 text-slate-900">
           <div class="flex justify-between items-center">
@@ -1663,7 +1703,7 @@
             </button>
           </div>
 
-          ${state.todoCategories.map(cat => {
+          ${folderCats.map(cat => {
             const completedCount = cat.items.filter(i => i.done).length;
             const totalCount = cat.items.length;
             const progress = totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
@@ -1710,9 +1750,12 @@
               </div>
             `;
           }).join('')}
+
+          ${wishSectionHTML}
         </div>
       `;
     }
+
 
     // 알림: 슬랙처럼 종을 눌러도 탭이 이동하지 않고, 종 위에 팝오버만 뜬다
     function toggleNotifPopover() {
@@ -1934,6 +1977,60 @@
     // 이전 이름 호환용 별칭
     function deleteEvent(id) { cancelEvent(id); }
 
+    // 스레드 타임라인: 레퍼런스와 동일하게 완전히 삭제한다 (내 일정만)
+    function hardDeleteEvent(id) {
+      const ev = state.events.find(e => e.id === id);
+      if (!ev || !canDelete(ev)) return;
+      state.events = state.events.filter(e => e.id !== id);
+      saveState();
+      showToast('일정이 삭제되었어요');
+      renderActiveScreen();
+    }
+
+    // 위시리스트 아이템: 날짜가 정해지면 실제 일정으로 등록
+    function convertWishItemToSchedule(itemId) {
+      const wishCat = (state.todoCategories || []).find(c => c.id === 'wishlist');
+      if (!wishCat) return;
+      const item = wishCat.items.find(i => i.id === itemId);
+      if (!item) return;
+      const who = item.who || '함께';
+      const isTogether = who === '함께';
+      state.events.push({
+        id: Date.now(),
+        title: item.text,
+        date: state.selectedDate,
+        endDate: null,
+        time: '12:00',
+        endTime: addMinutesToTime('12:00', 60),
+        subject: who,
+        subjectMemberId: isTogether ? null : who,
+        participants: isTogether ? ['준영', '아정'] : [who],
+        participation: {},
+        place: '',
+        createdBy: state.currentUser,
+        detailVisibility: isTogether ? 'shared' : 'busy_only',
+        lifecycle: 'active',
+        changeStatus: null,
+        version: 1,
+        revisions: [],
+        note: item.date || '',
+        completed: false,
+        comments: []
+      });
+      wishCat.items = wishCat.items.filter(i => i.id !== itemId);
+      saveState();
+      showToast('일정으로 등록했어요');
+      renderActiveScreen();
+    }
+
+    function removeWishItem(itemId) {
+      const wishCat = (state.todoCategories || []).find(c => c.id === 'wishlist');
+      if (!wishCat) return;
+      wishCat.items = wishCat.items.filter(i => i.id !== itemId);
+      saveState();
+      renderActiveScreen();
+    }
+
     // 레퍼런스와 동일한 '일정 작성' 모달: 타입(일정/위시리스트) + 담당자 선택
     let threadFormType = 'schedule';
     let threadSelectedAssignee = '함께';
@@ -2025,7 +2122,7 @@
       } else {
         const wishCat = (state.todoCategories || []).find(c => c.id === 'wishlist');
         if (wishCat) {
-          wishCat.items.push({ id: Date.now(), text: title, date: [location, memo].filter(Boolean).join(' · ') || '메모 없음', done: false });
+          wishCat.items.push({ id: Date.now(), text: title, date: [location, memo].filter(Boolean).join(' · ') || '메모 없음', done: false, who: threadSelectedAssignee });
           saveState();
           showToast('위시리스트에 등록했어요 (함께할 일 탭에서 볼 수 있어요)');
         }
