@@ -1236,14 +1236,15 @@
       // 주체자 이모지는 항상 우측(right-0)에 고정 렌더링되고, 상대방 이모지+하트는 그 왼쪽 칸에 항상 존재하되
       // 함께가 아니면 투명(opacity-0)으로만 숨긴다 — DOM 레이아웃 자체가 상태와 무관하게 항상 동일하다.
       const emojiOf = (person) => person === '준영' ? '🤵🏻' : '👰🏻';
-      // TODAY 카드 배경: 실제 일정 사진이 없어 키워드로 어울리는 스톡 사진을 붙인다
-      const todayEventPhoto = (ev) => {
+      // TODAY 카드 배경: 일정엔 실제 사진이 없으므로 키워드별 그라데이션 컬러로 구분한다
+      const todayEventGradient = (ev) => {
         const text = titleOf(ev) + ' ' + (ev.place || '');
-        if (/카페|디저트|브런치/.test(text)) return 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500&auto=format&fit=crop&q=70';
-        if (/회식|고기|삼겹살|구이/.test(text)) return 'https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=70';
-        if (/테니스/.test(text)) return 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=500&auto=format&fit=crop&q=70';
-        if (/맛집|점심|저녁|식사/.test(text)) return 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&auto=format&fit=crop&q=70';
-        return 'https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=500&auto=format&fit=crop&q=70';
+        if (/카페|디저트|브런치/.test(text)) return 'from-amber-400 to-orange-600';
+        if (/회식|고기|삼겹살|구이/.test(text)) return 'from-rose-500 to-red-700';
+        if (/테니스|운동|헬스|요가/.test(text)) return 'from-lime-400 to-emerald-600';
+        if (/맛집|점심|저녁|식사/.test(text)) return 'from-orange-400 to-rose-600';
+        if (/영화|문화|전시/.test(text)) return 'from-indigo-500 to-purple-700';
+        return 'from-sky-400 to-indigo-600';
       };
       const personBadge = (person, posClass, dim, animate) => {
         return `<span class="absolute ${posClass} top-0 w-6 h-6 flex items-center justify-center text-xl leading-none${dim ? ' opacity-0' : ''}${animate ? ' partner-door-in' : ''}" title="${person}">${emojiOf(person)}</span>`;
@@ -1302,7 +1303,7 @@
                 ? `<span class="absolute top-2 left-2 text-[10px] font-black bg-lime-300 text-lime-950 px-2 py-1 rounded-full shadow">함께</span>`
                 : '';
               return `
-              <div class="relative rounded-2xl overflow-hidden aspect-[4/5] shadow-sm bg-slate-200" style="background-image:url('${todayEventPhoto(ev)}');background-size:cover;background-position:center;">
+              <div class="relative rounded-2xl overflow-hidden aspect-[4/5] shadow-sm bg-gradient-to-br ${todayEventGradient(ev)}">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-black/5"></div>
                 ${tag}
                 <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-md rounded-xl px-1.5 py-1 shadow">${ownerPill(ev)}</div>
