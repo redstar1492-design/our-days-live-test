@@ -1236,15 +1236,14 @@
       // 주체자 이모지는 항상 우측(right-0)에 고정 렌더링되고, 상대방 이모지+하트는 그 왼쪽 칸에 항상 존재하되
       // 함께가 아니면 투명(opacity-0)으로만 숨긴다 — DOM 레이아웃 자체가 상태와 무관하게 항상 동일하다.
       const emojiOf = (person) => person === '준영' ? '🤵🏻' : '👰🏻';
-      // TODAY 카드 배경: 일정엔 실제 사진이 없으므로 키워드별 그라데이션 컬러로 구분한다
-      const todayEventGradient = (ev) => {
+      // TODAY 카드 테마: 카테고리별 컬러 배너 + 데코 이모지 + 스티커 라벨
+      const todayEventTheme = (ev) => {
         const text = titleOf(ev) + ' ' + (ev.place || '');
-        if (/카페|디저트|브런치/.test(text)) return 'from-amber-400 to-orange-600';
-        if (/회식|고기|삼겹살|구이/.test(text)) return 'from-rose-500 to-red-700';
-        if (/테니스|운동|헬스|요가/.test(text)) return 'from-lime-400 to-emerald-600';
-        if (/맛집|점심|저녁|식사/.test(text)) return 'from-orange-400 to-rose-600';
-        if (/영화|문화|전시/.test(text)) return 'from-indigo-500 to-purple-700';
-        return 'from-sky-400 to-indigo-600';
+        if (/카페|디저트|브런치|맛집|점심|식사/.test(text)) return { bg: 'bg-gradient-to-r from-orange-50 via-amber-50 to-orange-100', txt: 'text-slate-900', sub: 'text-slate-500', deco: '🍴', sticker: 'YUMMY', stickerCls: 'bg-white text-rose-600 border border-rose-300' };
+        if (/회식|고기|삼겹살|구이|술/.test(text)) return { bg: 'bg-gradient-to-r from-indigo-950 via-purple-950 to-indigo-900', txt: 'text-white', sub: 'text-white/70', deco: '🍷', sticker: 'JOIN US', stickerCls: 'bg-pink-400 text-indigo-950' };
+        if (/테니스|운동|헬스|요가/.test(text)) return { bg: 'bg-gradient-to-br from-lime-400 via-emerald-500 to-sky-500', txt: 'text-slate-900', sub: 'text-slate-800/70', deco: '🎾', sticker: 'GO!', stickerCls: 'bg-slate-900 text-lime-300' };
+        if (/영화|문화|전시/.test(text)) return { bg: 'bg-gradient-to-r from-violet-600 to-fuchsia-700', txt: 'text-white', sub: 'text-white/70', deco: '🎬', sticker: 'FUN!', stickerCls: 'bg-white text-violet-700' };
+        return { bg: 'bg-gradient-to-r from-slate-700 to-slate-900', txt: 'text-white', sub: 'text-white/70', deco: '📅', sticker: 'TODAY', stickerCls: 'bg-white text-slate-800' };
       };
       const personBadge = (person, posClass, dim, animate) => {
         return `<span class="absolute ${posClass} top-0 w-6 h-6 flex items-center justify-center text-xl leading-none${dim ? ' opacity-0' : ''}${animate ? ' partner-door-in' : ''}" title="${person}">${emojiOf(person)}</span>`;
@@ -1282,7 +1281,7 @@
 
           <div class="p-4 space-y-4 text-slate-900">
 
-          <!-- Section: Today's Overview — 레퍼런스 참고해 사진 카드 벤토 그리드로 재구성 -->
+          <!-- Section: Today's Overview — 레퍼런스 참고해 카테고리별 컬러 배너 카드로 재구성 -->
           <div>
             <div class="flex justify-between items-baseline px-1 pb-2">
               <h3 class="text-[11px] font-semibold tracking-[0.08em] text-slate-500 uppercase">TODAY · ${String(NOW.getMonth() + 1).padStart(2, '0')}.${String(NOW.getDate()).padStart(2, '0')}</h3>
@@ -1291,25 +1290,28 @@
 
             ${todayEvents.length === 0 ? `
               <div class="py-2 text-slate-400 text-[13px]">오늘 약속된 일정이 없습니다.</div>
-            ` : `<div class="grid grid-cols-2 gap-2">${todayEvents.map(ev => {
+            ` : `<div class="space-y-2">${todayEvents.map(ev => {
               const owner = ownerOf(ev);
               const canRequest = !isMine(ev) && owner !== '함께' && ev.lifecycle !== 'cancelled' && ev.detailVisibility !== 'private';
               const req = isMine(ev) ? pendingRequestForMyEvent(ev.id) : null;
-              const tag = canRequest
-                ? `<button onclick="requestJoinTogether(${ev.id})" class="absolute top-2 left-2 text-[10px] font-black bg-white text-slate-900 px-2 py-1 rounded-full shadow">같이 보내기</button>`
+              const theme = todayEventTheme(ev);
+              const statusTag = canRequest
+                ? `<button onclick="requestJoinTogether(${ev.id})" class="text-[10px] font-black bg-white text-slate-900 px-2.5 py-1 rounded-full shadow whitespace-nowrap">같이 보내기</button>`
                 : req
-                ? `<button onclick="approveJoinRequest(${req.id})" class="absolute top-2 left-2 text-[10px] font-black bg-emerald-400 text-emerald-950 px-2 py-1 rounded-full shadow animate-pulse-glow">수락하기</button>`
+                ? `<button onclick="approveJoinRequest(${req.id})" class="text-[10px] font-black bg-emerald-400 text-emerald-950 px-2.5 py-1 rounded-full shadow whitespace-nowrap animate-pulse-glow">수락하기</button>`
                 : owner === '함께'
-                ? `<span class="absolute top-2 left-2 text-[10px] font-black bg-lime-300 text-lime-950 px-2 py-1 rounded-full shadow">함께</span>`
-                : '';
+                ? `<span class="text-[10px] font-black bg-white/90 text-slate-900 px-2.5 py-1 rounded-full shadow whitespace-nowrap">함께</span>`
+                : `<span class="text-[10px] font-black ${theme.stickerCls} px-2.5 py-1 rounded-full shadow whitespace-nowrap">${theme.sticker}</span>`;
               return `
-              <div class="relative rounded-2xl overflow-hidden aspect-[4/5] shadow-sm bg-gradient-to-br ${todayEventGradient(ev)}">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-black/5"></div>
-                ${tag}
-                <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-md rounded-xl px-1.5 py-1 shadow">${ownerPill(ev)}</div>
-                <div class="absolute bottom-0 inset-x-0 p-2.5 text-white">
-                  <div class="text-[10px] font-bold tracking-wide opacity-90">${ev.time}</div>
-                  <div class="text-[13px] font-black leading-tight truncate">${titleOf(ev)}</div>
+              <div class="relative overflow-hidden rounded-2xl px-4 py-3 flex items-center gap-3 ${theme.bg} shadow-sm">
+                <span class="absolute -right-3 -top-4 text-6xl opacity-20 select-none pointer-events-none rotate-12">${theme.deco}</span>
+                <div class="relative flex-1 min-w-0">
+                  <div class="text-[11px] font-bold ${theme.sub}">${ev.time}</div>
+                  <div class="text-base font-black ${theme.txt} truncate">${titleOf(ev)}</div>
+                </div>
+                <div class="relative flex flex-col items-end gap-1.5 shrink-0">
+                  ${statusTag}
+                  <div class="bg-white/90 backdrop-blur-md rounded-xl px-1.5 py-1 shadow">${ownerPill(ev)}</div>
                 </div>
               </div>`;
             }).join('')}</div>`}
