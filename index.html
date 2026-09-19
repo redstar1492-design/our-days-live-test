@@ -1509,7 +1509,7 @@
         </div>`).join('');
 
       return `
-        <div class="p-4 bg-white flex gap-3${cardAnimCls}">
+        <div class="px-4 py-2.5 bg-white flex gap-3${cardAnimCls}">
           <div class="flex flex-col items-center shrink-0">
             ${avatarBlockHTML(owner)}
             ${!isLast ? `<div class="w-px flex-1 bg-slate-200 mt-2"></div>` : ''}
@@ -1527,8 +1527,8 @@
               ${place ? `<span class="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-md text-[10px] text-slate-500 font-bold"><i class="fa-solid fa-location-dot text-slate-400 text-[10px]"></i>${escapeHtml(place)}</span>` : ''}
               ${ev.note ? `<span class="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-md text-[10px] text-slate-500 font-bold"><i class="fa-solid fa-note-sticky text-slate-400 text-[10px]"></i>${escapeHtml(ev.note)}</span>` : ''}
             </div>` : ''}
-            ${joinBtn ? `<div class="mt-2">${joinBtn}</div>` : ''}
-            <div class="mt-3 pt-2 border-t border-slate-100 space-y-1.5">
+            ${joinBtn ? `<div class="mt-1.5">${joinBtn}</div>` : ''}
+            <div class="mt-2 pt-1.5 border-t border-slate-100 space-y-1.5">
               ${commentsHtml}
               <div class="flex items-center gap-1.5 mt-1">
                 <input type="text" id="event-comment-${ev.id}" placeholder="코멘트 남기기..." class="flex-1 bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1 text-[11px] font-medium text-slate-800 outline-none focus:bg-white">
