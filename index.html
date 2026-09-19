@@ -110,6 +110,38 @@
       0%, 100% { filter: drop-shadow(0 0 2px rgba(255,196,0,.35)); }
       50% { filter: drop-shadow(0 0 9px rgba(255,196,0,.95)); }
     }
+
+    /* 화면(탭) 전환: 아주 짧게 아래에서 살짝 떠오르며 페이드 */
+    @keyframes screenIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .screen-enter { animation: screenIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+    /* 덤프 카드 리스트 진입: 살짝 아래->위로 페이드 인 */
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card-enter { animation: cardIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+    /* 하트/별점 탭 피드백: 눌렀을 때 통통 튀는 스프링 팝 */
+    @keyframes heartPop {
+      0% { transform: scale(1); }
+      30% { transform: scale(1.35); }
+      55% { transform: scale(0.92); }
+      100% { transform: scale(1); }
+    }
+    .animate-heart-pop { animation: heartPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+    @keyframes starPop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+    .animate-star-pop { animation: starPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+    #toast-modal { transition: opacity 220ms cubic-bezier(0.22, 1, 0.36, 1), transform 220ms cubic-bezier(0.22, 1, 0.36, 1); }
   </style>
 </head>
 <body class="bg-slate-900 min-h-screen font-sans text-gray-900 antialiased flex flex-col justify-center items-center p-0 sm:p-4 selection:bg-rose-100 selection:text-rose-600">
@@ -1086,6 +1118,9 @@
       }
 
       container.innerHTML = html;
+      container.classList.remove('screen-enter');
+      void container.offsetWidth;
+      container.classList.add('screen-enter');
 
       // Update Navigation Styles (알림은 탭이 아니라 팝오버라 제외)
       const tabs = ['our', 'calendar', 'todo'];
@@ -1282,8 +1317,8 @@
     function dumpPostsListHTML() {
       const list = dumpShowEndorsedOnly ? state.posts.filter(isEndorsed) : state.posts;
       const empty = list.length === 0 && dumpShowEndorsedOnly ? '<div class="text-center py-6 text-slate-400 text-xs">아직은 서로가 공감가는 덤프가 없는 것 같아요..</div>' : '';
-      return empty + list.map(post => `
-            <article class="relative py-1">
+      return empty + list.map((post, idx) => `
+            <article class="relative py-1 card-enter" style="animation-delay:${Math.min(idx,6)*45}ms">
               <span class="absolute left-[17px] top-10 bottom-0 w-px bg-slate-200"></span>
               <div class="relative flex gap-3">
                 <img src="${post.authorAvatar}" class="w-9 h-9 rounded-full object-cover ring-2 ring-white border border-slate-100 shrink-0" alt="${post.author}">
@@ -2079,12 +2114,20 @@
       const post = state.posts.find(p => p.id === id);
       if (!post) return;
       post.hearts = post.hearts || {};
-      post.hearts[state.currentUser] = !post.hearts[state.currentUser];
+      const wasMine = !!post.hearts[state.currentUser];
+      post.hearts[state.currentUser] = !wasMine;
       saveState();
       const row = document.getElementById(`heart-row-${id}`);
       if (row) row.innerHTML = heartRowHTML(post);
       document.getElementById(`endorse-badge-${id}`)?.classList.toggle('hidden', !isEndorsed(post));
       if (window.lucide) lucide.createIcons();
+      if (!wasMine) {
+        const heartBtn = row?.querySelector('button');
+        if (heartBtn) {
+          heartBtn.classList.add('animate-heart-pop');
+          heartBtn.addEventListener('animationend', () => heartBtn.classList.remove('animate-heart-pop'), { once: true });
+        }
+      }
     }
 
     function closeEndorseConfirm() {
@@ -2128,6 +2171,12 @@
     function setRatingDraft(n) {
       document.getElementById('rating-picker-value').value = String(n);
       renderRatingPicker(n);
+      const stars = document.querySelectorAll('#rating-picker-stars button');
+      const target = stars[n - 1];
+      if (target) {
+        target.classList.add('animate-star-pop');
+        target.addEventListener('animationend', () => target.classList.remove('animate-star-pop'), { once: true });
+      }
     }
 
     function closeRatingPicker() {
