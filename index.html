@@ -1231,33 +1231,6 @@
     }
 
     function getOurScreenHTML() {
-      const todayEvents = state.events.filter(e => occursOn(e, state.selectedDate));
-      // 우측 아이콘: 신랑/신부 이모지 유지 + 위치 흔들림은 "항상 같은 DOM, opacity만 토글" 방식으로 원천 차단.
-      // 주체자 이모지는 항상 우측(right-0)에 고정 렌더링되고, 상대방 이모지+하트는 그 왼쪽 칸에 항상 존재하되
-      // 함께가 아니면 투명(opacity-0)으로만 숨긴다 — DOM 레이아웃 자체가 상태와 무관하게 항상 동일하다.
-      const emojiOf = (person) => person === '준영' ? '🤵🏻' : '👰🏻';
-      // TODAY 카드 테마: 작은 아이콘 사각형 색상 + 카테고리 라벨(장소와 함께 보조 텍스트로 표시)
-      const todayEventTheme = (ev) => {
-        const text = titleOf(ev) + ' ' + (ev.place || '');
-        if (/회식|고기|삼겹살|구이|술/.test(text)) return { box: 'bg-violet-100', icon: '🍷', label: '회식' };
-        if (/테니스|운동|헬스|요가/.test(text)) return { box: 'bg-emerald-100', icon: '🎾', label: '운동' };
-        if (/영화|문화|전시/.test(text)) return { box: 'bg-fuchsia-100', icon: '🎬', label: '문화' };
-        if (/카페|디저트|브런치|맛집|점심|저녁|식사/.test(text)) return { box: 'bg-orange-100', icon: '🍴', label: '식사' };
-        return { box: 'bg-slate-100', icon: '📅', label: '일정' };
-      };
-      const personBadge = (person, posClass, dim, animate) => {
-        return `<span class="absolute ${posClass} top-0 w-6 h-6 flex items-center justify-center text-xl leading-none${dim ? ' opacity-0' : ''}${animate ? ' partner-door-in' : ''}" title="${person}">${emojiOf(person)}</span>`;
-      };
-      const heartBadge = (posClass, dim, animate) => `<span class="absolute ${posClass} top-1/2 -translate-y-1/2 text-[10px] text-rose-500 leading-none${dim ? ' opacity-0' : ''}${animate ? ' heart-pop-in' : ''}">♥</span>`;
-      const ownerPill = (ev) => {
-        const owner = ownerOf(ev);
-        const subject = ev.subjectMemberId || (owner !== '함께' ? owner : '아정');
-        const partner = subject === '준영' ? '아정' : '준영';
-        const joined = owner === '함께';
-        const justJoined = joined && ev.id === justJoinedEventId;
-        return `<div class="relative w-11 h-6 shrink-0">${personBadge(partner, 'right-6', !joined, justJoined)}${heartBadge('right-5', !joined, justJoined)}${personBadge(subject, 'right-0', false, false)}</div>`;
-      };
-
       const heroBg = `background-image:url('${heroImageUrl()}');background-size:cover;background-position:center 58%;`;
       const dday = ddayText();
       const todayEmojis = visibleEmojiMarkers(state.selectedDate);
@@ -1280,36 +1253,6 @@
           </div>
 
           <div class="p-4 space-y-4 text-slate-900">
-
-          <!-- Section: Today's Overview — 둘만 쓰는 공간에 맞춰 담백한 화이트 카드 리스트로 정리 -->
-          <div>
-            <div class="flex justify-between items-baseline px-1 pb-2">
-              <h3 class="text-[11px] font-semibold tracking-[0.08em] text-slate-500 uppercase">TODAY · ${String(NOW.getMonth() + 1).padStart(2, '0')}.${String(NOW.getDate()).padStart(2, '0')}</h3>
-              <button onclick="switchTab('calendar')" class="text-[11px] text-slate-500 font-medium hover:text-slate-700 flex items-center gap-0.5">전체보기 <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
-            </div>
-
-            ${todayEvents.length === 0 ? `
-              <div class="py-2 text-slate-400 text-[13px]">오늘 약속된 일정이 없습니다.</div>
-            ` : `<div class="space-y-2">${todayEvents.map(ev => {
-              const owner = ownerOf(ev);
-              const canRequest = !isMine(ev) && owner !== '함께' && ev.lifecycle !== 'cancelled' && ev.detailVisibility !== 'private';
-              const theme = todayEventTheme(ev);
-              const subtitle = theme.label + (ev.place ? ' · ' + escapeHtml(ev.place) : '');
-              const actionBtn = canRequest
-                ? `<button onclick="requestJoinTogether(${ev.id})" class="text-[11px] font-bold text-white bg-slate-900 px-2.5 py-1.5 rounded-full whitespace-nowrap">일정 참여</button>`
-                : `<div class="bg-slate-50 rounded-xl px-1.5 py-1">${ownerPill(ev)}</div>`;
-              return `
-              <div class="flex items-center gap-3 bg-white border border-slate-100 rounded-2xl px-3 py-2.5 shadow-sm">
-                <div class="w-10 h-10 rounded-xl ${theme.box} flex items-center justify-center text-lg shrink-0">${theme.icon}</div>
-                <div class="flex-1 min-w-0">
-                  <div class="text-[11px] font-bold text-slate-400">${ev.time}</div>
-                  <div class="text-[13px] font-bold text-slate-900 truncate">${titleOf(ev)}</div>
-                  <div class="text-[11px] text-slate-400 truncate">${subtitle}</div>
-                </div>
-                <div class="shrink-0">${actionBtn}</div>
-              </div>`;
-            }).join('')}</div>`}
-          </div>
 
           <!-- Section: Feed Feed Posts -->
           <div class="flex justify-between items-center px-1 pt-2">
