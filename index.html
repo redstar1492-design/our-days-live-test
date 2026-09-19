@@ -1352,12 +1352,35 @@
           <!-- Section: Feed Feed Posts -->
           <div class="flex justify-between items-center px-1 pt-2">
             <div class="flex items-center gap-1.5">
-              <div class="w-4 h-4 shrink-0 grid grid-cols-5 gap-px">
-                ${[1,1,1,1,0, 1,0,0,0,1, 1,0,0,0,1, 1,0,0,0,1, 1,1,1,1,0].map(c => c
-                  ? '<span class="rounded-[0.5px] bg-gradient-to-br from-orange-300 to-rose-400"></span>'
-                  : '<span></span>'
-                ).join('')}
-              </div>
+              <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0">
+                <clipPath id="d-shape-clip">
+                  <path d="M 10 10 L 55 10 C 80 10 90 28 90 50 C 90 72 80 90 55 90 L 10 90 Z" />
+                </clipPath>
+                <g clip-path="url(#d-shape-clip)">
+                  <rect x="10" y="10" width="80" height="15" rx="3" fill="#FB6B61" />
+                  <rect x="10" y="28" width="13" height="13" rx="2.5" fill="#FB6B61" />
+                  <rect x="10" y="43.5" width="13" height="13" rx="2.5" fill="#FB6B61" />
+                  <rect x="10" y="59" width="13" height="13" rx="2.5" fill="#FB6B61" />
+                  <rect x="10" y="74.5" width="13" height="13" rx="2.5" fill="#FB6B61" />
+                  <rect x="25.5" y="28" width="15" height="13" rx="2.5" fill="#FB6B61" />
+                  <rect x="25.5" y="43.5" width="15" height="13" rx="2.5" fill="#714BA5" />
+                  <rect x="25.5" y="59" width="15" height="13" rx="2.5" fill="#714BA5" />
+                  <rect x="25.5" y="74.5" width="15" height="13" rx="2.5" fill="#714BA5" />
+                  <rect x="43" y="28" width="16" height="13" rx="2.5" fill="#714BA5" />
+                  <rect x="43" y="43.5" width="16" height="13" rx="2.5" fill="#714BA5" />
+                  <rect x="43" y="59" width="16" height="13" rx="2.5" fill="#714BA5" />
+                  <rect x="43" y="74.5" width="16" height="13" rx="2.5" fill="#714BA5" />
+                  <rect x="61" y="28" width="16" height="13" rx="2.5" fill="#714BA5" />
+                  <rect x="61" y="43.5" width="16" height="13" rx="2.5" fill="#FFFFFF" stroke="#714BA5" stroke-width="1.2" />
+                  <path d="M 69 47.5 C 67.5 45.5 64.5 46.5 64.5 48.8 C 64.5 51.2 69 53.5 69 53.5 C 69 53.5 73.5 51.2 73.5 48.8 C 73.5 46.5 70.5 45.5 69 47.5 Z" fill="#FB6B61" />
+                  <rect x="61" y="59" width="16" height="13" rx="2.5" fill="#714BA5" />
+                  <rect x="61" y="74.5" width="16" height="13" rx="2.5" fill="#714BA5" />
+                  <rect x="79" y="28" width="15" height="13" rx="2.5" fill="#714BA5" />
+                  <rect x="79" y="43.5" width="15" height="13" rx="2.5" fill="#714BA5" />
+                  <rect x="79" y="59" width="15" height="13" rx="2.5" fill="#714BA5" />
+                  <rect x="79" y="74.5" width="15" height="13" rx="2.5" fill="#714BA5" />
+                </g>
+              </svg>
               <h3 class="text-sm font-black tracking-tight text-slate-900">덤프</h3>
             </div>
             <div class="flex items-center gap-2">
