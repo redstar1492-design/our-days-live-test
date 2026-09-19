@@ -25,6 +25,14 @@
             },
             junyoung: '#FF5E57',
             ajeong: '#4A90E2',
+            threads: {
+              junyoung: '#2563EB',
+              ajung: '#DB2777',
+              together: '#7C3AED',
+              dark: '#101010',
+              subtle: '#8E8E93',
+              border: '#EFEFEF'
+            },
           },
           fontFamily: {
             sans: ['-apple-system', 'BlinkMacSystemFont', 'Pretendard', 'Apple SD Gothic Neo', 'Roboto', 'sans-serif'],
@@ -552,6 +560,66 @@
   </div>
 
   <!-- Modal 4: GitHub Pages Deployment Guide Sheet -->
+  <div id="sheet-thread-add" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[85vh] overflow-y-auto">
+    <div class="flex justify-between items-center pb-2 mb-3 border-b border-slate-100">
+      <h3 class="text-sm font-extrabold text-slate-900" id="thread-modal-title">새 일정 등록</h3>
+      <button onclick="closeAllSheets()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+    </div>
+
+    <div class="space-y-3.5">
+      <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-bold">
+        <button type="button" onclick="setThreadFormType('schedule')" id="thread-type-schedule" class="flex-1 py-1.5 rounded-lg bg-white text-threads-dark shadow-sm">일정 (날짜 지정)</button>
+        <button type="button" onclick="setThreadFormType('wish')" id="thread-type-wish" class="flex-1 py-1.5 rounded-lg text-threads-subtle">위시리스트</button>
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-bold text-threads-subtle mb-1">담당자 선택</label>
+        <div class="grid grid-cols-3 gap-2 text-xs font-bold">
+          <button type="button" onclick="setThreadAssignee('함께')" data-who="함께" class="thread-assignee-btn py-2 rounded-xl border border-purple-500 bg-purple-50 text-purple-700 flex items-center justify-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-threads-together"></span> 함께
+          </button>
+          <button type="button" onclick="setThreadAssignee('준영')" data-who="준영" class="thread-assignee-btn py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 flex items-center justify-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-threads-junyoung"></span> 준영
+          </button>
+          <button type="button" onclick="setThreadAssignee('아정')" data-who="아정" class="thread-assignee-btn py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 flex items-center justify-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-threads-ajung"></span> 아정
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-bold text-threads-subtle mb-1">일정 내용</label>
+        <input type="text" id="thread-input-title" placeholder="예: 주말 브런치 데이트" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-threads-border text-xs font-semibold outline-none focus:ring-1 focus:ring-threads-dark">
+      </div>
+
+      <div id="thread-row-datetime" class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[11px] font-bold text-threads-subtle mb-1">날짜</label>
+          <input type="date" id="thread-input-date" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-threads-border text-xs font-semibold text-slate-800">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-threads-subtle mb-1">시간</label>
+          <input type="time" id="thread-input-time" value="12:00" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-threads-border text-xs font-semibold text-slate-800">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[11px] font-bold text-threads-subtle mb-1">장소 (선택)</label>
+          <input type="text" id="thread-input-location" placeholder="성수동" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-threads-border text-xs font-medium text-slate-800">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-threads-subtle mb-1">메모 (선택)</label>
+          <input type="text" id="thread-input-memo" placeholder="예약 완료" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-threads-border text-xs font-medium text-slate-800">
+        </div>
+      </div>
+
+      <button type="button" onclick="submitThreadForm()" class="w-full py-3 bg-threads-dark text-white rounded-xl font-bold text-xs shadow-md hover:bg-neutral-800 active:scale-[0.99] transition-all">
+        작성 완료
+      </button>
+    </div>
+  </div>
+
   <div id="sheet-github-guide" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl">
     <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
     <div class="flex justify-between items-center mb-3">
@@ -1327,15 +1395,15 @@
           <div class="flex justify-between items-center pb-3">
             <div class="flex items-center gap-2.5 min-w-0">
               <div class="flex -space-x-2 shrink-0">
-                <img class="w-8 h-8 rounded-full object-cover ring-2 ring-brand-red bg-slate-200" src="${avatarUrlOf('준영')}">
-                <img class="w-8 h-8 rounded-full object-cover ring-2 ring-brand-blue bg-slate-200" src="${avatarUrlOf('아정')}">
+                <img class="w-8 h-8 rounded-full object-cover ring-2 ring-threads-junyoung bg-slate-200" src="${avatarUrlOf('준영')}">
+                <img class="w-8 h-8 rounded-full object-cover ring-2 ring-threads-ajung bg-slate-200" src="${avatarUrlOf('아정')}">
               </div>
               <div class="min-w-0">
                 <h1 class="text-base font-extrabold text-slate-900 tracking-tight leading-tight truncate">준영 & 아정</h1>
                 <p class="text-[11px] text-slate-400 font-medium truncate">우리 둘만의 공유 타임라인</p>
               </div>
             </div>
-            <button onclick="openAddEvent()" class="px-3 py-1.5 bg-slate-900 text-white rounded-full text-xs font-bold hover:bg-black transition-all flex items-center gap-1 shrink-0">
+            <button onclick="openThreadAddModal()" class="px-3 py-1.5 bg-slate-900 text-white rounded-full text-xs font-bold hover:bg-black transition-all flex items-center gap-1 shrink-0">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i> 일정 작성
             </button>
           </div>
@@ -1361,7 +1429,7 @@
         : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80';
     }
     function personRingClass(person) {
-      return person === '준영' ? 'ring-brand-red' : person === '아정' ? 'ring-brand-blue' : 'ring-brand-green';
+      return person === '준영' ? 'ring-threads-junyoung' : person === '아정' ? 'ring-threads-ajung' : 'ring-threads-together';
     }
     function avatarBlockHTML(owner) {
       if (owner === '함께') {
@@ -1443,109 +1511,78 @@
       `;
     }
 
+    function threadsDotClass(person) {
+      return person === '준영' ? 'bg-threads-junyoung' : person === '아정' ? 'bg-threads-ajung' : 'bg-threads-together';
+    }
+
+    // 달력(월간) 뷰: 레퍼런스와 동일한 심플한 그리드 + 점 표시 + 하단 선택일 카드 리스트
     function getMonthlyCalendarHTML() {
       const [yy, mm] = state.calendarMonth.split('-').map(Number);
-      const firstWeekday = new Date(yy, mm - 1, 1).getDay();     // 0=일
+      const firstWeekday = new Date(yy, mm - 1, 1).getDay();
       const daysInMonth = new Date(yy, mm, 0).getDate();
       const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
       const filt = state.calendarFilter;
-      const matchFilter = (e) => (filt === '전체' || ownerOf(e) === filt) && !isHiddenFromMe(e);
+      const matchFilter = (e) => (filt === '전체' || ownerOf(e) === filt) && !isHiddenFromMe(e) && e.lifecycle !== 'cancelled';
 
       return `
-        <div class="pt-12 px-4 pb-4 space-y-3 text-slate-900 min-h-full">
-          <div class="flex justify-between items-center bg-white p-3 rounded-2xl border border-slate-100 shadow-soft">
-            <div class="flex items-center gap-1 min-w-0">
-              <button onclick="shiftMonth(-1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-500 shrink-0"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-              <h2 class="text-base font-black text-slate-900 truncate">${yy}년 ${mm}월</h2>
-              <button onclick="shiftMonth(1)" class="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-500 shrink-0"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
-            </div>
-            <div class="bg-slate-100 p-1 rounded-xl grid grid-cols-2 w-[104px] text-xs font-bold shrink-0">
-              <button onclick="setCalendarView('daily')" class="py-1 rounded-lg text-center ${state.activeCalendarView === 'daily' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-500'}">타임라인</button>
-              <button onclick="setCalendarView('monthly')" class="py-1 rounded-lg text-center ${state.activeCalendarView === 'monthly' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-500'}">월간</button>
+        <div class="p-4 bg-white border-b border-slate-100">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-base font-extrabold text-slate-900">${yy}년 ${mm}월</h2>
+            <div class="flex items-center gap-1">
+              <button onclick="goToToday()" class="px-2.5 py-1 text-[11px] font-bold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200">오늘</button>
+              <button onclick="shiftMonth(-1)" class="w-7 h-7 rounded-lg border border-slate-100 flex items-center justify-center text-xs text-slate-600"><i data-lucide="chevron-left" class="w-3.5 h-3.5"></i></button>
+              <button onclick="shiftMonth(1)" class="w-7 h-7 rounded-lg border border-slate-100 flex items-center justify-center text-xs text-slate-600"><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
             </div>
           </div>
 
-          <!-- 색상 범례: 필터가 아니라 색상이 무슨 뜻인지 설명한다 (요구사항 6) -->
-          <div class="flex items-center gap-3 px-1">
-            <span class="flex items-center gap-1 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 rounded-full bg-brand-red inline-block"></span>준영</span>
-            <span class="flex items-center gap-1 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 rounded-full bg-brand-blue inline-block"></span>아정</span>
-            <span class="flex items-center gap-1 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 rounded-full bg-brand-green inline-block"></span>함께</span>
-          </div>
-
-          <!-- 주체 필터 -->
-          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-            ${['전체', '준영', '아정', '함께'].map(f => `
-              <button onclick="setCalendarFilter('${f}')" class="shrink-0 px-2.5 py-1 rounded-full text-xs font-bold border transition-all ${filt === f ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}">${f}</button>
-            `).join('')}
-          </div>
-
-          <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 py-1">
+          <div class="grid grid-cols-7 text-center text-[11px] font-bold text-slate-400 mb-2">
             <span class="text-rose-500">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="text-blue-500">토</span>
           </div>
 
-          <div class="grid grid-cols-7 gap-1.5 pt-1">
-            ${Array.from({ length: firstWeekday }, () => '<div></div>').join('')}
+          <div class="grid grid-cols-7 gap-y-1 text-center text-xs">
+            ${Array.from({ length: firstWeekday }, () => `<div></div>`).join('')}
             ${days.map(d => {
               const dateStr = `${yy}-${String(mm).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
               const dayEvents = state.events.filter(e => occursOn(e, dateStr) && matchFilter(e));
               const isSelected = state.selectedDate === dateStr;
-              const weekday = (firstWeekday + d - 1) % 7;
-              // 월간에는 작은 아이콘만. 주기 상세명은 날짜 상세에서만 보여준다 (요청서 2-5)
-              const emojiMarks = visibleEmojiMarkers(dateStr);
-              const cycleMarks = visibleCycleMarkers(dateStr);
-              const markIcons = [
-                ...(emojiMarks.length ? [Array.from(emojiMarks[0].emoji)[0]] : []),
-                ...cycleMarks.slice(0, 1).map(m => CYCLE_TYPES[m.type].icon)
-              ].join('');
-
-              // 사람별로 묶어서 점 하나 + 개수(2개 이상일 때만)로 표시. 취소만 있는 사람은 흐리게
-              const byPerson = { '준영': [], '아정': [], '함께': [] };
-              dayEvents.forEach(e => byPerson[ownerOf(e)].push(e));
-              const hasChange = dayEvents.some(e => e.changeStatus && e.lifecycle !== 'cancelled');
-              const emojiMark = visibleEmojiMarkers(dateStr)[0];
-              const emojiChar = emojiMark ? Array.from(emojiMark.emoji)[0] : '';
-
-              return `
-                <div onclick="selectCalendarDate('${dateStr}')" class="relative h-14 rounded-xl p-1 flex flex-col justify-between items-center cursor-pointer border-2 transition-all ${isSelected ? 'border-brand-blue bg-blue-50/80 font-bold' : 'border-slate-100 hover:bg-slate-50'}">
-                  ${emojiChar ? `<span class="absolute top-0 right-0.5 text-[11px] leading-none">${emojiChar}</span>` : ''}
-                  ${hasChange ? `<span class="absolute top-0 left-0.5 text-[8px] leading-none" title="변경됨">●</span>` : ''}
-                  <span class="text-[11px] ${weekday === 0 ? 'text-rose-500' : weekday === 6 ? 'text-blue-500' : 'text-slate-700'}">${d}</span>
-                  <div class="flex items-center justify-center gap-1 w-full px-0.5">
-                    ${['준영', '아정', '함께'].map(person => {
-                      const evs = byPerson[person];
-                      if (!evs.length) return '';
-                      const allCancelled = evs.every(e => e.lifecycle === 'cancelled');
-                      const n = evs.length;
-                      return `<span class="flex items-center gap-0.5 ${allCancelled ? 'opacity-30' : ''}">
-                        <span class="w-1.5 h-1.5 rounded-full ${personDotClass(person)}"></span>${n > 1 ? `<span class="text-[8px] font-bold text-slate-400">${n}</span>` : ''}
-                      </span>`;
-                    }).join('')}
-                    ${(() => { const c = visibleCycleMarkers(dateStr)[0]; return c ? `<span class="text-[9px]">${CYCLE_TYPES[c.type].icon}</span>` : ''; })()}
-                  </div>
-                </div>
-              `;
+              const isToday = dateStr === demoTodayStr();
+              const dotsHtml = dayEvents.length ? `<div class="flex gap-0.5 mt-1 justify-center">${['준영', '아정', '함께'].filter(p => dayEvents.some(e => ownerOf(e) === p)).map(p => `<span class="w-1.5 h-1.5 rounded-full ${threadsDotClass(p)}"></span>`).join('')}</div>` : '';
+              const cellCls = isSelected ? 'bg-threads-dark text-white font-extrabold' : (isToday ? 'bg-blue-50 text-blue-600 font-extrabold' : 'hover:bg-slate-100 text-slate-800 font-semibold');
+              return `<div onclick="selectCalendarDate('${dateStr}')" class="py-1.5 flex flex-col items-center justify-center rounded-xl cursor-pointer transition-all min-h-[40px] ${cellCls}"><span class="leading-none text-xs">${d}</span>${dotsHtml}</div>`;
             }).join('')}
           </div>
 
-          <!-- 선택한 날짜 요약: 조밀한 행 + 등록자 배지. 일간 이동은 상단 '일간' 탭으로만 한다 (요구사항 3, 6) -->
-          <div class="bg-white rounded-2xl p-2.5 border border-slate-100 shadow-soft space-y-1.5">
-            <h3 class="text-sm font-bold text-slate-900 px-0.5">${Number(state.selectedDate.split('-')[2])}일 주요 일정${filt !== '전체' ? ` · ${filt}` : ''}</h3>
+          <div class="flex items-center justify-end gap-3 mt-3 pt-3 border-t border-slate-100 text-[10px] font-bold text-slate-400">
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-threads-junyoung"></span> 준영</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-threads-ajung"></span> 아정</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-threads-together"></span> 함께</span>
+          </div>
+        </div>
+
+        <div class="p-4">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">${koreanDateShort(state.selectedDate)} 일정</h3>
+          </div>
+          <div class="space-y-3">
             ${(() => {
               const dayEvents = state.events.filter(e => occursOn(e, state.selectedDate) && matchFilter(e)).sort((a, b) => a.time.localeCompare(b.time));
-              if (dayEvents.length === 0) {
-                return `<div class="text-center py-2.5 text-slate-400 text-xs">등록된 일정이 없습니다.</div>`;
-              }
-              return `<div class="space-y-1">${dayEvents.map(e => {
-                const cancelled = e.lifecycle === 'cancelled';
-                const busy = isBusyOnlyToMe(e);
+              if (dayEvents.length === 0) return `<p class="text-xs text-slate-400 text-center py-4">일정이 없습니다.</p>`;
+              return dayEvents.map(ev => {
+                const owner = ownerOf(ev);
+                const mine = isMine(ev);
+                const place = placeOf(ev);
                 return `
-                <div class="flex items-center gap-1.5 text-xs px-1.5 py-1 rounded-lg hover:bg-slate-50 ${cancelled ? 'opacity-50' : ''}">
-                  <span class="font-mono font-bold text-slate-900 w-10 shrink-0">${e.time}</span>
-                  ${(!canSeeDetails(e) && !busy) ? '<i data-lucide="lock" class="w-3 h-3 text-slate-400 shrink-0"></i>' : ''}
-                  <span class="font-bold ${canSeeDetails(e) ? 'text-slate-700' : 'text-slate-500'} truncate ${cancelled ? 'line-through' : ''}">${escapeHtml(titleOf(e))}</span>
-                  <span class="ml-auto shrink-0 flex items-center gap-1">${cancelled ? '<span class="text-[10px] font-bold text-slate-400">취소됨</span>' : badgeHTML(e)}${ownerPill(ownerOf(e))}</span>
+                <div class="bg-white border border-slate-100 rounded-2xl p-3.5 flex justify-between items-center">
+                  <div class="flex items-center gap-3 min-w-0">
+                    ${avatarBlockHTML(owner)}
+                    <div class="min-w-0">
+                      <h4 class="text-xs font-bold text-slate-900 truncate${ev.completed ? ' line-through text-slate-400' : ''}">${escapeHtml(titleOf(ev))}</h4>
+                      <span class="text-[10px] text-slate-400 font-medium">${ev.time}${place ? ' · ' + escapeHtml(place) : ''}</span>
+                    </div>
+                  </div>
+                  ${mine ? `<button onclick="toggleEventComplete(${ev.id})" class="text-slate-400 hover:text-slate-900 shrink-0"><i data-lucide="${ev.completed ? 'check-circle-2' : 'circle'}" class="w-5 h-5 ${ev.completed ? 'text-emerald-500' : ''}"></i></button>` : ''}
                 </div>`;
-              }).join('')}</div>`;
+              }).join('');
             })()}
           </div>
         </div>
@@ -1896,6 +1933,106 @@
     }
     // 이전 이름 호환용 별칭
     function deleteEvent(id) { cancelEvent(id); }
+
+    // 레퍼런스와 동일한 '일정 작성' 모달: 타입(일정/위시리스트) + 담당자 선택
+    let threadFormType = 'schedule';
+    let threadSelectedAssignee = '함께';
+
+    function openThreadAddModal() {
+      threadFormType = 'schedule';
+      threadSelectedAssignee = '함께';
+      document.getElementById('thread-input-title').value = '';
+      document.getElementById('thread-input-date').value = state.selectedDate;
+      document.getElementById('thread-input-time').value = '12:00';
+      document.getElementById('thread-input-location').value = '';
+      document.getElementById('thread-input-memo').value = '';
+      setThreadFormType('schedule');
+      setThreadAssignee('함께');
+      openSheet('sheet-thread-add');
+    }
+
+    function setThreadFormType(type) {
+      threadFormType = type;
+      const btnSchedule = document.getElementById('thread-type-schedule');
+      const btnWish = document.getElementById('thread-type-wish');
+      const row = document.getElementById('thread-row-datetime');
+      const title = document.getElementById('thread-modal-title');
+      if (type === 'schedule') {
+        btnSchedule.className = 'flex-1 py-1.5 rounded-lg bg-white text-threads-dark shadow-sm';
+        btnWish.className = 'flex-1 py-1.5 rounded-lg text-threads-subtle';
+        row.classList.remove('hidden');
+        title.textContent = '새 일정 등록';
+      } else {
+        btnWish.className = 'flex-1 py-1.5 rounded-lg bg-white text-threads-dark shadow-sm';
+        btnSchedule.className = 'flex-1 py-1.5 rounded-lg text-threads-subtle';
+        row.classList.add('hidden');
+        title.textContent = '위시리스트에 등록';
+      }
+    }
+
+    function setThreadAssignee(who) {
+      threadSelectedAssignee = who;
+      document.querySelectorAll('.thread-assignee-btn').forEach(btn => {
+        btn.className = 'thread-assignee-btn py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 flex items-center justify-center gap-1';
+      });
+      const target = document.querySelector(`.thread-assignee-btn[data-who="${who}"]`);
+      if (!target) return;
+      const colorCls = who === '함께' ? 'border-purple-500 bg-purple-50 text-purple-700'
+        : who === '준영' ? 'border-blue-500 bg-blue-50 text-blue-700'
+        : 'border-pink-500 bg-pink-50 text-pink-700';
+      target.className = `thread-assignee-btn py-2 rounded-xl border ${colorCls} flex items-center justify-center gap-1`;
+    }
+
+    function submitThreadForm() {
+      const title = document.getElementById('thread-input-title').value.trim();
+      const location = document.getElementById('thread-input-location').value.trim();
+      const memo = document.getElementById('thread-input-memo').value.trim();
+      if (!title) { showToast('내용을 입력해 주세요!'); return; }
+
+      if (threadFormType === 'schedule') {
+        const date = document.getElementById('thread-input-date').value || state.selectedDate;
+        const time = document.getElementById('thread-input-time').value || '12:00';
+        const isTogether = threadSelectedAssignee === '함께';
+        state.events.push({
+          id: Date.now(),
+          title,
+          date,
+          endDate: null,
+          time,
+          endTime: addMinutesToTime(time, 60),
+          subject: threadSelectedAssignee,
+          subjectMemberId: isTogether ? null : threadSelectedAssignee,
+          participants: isTogether ? ['준영', '아정'] : [threadSelectedAssignee],
+          participation: {},
+          place: location,
+          createdBy: state.currentUser,
+          detailVisibility: isTogether ? 'shared' : 'busy_only',
+          lifecycle: 'active',
+          changeStatus: null,
+          version: 1,
+          revisions: [],
+          note: memo,
+          completed: false,
+          comments: []
+        });
+        state.notifications.unshift({
+          id: Date.now(),
+          text: `${threadSelectedAssignee}님이 '${title}' 일정을 새로 추가했어요`,
+          timeAgo: '방금 전', read: false, type: 'calendar', color: 'bg-brand-blue'
+        });
+        saveState();
+        showToast('일정이 등록되었어요');
+      } else {
+        const wishCat = (state.todoCategories || []).find(c => c.id === 'wishlist');
+        if (wishCat) {
+          wishCat.items.push({ id: Date.now(), text: title, date: [location, memo].filter(Boolean).join(' · ') || '메모 없음', done: false });
+          saveState();
+          showToast('위시리스트에 등록했어요 (함께할 일 탭에서 볼 수 있어요)');
+        }
+      }
+      closeAllSheets();
+      renderActiveScreen();
+    }
 
     // 스레드 타임라인: 완료/진행중 토글 (내 일정만)
     function toggleEventComplete(id) {
@@ -2640,7 +2777,7 @@
 
     function closeAllSheets() {
       document.getElementById('sheet-backdrop').classList.add('hidden');
-      ['sheet-create-event', 'sheet-edit-event', 'sheet-mood', 'sheet-create-post', 'sheet-ai-assistant', 'sheet-github-guide', 'sheet-folder', 'sheet-settings', 'sheet-marker']
+      ['sheet-create-event', 'sheet-edit-event', 'sheet-mood', 'sheet-create-post', 'sheet-ai-assistant', 'sheet-github-guide', 'sheet-folder', 'sheet-settings', 'sheet-marker', 'sheet-thread-add']
         .forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('hidden'); });
     }
 
