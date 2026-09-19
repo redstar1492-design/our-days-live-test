@@ -1236,14 +1236,14 @@
       // 주체자 이모지는 항상 우측(right-0)에 고정 렌더링되고, 상대방 이모지+하트는 그 왼쪽 칸에 항상 존재하되
       // 함께가 아니면 투명(opacity-0)으로만 숨긴다 — DOM 레이아웃 자체가 상태와 무관하게 항상 동일하다.
       const emojiOf = (person) => person === '준영' ? '🤵🏻' : '👰🏻';
-      // TODAY 카드 테마: 카테고리별 컬러 배너 + 데코 이모지 + 스티커 라벨
+      // TODAY 카드 테마: 작은 아이콘 사각형 색상 + 카테고리 라벨(장소와 함께 보조 텍스트로 표시)
       const todayEventTheme = (ev) => {
         const text = titleOf(ev) + ' ' + (ev.place || '');
-        if (/카페|디저트|브런치|맛집|점심|식사/.test(text)) return { bg: 'bg-gradient-to-r from-orange-50 via-amber-50 to-orange-100', txt: 'text-slate-900', sub: 'text-slate-500', deco: '🍴', sticker: 'YUMMY', stickerCls: 'bg-white text-rose-600 border border-rose-300' };
-        if (/회식|고기|삼겹살|구이|술/.test(text)) return { bg: 'bg-gradient-to-r from-indigo-950 via-purple-950 to-indigo-900', txt: 'text-white', sub: 'text-white/70', deco: '🍷', sticker: 'JOIN US', stickerCls: 'bg-pink-400 text-indigo-950' };
-        if (/테니스|운동|헬스|요가/.test(text)) return { bg: 'bg-gradient-to-br from-lime-400 via-emerald-500 to-sky-500', txt: 'text-slate-900', sub: 'text-slate-800/70', deco: '🎾', sticker: 'GO!', stickerCls: 'bg-slate-900 text-lime-300' };
-        if (/영화|문화|전시/.test(text)) return { bg: 'bg-gradient-to-r from-violet-600 to-fuchsia-700', txt: 'text-white', sub: 'text-white/70', deco: '🎬', sticker: 'FUN!', stickerCls: 'bg-white text-violet-700' };
-        return { bg: 'bg-gradient-to-r from-slate-700 to-slate-900', txt: 'text-white', sub: 'text-white/70', deco: '📅', sticker: 'TODAY', stickerCls: 'bg-white text-slate-800' };
+        if (/회식|고기|삼겹살|구이|술/.test(text)) return { box: 'bg-violet-100', icon: '🍷', label: '회식' };
+        if (/테니스|운동|헬스|요가/.test(text)) return { box: 'bg-emerald-100', icon: '🎾', label: '운동' };
+        if (/영화|문화|전시/.test(text)) return { box: 'bg-fuchsia-100', icon: '🎬', label: '문화' };
+        if (/카페|디저트|브런치|맛집|점심|저녁|식사/.test(text)) return { box: 'bg-orange-100', icon: '🍴', label: '식사' };
+        return { box: 'bg-slate-100', icon: '📅', label: '일정' };
       };
       const personBadge = (person, posClass, dim, animate) => {
         return `<span class="absolute ${posClass} top-0 w-6 h-6 flex items-center justify-center text-xl leading-none${dim ? ' opacity-0' : ''}${animate ? ' partner-door-in' : ''}" title="${person}">${emojiOf(person)}</span>`;
@@ -1281,7 +1281,7 @@
 
           <div class="p-4 space-y-4 text-slate-900">
 
-          <!-- Section: Today's Overview — 레퍼런스 참고해 카테고리별 컬러 배너 카드로 재구성 -->
+          <!-- Section: Today's Overview — 둘만 쓰는 공간에 맞춰 담백한 화이트 카드 리스트로 정리 -->
           <div>
             <div class="flex justify-between items-baseline px-1 pb-2">
               <h3 class="text-[11px] font-semibold tracking-[0.08em] text-slate-500 uppercase">TODAY · ${String(NOW.getMonth() + 1).padStart(2, '0')}.${String(NOW.getDate()).padStart(2, '0')}</h3>
@@ -1293,26 +1293,20 @@
             ` : `<div class="space-y-2">${todayEvents.map(ev => {
               const owner = ownerOf(ev);
               const canRequest = !isMine(ev) && owner !== '함께' && ev.lifecycle !== 'cancelled' && ev.detailVisibility !== 'private';
-              const req = isMine(ev) ? pendingRequestForMyEvent(ev.id) : null;
               const theme = todayEventTheme(ev);
-              const statusTag = canRequest
-                ? `<button onclick="requestJoinTogether(${ev.id})" class="text-[10px] font-black bg-white text-slate-900 px-2.5 py-1 rounded-full shadow whitespace-nowrap">같이 보내기</button>`
-                : req
-                ? `<button onclick="approveJoinRequest(${req.id})" class="text-[10px] font-black bg-emerald-400 text-emerald-950 px-2.5 py-1 rounded-full shadow whitespace-nowrap animate-pulse-glow">수락하기</button>`
-                : owner === '함께'
-                ? `<span class="text-[10px] font-black bg-white/90 text-slate-900 px-2.5 py-1 rounded-full shadow whitespace-nowrap">함께</span>`
-                : `<span class="text-[10px] font-black ${theme.stickerCls} px-2.5 py-1 rounded-full shadow whitespace-nowrap">${theme.sticker}</span>`;
+              const subtitle = theme.label + (ev.place ? ' · ' + escapeHtml(ev.place) : '');
+              const actionBtn = canRequest
+                ? `<button onclick="requestJoinTogether(${ev.id})" class="text-[11px] font-bold text-white bg-slate-900 px-2.5 py-1.5 rounded-full whitespace-nowrap">일정 참여</button>`
+                : `<div class="bg-slate-50 rounded-xl px-1.5 py-1">${ownerPill(ev)}</div>`;
               return `
-              <div class="relative overflow-hidden rounded-2xl px-4 py-3 flex items-center gap-3 ${theme.bg} shadow-sm">
-                <span class="absolute -right-3 -top-4 text-6xl opacity-20 select-none pointer-events-none rotate-12">${theme.deco}</span>
-                <div class="relative flex-1 min-w-0">
-                  <div class="text-[11px] font-bold ${theme.sub}">${ev.time}</div>
-                  <div class="text-base font-black ${theme.txt} truncate">${titleOf(ev)}</div>
+              <div class="flex items-center gap-3 bg-white border border-slate-100 rounded-2xl px-3 py-2.5 shadow-sm">
+                <div class="w-10 h-10 rounded-xl ${theme.box} flex items-center justify-center text-lg shrink-0">${theme.icon}</div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-[11px] font-bold text-slate-400">${ev.time}</div>
+                  <div class="text-[13px] font-bold text-slate-900 truncate">${titleOf(ev)}</div>
+                  <div class="text-[11px] text-slate-400 truncate">${subtitle}</div>
                 </div>
-                <div class="relative flex flex-col items-end gap-1.5 shrink-0">
-                  ${statusTag}
-                  <div class="bg-white/90 backdrop-blur-md rounded-xl px-1.5 py-1 shadow">${ownerPill(ev)}</div>
-                </div>
+                <div class="shrink-0">${actionBtn}</div>
               </div>`;
             }).join('')}</div>`}
           </div>
@@ -1831,31 +1825,32 @@
       }
       if (ev.detailVisibility === 'private') return; // private만 요청 자체를 막는다. busy_only도 같이하기 요청 가능
       const me = state.currentUser;
-      if (pendingJoinRequestOf(ev.id, me)) {
-        showToast('이미 함께하기를 요청했어요');
-        return;
-      }
-      const owner = ev.createdBy;
-      const reqId = Date.now();
-      state.joinRequests = state.joinRequests || [];
-      state.joinRequests.push({ id: reqId, eventId: ev.id, requesterId: me, ownerId: owner, status: 'pending', createdAt: new Date().toISOString(), resolvedAt: null });
 
-      // 알림은 작성자에게만 간다. 기업형 '수락/거절'이 아니라 가벼운 '함께하기' 확인이다
+      // 둘만 쓰는 공간이라 승인 절차 없이 참여를 누르면 바로 함께 일정이 된다
+      const before = { participants: [...ev.participants] };
+      if (!ev.participants.includes(me)) ev.participants.push(me);
+      ev.participation = ev.participation || {};
+      ev.participation[me] = { joinedAt: new Date().toISOString(), joinedFromPersonal: true };
+      ev.version = (ev.version || 1) + 1;
+      ev.changeStatus = null;
+      ev.revisions = ev.revisions || [];
+      ev.revisions.push({ version: ev.version, actor: me, changedFields: ['participants'], before, after: { participants: [...ev.participants] }, createdAt: new Date().toISOString() });
+
+      const owner = ev.createdBy;
       state.notifications.unshift({
-        id: Date.now() + 1,
+        id: Date.now(),
         recipientId: owner,
-        type: 'join_request',
-        eventId: ev.id,
-        requestId: reqId,
-        text: `${me}님이 '${ev.title}'에 함께하고 싶어해요`,
-        timeAgo: '방금 전',
-        read: false,
-        color: 'bg-emerald-500'
+        type: 'calendar',
+        text: `${me}님이 '${ev.title}'에 함께해요`,
+        timeAgo: '방금 전', read: false, color: 'bg-emerald-500'
       });
 
       saveState();
-      showToast(`'${ev.title}'에 함께하기를 요청했어요`);
+      showToast('함께 일정으로 바뀌었어요');
+      justJoinedEventId = ev.id;
       renderActiveScreen();
+      renderNotifPopover();
+      updateNotifBadge();
     }
 
     // 요청자가 승인 전에 요청을 취소한다
