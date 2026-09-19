@@ -1196,20 +1196,20 @@
 
     function getOurScreenHTML() {
       const todayEvents = state.events.filter(e => occursOn(e, state.selectedDate));
-      // 우측 아이콘: 이모지 폰트 렌더링 편차를 완전히 배제하기 위해 색상 아바타(이니셜 원)로 구현.
-      // 주체자 아바타는 항상 같은 자리(오른쪽)에 고정 렌더링되고, 상대방 아바타는 그 왼쪽 칸에 항상 존재하되
-      // 함께가 아니면 투명(opacity-0)으로만 숨긴다 — 즉 DOM 레이아웃 자체가 상태와 무관하게 항상 동일하다.
-      const AVATAR_INITIAL = { '준영': '준', '아정': '아' };
-      const avatarBadge = (person, posClass, dim) => {
-        const bg = person === '준영' ? 'bg-brand-red' : 'bg-brand-blue';
-        return `<span class="absolute ${posClass} top-0 w-6 h-6 rounded-full ${bg} ring-2 ring-white flex items-center justify-center text-[11px] font-bold text-white${dim ? ' opacity-0' : ''}" title="${person}">${AVATAR_INITIAL[person]}</span>`;
+      // 우측 아이콘: 신랑/신부 이모지 유지 + 위치 흔들림은 "항상 같은 DOM, opacity만 토글" 방식으로 원천 차단.
+      // 주체자 이모지는 항상 우측(right-0)에 고정 렌더링되고, 상대방 이모지+하트는 그 왼쪽 칸에 항상 존재하되
+      // 함께가 아니면 투명(opacity-0)으로만 숨긴다 — DOM 레이아웃 자체가 상태와 무관하게 항상 동일하다.
+      const emojiOf = (person) => person === '준영' ? '🤵🏻' : '👰🏻';
+      const personBadge = (person, posClass, dim) => {
+        return `<span class="absolute ${posClass} top-0 w-6 h-6 flex items-center justify-center text-xl leading-none${dim ? ' opacity-0' : ''}" title="${person}">${emojiOf(person)}</span>`;
       };
+      const heartBadge = (posClass, dim) => `<span class="absolute ${posClass} top-1/2 -translate-y-1/2 text-[10px] text-rose-500 leading-none${dim ? ' opacity-0' : ''}">♥</span>`;
       const ownerPill = (ev) => {
         const owner = ownerOf(ev);
         const subject = ev.subjectMemberId || (owner !== '함께' ? owner : '아정');
         const partner = subject === '준영' ? '아정' : '준영';
         const joined = owner === '함께';
-        return `<div class="relative w-11 h-6 shrink-0">${avatarBadge(partner, 'right-4', !joined)}${avatarBadge(subject, 'right-0', false)}</div>`;
+        return `<div class="relative w-11 h-6 shrink-0">${personBadge(partner, 'right-6', !joined)}${heartBadge('right-5', !joined)}${personBadge(subject, 'right-0', false)}</div>`;
       };
 
       const heroBg = `background-image:url('${heroImageUrl()}');background-size:cover;background-position:center 58%;`;
