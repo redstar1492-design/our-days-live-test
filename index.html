@@ -1196,16 +1196,20 @@
 
     function getOurScreenHTML() {
       const todayEvents = state.events.filter(e => occursOn(e, state.selectedDate));
-      const emojiOf = (person) => person === '준영' ? '🤵🏻' : '👰🏻';
-      // 우측 아이콘 한 자리: 혼자 일정이면 해당 사람, 함께가 되면 주체자를 항상 우측 고정하고 좌측에 상대+하트를 붙인다.
+      // 우측 아이콘: 이모지 폰트 렌더링 편차를 완전히 배제하기 위해 색상 아바타(이니셜 원)로 구현.
+      // 주체자 아바타는 항상 같은 자리(오른쪽)에 고정 렌더링되고, 상대방 아바타는 그 왼쪽 칸에 항상 존재하되
+      // 함께가 아니면 투명(opacity-0)으로만 숨긴다 — 즉 DOM 레이아웃 자체가 상태와 무관하게 항상 동일하다.
+      const AVATAR_INITIAL = { '준영': '준', '아정': '아' };
+      const avatarBadge = (person, posClass, dim) => {
+        const bg = person === '준영' ? 'bg-brand-red' : 'bg-brand-blue';
+        return `<span class="absolute ${posClass} top-0 w-6 h-6 rounded-full ${bg} ring-2 ring-white flex items-center justify-center text-[11px] font-bold text-white${dim ? ' opacity-0' : ''}" title="${person}">${AVATAR_INITIAL[person]}</span>`;
+      };
       const ownerPill = (ev) => {
         const owner = ownerOf(ev);
-        if (owner !== '함께') return `<span class="shrink-0 text-xl leading-none" title="${owner}">${emojiOf(owner)}</span>`;
-        const subject = ev.subjectMemberId;
-        const other = subject === '준영' ? '아정' : '준영';
-        const leftPerson = subject ? other : '준영';
-        const rightPerson = subject ? subject : '아정';
-        return `<span class="shrink-0 text-xl leading-none tracking-[-0.12em]" title="함께">${emojiOf(leftPerson)}<span class="relative -top-px text-[10px] text-rose-500">♥</span>${emojiOf(rightPerson)}</span>`;
+        const subject = ev.subjectMemberId || (owner !== '함께' ? owner : '아정');
+        const partner = subject === '준영' ? '아정' : '준영';
+        const joined = owner === '함께';
+        return `<div class="relative w-11 h-6 shrink-0">${avatarBadge(partner, 'right-4', !joined)}${avatarBadge(subject, 'right-0', false)}</div>`;
       };
 
       const heroBg = `background-image:url('${heroImageUrl()}');background-size:cover;background-position:center 58%;`;
@@ -1249,7 +1253,7 @@
                     <button onclick="requestJoinTogether(${ev.id})" class="text-[10px] bg-slate-900 text-white px-2.5 py-1 rounded-full font-bold hover:bg-black">같이 보내기</button>
                   ` : ''}
                   ${(() => { const req = isMine(ev) ? pendingRequestForMyEvent(ev.id) : null; return req ? `<button onclick="approveJoinRequest(${req.id})" class="text-[10px] bg-emerald-500 text-white px-2.5 py-1 rounded-full font-bold hover:bg-emerald-600">수락하기</button>` : ''; })()}
-                  <span class="w-11 flex justify-end shrink-0">${ownerPill(ev)}</span>
+                  ${ownerPill(ev)}
                 </div>
               </div>
             `).join('')}
