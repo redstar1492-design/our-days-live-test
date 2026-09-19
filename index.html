@@ -129,15 +129,14 @@
 
     #toast-modal { transition: opacity 220ms cubic-bezier(0.22, 1, 0.36, 1), transform 220ms cubic-bezier(0.22, 1, 0.36, 1); }
 
-    /* 함께 수락: 상대방 이모지가 문 열듯 스윙하며 등장, 살짝 늦게 하트가 팝업 */
-    @keyframes partnerDoorIn {
-      0% { opacity: 0; transform: perspective(240px) rotateY(70deg) scale(0.6); }
-      60% { opacity: 1; transform: perspective(240px) rotateY(-8deg) scale(1.06); }
-      100% { opacity: 1; transform: perspective(240px) rotateY(0deg) scale(1); }
+    /* 함께 수락: 상대방 이모지가 옆에서 슬라이드+페이드로 등장 (회전/3D 없음 — 옆의 주체자 이모지는 완전히 고정) */
+    @keyframes partnerSlideIn {
+      0% { opacity: 0; transform: translateX(18px) scale(0.7); }
+      60% { opacity: 1; transform: translateX(-2px) scale(1.08); }
+      100% { opacity: 1; transform: translateX(0) scale(1); }
     }
     .partner-door-in {
-      transform-origin: right center;
-      animation: partnerDoorIn 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: partnerSlideIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
     @keyframes heartPopIn {
       0% { opacity: 0; transform: translateY(-50%) scale(0.3); }
