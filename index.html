@@ -1349,27 +1349,15 @@
 
           <div class="p-4 space-y-4 text-slate-900">
 
-          <!-- Section: 브랜드 마크 — 픽셀 모자이크로 만든 'D + 하트' 우리만의 워드마크 -->
-          <div class="flex items-center justify-center py-1">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 px-3 py-2.5 inline-flex items-center gap-2">
-              <div class="grid grid-cols-5 gap-[2px]">
-                ${[1,1,1,1,0, 1,0,0,0,1, 1,0,0,0,1, 1,0,0,0,1, 1,1,1,1,0].map(c => c
-                  ? '<span class="w-[6px] h-[6px] rounded-[1.5px] bg-gradient-to-br from-orange-300 to-rose-400"></span>'
-                  : '<span class="w-[6px] h-[6px]"></span>'
-                ).join('')}
-              </div>
-              <div class="grid grid-cols-5 gap-[2px]">
-                ${[1,1,1,1,1, 1,1,1,1,1, 1,1,2,1,1, 1,1,1,1,1, 1,1,1,1,1].map(c => c === 2
-                  ? '<span class="w-[6px] h-[6px] flex items-center justify-center text-rose-400" style="font-size:6px;line-height:1;">♥</span>'
-                  : '<span class="w-[6px] h-[6px] rounded-[1.5px] bg-gradient-to-br from-indigo-400 to-violet-500"></span>'
-                ).join('')}
-              </div>
-            </div>
-          </div>
-
           <!-- Section: Feed Feed Posts -->
           <div class="flex justify-between items-center px-1 pt-2">
             <div class="flex items-center gap-1.5">
+              <div class="w-4 h-4 shrink-0 grid grid-cols-5 gap-px">
+                ${[1,1,1,1,0, 1,0,0,0,1, 1,0,0,0,1, 1,0,0,0,1, 1,1,1,1,0].map(c => c
+                  ? '<span class="rounded-[0.5px] bg-gradient-to-br from-orange-300 to-rose-400"></span>'
+                  : '<span></span>'
+                ).join('')}
+              </div>
               <h3 class="text-sm font-black tracking-tight text-slate-900">덤프</h3>
             </div>
             <div class="flex items-center gap-2">
