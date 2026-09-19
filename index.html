@@ -235,7 +235,7 @@
     <!-- 알림 팝오버: 탭 이동 없이 종 위에 떠서 표시 (슬랙 스타일) -->
     <div id="notif-popover" class="hidden absolute bottom-16 right-2 w-64 max-h-80 bg-white rounded-2xl shadow-[0_20px_50px_-8px_rgba(0,0,0,0.45)] ring-1 ring-black/5 border border-slate-100 z-50 overflow-hidden animate-pop">
       <div class="flex items-center justify-between px-3.5 py-2.5 border-b border-slate-100">
-        <span class="font-extrabold text-xs text-slate-900">알림</span>
+        <span class="text-xs font-black text-slate-900">알림</span>
         <button onclick="clearAllNotifications()" class="text-[10px] font-bold text-slate-500 hover:text-slate-800">모두 읽음</button>
       </div>
       <div id="notif-popover-list" class="max-h-64 overflow-y-auto no-scrollbar divide-y divide-slate-50"></div>
@@ -247,8 +247,8 @@
   <div id="sheet-backdrop" onclick="closeAllSheets()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] z-40 hidden transition-opacity"></div>
 
   <div id="delete-post-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-slate-950/45 p-6">
-    <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl">
-      <div class="text-lg mb-2">🗑️</div>
+    <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl text-center animate-pop">
+      <div class="text-3xl mb-2">🗑️</div>
       <h3 class="text-base font-black text-slate-900">이 덤프를 삭제할까요?</h3>
       <p class="mt-1 text-xs leading-relaxed text-slate-500">삭제하면 이 덤프와 답글을 되돌릴 수 없어요.</p>
       <div class="mt-5 flex gap-2">
@@ -260,7 +260,7 @@
 
   <!-- 서로 하트가 둘 다 채워진 순간에만 뜨는 인정 확인. 하트만으로 자동 인정되지 않게 한 단계를 둔다 -->
   <div id="endorse-confirm-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-slate-950/45 p-6">
-    <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl text-center">
+    <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl text-center animate-pop">
       <div class="text-3xl mb-2">🏅</div>
       <h3 class="text-base font-black text-slate-900">서로 하트를 눌렀어요!</h3>
       <p class="mt-1 text-xs leading-relaxed text-slate-500">이 장소, 우리 둘 다의 '인정'으로 도장 찍을까요?</p>
@@ -273,7 +273,7 @@
 
   <!-- 타임라인 일정 삭제 확인 -->
   <div id="event-delete-confirm-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-slate-950/45 p-6">
-    <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl text-center">
+    <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl text-center animate-pop">
       <div class="text-3xl mb-2">🗑️</div>
       <h3 class="text-base font-black text-slate-900">이 일정을 삭제할까요?</h3>
       <p class="mt-1 text-xs leading-relaxed text-slate-500">삭제하면 되돌릴 수 없어요.</p>
@@ -286,8 +286,8 @@
 
   <!-- 별점은 각자 남긴다. 카드의 ⭐ 버튼을 누르면 여기서 1~5를 고른다 -->
   <div id="rating-picker-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-slate-950/45 p-6">
-    <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl text-center">
-      <h3 class="text-sm font-black text-slate-900 mb-3">내 별점 남기기</h3>
+    <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl text-center animate-pop">
+      <h3 class="text-base font-black text-slate-900 mb-3">내 별점 남기기</h3>
       <input type="hidden" id="rating-picker-value" value="0">
       <div id="rating-picker-stars" class="flex justify-center gap-1"></div>
       <div class="mt-5 flex gap-2">
@@ -300,12 +300,12 @@
   <!-- Modal 1: Create Event Sheet -->
   <div id="sheet-folder" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[85vh] overflow-y-auto">
     <div class="flex justify-between items-center mb-4">
-      <h3 id="folder-sheet-title" class="font-extrabold text-slate-900">새 폴더</h3>
+      <h3 id="folder-sheet-title" class="text-base font-extrabold text-slate-900">새 폴더</h3>
       <button onclick="closeAllSheets()" class="p-1 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <div class="space-y-3 text-xs">
       <div>
-        <label class="block font-bold text-slate-700 mb-1">폴더 이름 (필수)</label>
+        <label class="block text-[11px] font-bold text-slate-400 mb-1">폴더 이름 (필수)</label>
         <input type="text" id="folder-title-input" placeholder="예: 가을 여행" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none">
       </div>
       <label class="block font-bold text-slate-700">표지</label>
@@ -316,7 +316,7 @@
 
   <div id="sheet-settings" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[85vh] overflow-y-auto">
     <div class="flex justify-between items-center mb-4">
-      <h3  class="font-extrabold text-slate-900">공간 설정</h3>
+      <h3 class="text-base font-extrabold text-slate-900">공간 설정</h3>
       <button onclick="closeAllSheets()" class="p-1 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <div id="settings-body" class="space-y-5"></div>
@@ -324,20 +324,21 @@
 
   <div id="sheet-marker" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[85vh] overflow-y-auto">
     <div class="flex justify-between items-center mb-4">
-      <h3  class="font-extrabold text-slate-900">표시 남기기</h3>
+      <h3 class="text-base font-extrabold text-slate-900">표시 남기기</h3>
       <button onclick="closeAllSheets()" class="p-1 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <div id="marker-body" class="space-y-4"></div>
     <button onclick="saveMarker()" class="w-full mt-5 py-3 bg-slate-900 text-white rounded-xl text-sm font-bold">저장</button>
   </div>
 
-  <div id="device-user-modal" class="fixed inset-0 z-[60] bg-slate-950/70 hidden flex items-center justify-center p-6">
-    <div class="bg-white rounded-3xl p-6 w-full max-w-[320px] text-center space-y-4">
-      <h3 class="font-extrabold text-slate-900">이 휴대폰은 누구의 것인가요?</h3>
-      <p class="text-xs text-slate-500">선택한 사람의 시점으로 시작합니다. 나중에 공간 설정에서 바꿀 수 있어요.</p>
-      <div class="flex gap-3">
-        <button onclick="setDeviceUser('준영')" class="flex-1 py-3 rounded-xl bg-slate-900 text-white font-bold">준영</button>
-        <button onclick="setDeviceUser('아정')" class="flex-1 py-3 rounded-xl bg-slate-900 text-white font-bold">아정</button>
+  <div id="device-user-modal" class="fixed inset-0 z-[60] bg-slate-950/70 hidden items-center justify-center p-6">
+    <div class="w-full max-w-[300px] rounded-3xl bg-white p-5 shadow-2xl text-center animate-pop">
+      <div class="text-3xl mb-2">📱</div>
+      <h3 class="text-base font-black text-slate-900">이 휴대폰은 누구의 것인가요?</h3>
+      <p class="mt-1 text-xs leading-relaxed text-slate-500">선택한 사람의 시점으로 시작합니다. 나중에 공간 설정에서 바꿀 수 있어요.</p>
+      <div class="mt-5 flex gap-2">
+        <button onclick="setDeviceUser('준영')" class="flex-1 rounded-xl bg-slate-900 py-2.5 text-xs font-bold text-white">준영</button>
+        <button onclick="setDeviceUser('아정')" class="flex-1 rounded-xl bg-slate-900 py-2.5 text-xs font-bold text-white">아정</button>
       </div>
     </div>
   </div>
@@ -345,7 +346,7 @@
   <div id="sheet-create-event" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl">
     <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
     <div class="flex justify-between items-center mb-4">
-      <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
+      <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
         <i data-lucide="calendar-plus" class="w-5 h-5 text-brand-red"></i> 새 일정 등록
       </h3>
       <button onclick="closeAllSheets()" class="text-slate-400 hover:text-slate-600 p-1">
@@ -355,12 +356,12 @@
 
     <div class="space-y-3 text-xs">
       <div>
-        <label class="block font-bold text-slate-700 mb-1">일정 제목</label>
+        <label class="block text-[11px] font-bold text-slate-400 mb-1">일정 제목</label>
         <input type="text" id="event-title-input" placeholder="예: 성수동 데이트, 제주도 항공권 예매" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-brand-red font-medium">
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1">일정 주체 (누구의 일정인가요?)</label>
+        <label class="block text-[11px] font-bold text-slate-400 mb-1">일정 주체 (누구의 일정인가요?)</label>
         <div class="grid grid-cols-3 gap-2">
           <button type="button" onclick="setOwnerType('준영')" id="owner-btn-준영" class="py-2 rounded-xl border border-rose-200 bg-rose-50 text-brand-red font-bold">👨🏻 준영</button>
           <button type="button" onclick="setOwnerType('아정')" id="owner-btn-아정" class="py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 font-medium">👩🏻‍🦰 아정</button>
@@ -370,29 +371,29 @@
 
       <div class="grid grid-cols-2 gap-2">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">시작 날짜</label>
+          <label class="block text-[11px] font-bold text-slate-400 mb-1">시작 날짜</label>
           <input type="date" id="event-date-input" value="2026-09-16" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">종료 날짜 <span class="text-slate-400 font-medium">(선택)</span></label>
+          <label class="block text-[11px] font-bold text-slate-400 mb-1">종료 날짜 <span class="text-slate-400 font-medium">(선택)</span></label>
           <input type="date" id="event-enddate-input" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
         </div>
       </div>
       <div>
         <div class="grid grid-cols-2 gap-1">
           <div>
-            <label class="block font-bold text-slate-700 mb-1">시작</label>
+            <label class="block text-[11px] font-bold text-slate-400 mb-1">시작</label>
             <input type="time" id="event-time-input" value="15:00" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">종료</label>
+            <label class="block text-[11px] font-bold text-slate-400 mb-1">종료</label>
             <input type="time" id="event-endtime-input" value="16:00" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
           </div>
         </div>
       </div>
 
       <div>
-        <label class="block font-bold text-slate-700 mb-1">장소 / 메모 (선택)</label>
+        <label class="block text-[11px] font-bold text-slate-400 mb-1">장소 / 메모 (선택)</label>
         <input type="text" id="event-place-input" placeholder="예: 성수동 감성카페" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
       </div>
 
@@ -418,7 +419,7 @@
   <div id="sheet-edit-event" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl">
     <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
     <div class="flex justify-between items-center mb-4">
-      <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
+      <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
         <i data-lucide="pencil" class="w-5 h-5 text-brand-blue"></i> 일정 수정
       </h3>
       <button onclick="closeAllSheets()" class="text-slate-400 hover:text-slate-600 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -426,33 +427,33 @@
     <input type="hidden" id="edit-event-id">
     <div class="space-y-3 text-xs">
       <div>
-        <label class="block font-bold text-slate-700 mb-1">일정 제목</label>
+        <label class="block text-[11px] font-bold text-slate-400 mb-1">일정 제목</label>
         <input type="text" id="edit-title" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-brand-blue font-medium">
       </div>
       <div class="grid grid-cols-2 gap-2">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">시작 날짜</label>
+          <label class="block text-[11px] font-bold text-slate-400 mb-1">시작 날짜</label>
           <input type="date" id="edit-date" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">종료 날짜 <span class="text-slate-400 font-medium">(선택)</span></label>
+          <label class="block text-[11px] font-bold text-slate-400 mb-1">종료 날짜 <span class="text-slate-400 font-medium">(선택)</span></label>
           <input type="date" id="edit-enddate" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
         </div>
       </div>
       <div>
         <div class="grid grid-cols-2 gap-1">
           <div>
-            <label class="block font-bold text-slate-700 mb-1">시작</label>
+            <label class="block text-[11px] font-bold text-slate-400 mb-1">시작</label>
             <input type="time" id="edit-time" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">종료</label>
+            <label class="block text-[11px] font-bold text-slate-400 mb-1">종료</label>
             <input type="time" id="edit-endtime" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
           </div>
         </div>
       </div>
       <div>
-        <label class="block font-bold text-slate-700 mb-1">장소 / 메모 (선택)</label>
+        <label class="block text-[11px] font-bold text-slate-400 mb-1">장소 / 메모 (선택)</label>
         <input type="text" id="edit-place" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium">
       </div>
       <div id="edit-detail-toggle-wrap" class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
@@ -477,7 +478,7 @@
   <div id="sheet-mood" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl">
     <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
     <div class="flex justify-between items-center mb-1">
-      <h3 class="font-extrabold text-base text-slate-900">오늘 기분</h3>
+      <h3 class="text-base font-extrabold text-slate-900">오늘 기분</h3>
       <button onclick="closeAllSheets()" class="text-slate-400 hover:text-slate-600 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <p class="text-[11px] text-slate-400 mb-4">선택 입력입니다. 남기지 않아도 아무 일도 생기지 않아요.</p>
@@ -545,7 +546,7 @@
           <i data-lucide="sparkles" class="w-4 h-4"></i>
         </span>
         <div>
-          <h3 class="font-extrabold text-base text-slate-900">Gemini 커플 AI 비서 <span class="text-[10px] font-bold text-slate-400">(추천 시연 · 샘플 결과)</span></h3>
+          <h3 class="text-base font-extrabold text-slate-900">Gemini 커플 AI 비서 <span class="text-[10px] font-bold text-slate-400">(추천 시연 · 샘플 결과)</span></h3>
           <p class="text-[10px] text-slate-400">데이트 코스 및 음성 안내</p>
         </div>
       </div>
@@ -556,7 +557,7 @@
 
     <div class="space-y-3 text-xs">
       <div>
-        <label class="block font-bold text-slate-700 mb-1">어떤 데이트를 계획하고 계신가요?</label>
+        <label class="block text-[11px] font-bold text-slate-400 mb-1">어떤 데이트를 계획하고 계신가요?</label>
         <input type="text" id="ai-prompt-input" placeholder="예: 성수동 분위기 좋은 카페와 디저트 3곳 추천해줘" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 font-medium">
       </div>
 
@@ -584,7 +585,7 @@
   <!-- Modal 4: GitHub Pages Deployment Guide Sheet -->
   <div id="sheet-wish-add" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[85vh] overflow-y-auto">
     <div class="flex justify-between items-center pb-2 mb-3 border-b border-slate-100">
-      <h3 class="text-sm font-extrabold text-slate-900">위시리스트 항목 추가</h3>
+      <h3 class="text-base font-extrabold text-slate-900">위시리스트 항목 추가</h3>
       <button onclick="closeAllSheets()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"><i class="fa-solid fa-xmark text-xs"></i></button>
     </div>
     <div class="space-y-3.5">
@@ -608,29 +609,29 @@
 
   <div id="sheet-thread-add" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl max-h-[85vh] overflow-y-auto">
     <div class="flex justify-between items-center pb-2 mb-3 border-b border-slate-100">
-      <h3 class="text-sm font-extrabold text-slate-900" id="thread-modal-title">새 일정 등록</h3>
+      <h3 class="text-base font-extrabold text-slate-900" id="thread-modal-title">새 일정 등록</h3>
       <button onclick="closeAllSheets()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"><i class="fa-solid fa-xmark text-xs"></i></button>
     </div>
 
     <div class="space-y-3.5">
       <div>
-        <label class="block text-[11px] font-bold text-threads-subtle mb-1">일정 내용</label>
+        <label class="block text-[11px] font-bold text-slate-400 mb-1">일정 내용</label>
         <input type="text" id="thread-input-title" placeholder="예: 주말 브런치 데이트" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-threads-border text-xs font-semibold outline-none focus:ring-1 focus:ring-threads-dark">
       </div>
 
       <div class="grid grid-cols-2 gap-2">
         <div>
-          <label class="block text-[11px] font-bold text-threads-subtle mb-1">시작 날짜</label>
+          <label class="block text-[11px] font-bold text-slate-400 mb-1">시작 날짜</label>
           <input type="date" id="thread-input-date" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-threads-border text-xs font-semibold text-slate-800">
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-threads-subtle mb-1">종료 날짜 <span class="text-threads-subtle font-medium">(연차처럼 여러 날이면)</span></label>
+          <label class="block text-[11px] font-bold text-slate-400 mb-1">종료 날짜 <span class="text-threads-subtle font-medium">(연차처럼 여러 날이면)</span></label>
           <input type="date" id="thread-input-enddate" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-threads-border text-xs font-semibold text-slate-800">
         </div>
       </div>
 
       <div>
-        <label class="block text-[11px] font-bold text-threads-subtle mb-1">시간</label>
+        <label class="block text-[11px] font-bold text-slate-400 mb-1">시간</label>
         <input type="time" id="thread-input-time" value="12:00" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-threads-border text-xs font-semibold text-slate-800">
       </div>
 
@@ -640,11 +641,11 @@
 
       <div class="grid grid-cols-2 gap-2">
         <div>
-          <label class="block text-[11px] font-bold text-threads-subtle mb-1">장소 (선택)</label>
+          <label class="block text-[11px] font-bold text-slate-400 mb-1">장소 (선택)</label>
           <input type="text" id="thread-input-location" placeholder="성수동" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-threads-border text-xs font-medium text-slate-800">
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-threads-subtle mb-1">메모 (선택)</label>
+          <label class="block text-[11px] font-bold text-slate-400 mb-1">메모 (선택)</label>
           <input type="text" id="thread-input-memo" placeholder="예약 완료" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-threads-border text-xs font-medium text-slate-800">
         </div>
       </div>
@@ -660,7 +661,7 @@
   <div id="sheet-github-guide" class="fixed bottom-0 inset-x-0 max-w-[390px] mx-auto bg-white rounded-t-3xl border-t border-slate-200 z-50 hidden animate-pop p-5 pb-8 shadow-2xl">
     <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
     <div class="flex justify-between items-center mb-3">
-      <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
+      <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
         <i data-lucide="github" class="w-5 h-5 text-slate-800"></i> GitHub Pages 공개 방법
       </h3>
       <button onclick="closeAllSheets()" class="text-slate-400 hover:text-slate-600 p-1">
@@ -1135,21 +1136,6 @@
       return (h >= 0 && h <= CONFLICT_WINDOW_HOURS) ? 'needsConfirm' : 'changed';
     }
 
-    // 기획서 5-2: 일정당 배지 1개. 경고색·느낌표·재촉 문구 금지
-    function badgeHTML(ev) {
-      if (ev.changeStatus === 'needsConfirm') {
-        const confirmer = ownerOf(ev) === '함께' ? otherUser() : ownerOf(ev);
-        return `<button onclick="confirmChange(${ev.id})" class="bg-amber-100 text-amber-800 text-[11px] px-2 py-0.5 rounded font-bold shrink-0">${confirmer} 확인 전</button>`;
-      }
-      if (ev.changeStatus === 'changed') {
-        return `<span class="bg-blue-50 text-brand-blue text-[11px] px-2 py-0.5 rounded font-bold shrink-0">변경됨</span>`;
-      }
-      if (ownerOf(ev) === '함께') {
-        return `<span class="bg-emerald-100 text-emerald-800 text-[11px] px-2 py-0.5 rounded font-bold shrink-0">공통</span>`;
-      }
-      return '';
-    }
-
     function confirmChange(id) {
       const ev = state.events.find(e => e.id === id);
       if (!ev) return;
@@ -1193,7 +1179,7 @@
       currentOwnerType = user;
       saveState();
       const first = document.getElementById('device-user-modal');
-      if (first) first.classList.add('hidden');
+      if (first) { first.classList.add('hidden'); first.classList.remove('flex'); }
       showToast(`이 휴대폰은 '${user}'으로 시작합니다`);
       renderActiveScreen();
       if (!document.getElementById('sheet-settings').classList.contains('hidden')) renderSettingsSheet();
@@ -1441,7 +1427,7 @@
               </div>
               <div class="min-w-0">
                 <h1 class="text-base font-extrabold text-slate-900 tracking-tight leading-tight truncate flex items-center gap-1.5">준영 & 아정 <i class="fa-solid fa-circle-check text-blue-500 text-xs"></i></h1>
-                <p class="text-[11px] text-slate-400 font-medium truncate">우리 둘만의 공유 타임라인</p>
+                <p class="text-[10px] text-slate-400 truncate">우리 둘만의 공유 타임라인</p>
               </div>
             </div>
             <button onclick="openThreadAddModal()" class="px-3 py-1.5 bg-slate-900 text-white rounded-full text-xs font-bold hover:bg-black transition-all flex items-center gap-1 shrink-0">
@@ -1496,13 +1482,13 @@
         ? `<button onclick="event.stopPropagation();hardDeleteEvent(${ev.id})" class="text-slate-300 hover:text-rose-500 p-1 shrink-0"><i class="fa-solid fa-trash-can text-xs"></i></button>`
         : '';
       const joinBtn = (!mine && owner !== '함께' && ev.lifecycle !== 'cancelled' && ev.detailVisibility !== 'private')
-        ? `<button onclick="event.stopPropagation();requestJoinTogether(${ev.id})" class="text-[10px] font-bold text-white bg-slate-900 rounded-full px-2.5 py-1">같이 하기</button>`
+        ? `<button onclick="event.stopPropagation();requestJoinTogether(${ev.id})" class="px-3 py-1.5 bg-slate-900 text-white font-bold rounded-full text-xs">같이 하기</button>`
         : '';
       const commentsHtml = (ev.comments || []).map((c, ci) => `
-        <div class="text-xs flex items-baseline gap-1.5 bg-slate-50 p-2 rounded-xl${(ev.id === lastCommentEventId && ci === ev.comments.length - 1) ? ' toss-pop-in' : ''}">
-          <span class="font-bold text-slate-900">${escapeHtml(c.author)}:</span>
-          <span class="text-slate-600 font-medium flex-1">${escapeHtml(c.text)}</span>
-          <span class="text-[10px] text-slate-400 shrink-0">${c.time}</span>
+        <div class="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs${(ev.id === lastCommentEventId && ci === ev.comments.length - 1) ? ' toss-pop-in' : ''}">
+          <span class="font-bold text-slate-900">${escapeHtml(c.author)}</span>
+          <span class="ml-1 font-medium text-slate-600">${escapeHtml(c.text)}</span>
+          <span class="ml-2 text-[10px] text-slate-400">${c.time}</span>
         </div>`).join('');
 
       return `
@@ -1520,16 +1506,16 @@
               <div class="flex items-center gap-1.5 shrink-0">${ev.lifecycle === 'cancelled' ? '<span class="text-[10px] font-bold text-slate-400">취소됨</span>' : ''}${deleteBtn}</div>
             </div>
             <h3 class="text-[13px] font-medium leading-relaxed ${ev.lifecycle === 'cancelled' ? 'line-through text-slate-400' : 'text-slate-800'}">${label}</h3>
-            ${(place || ev.note) ? `<div class="mt-1.5 flex flex-wrap gap-2 text-[11px] text-slate-600 font-medium">
+            ${(place || ev.note) ? `<div class="mt-1.5 flex flex-wrap gap-1.5">
               ${place ? `<span class="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-md text-[10px] text-slate-500 font-bold"><i class="fa-solid fa-location-dot text-slate-400 text-[10px]"></i>${escapeHtml(place)}</span>` : ''}
               ${ev.note ? `<span class="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-md text-[10px] text-slate-500 font-bold"><i class="fa-solid fa-note-sticky text-slate-400 text-[10px]"></i>${escapeHtml(ev.note)}</span>` : ''}
             </div>` : ''}
             ${joinBtn ? `<div class="mt-1.5">${joinBtn}</div>` : ''}
             <div class="mt-2 pt-1.5 border-t border-slate-100 space-y-1.5">
               ${commentsHtml}
-              <div class="flex items-center gap-1.5 mt-1">
-                <input type="text" id="event-comment-${ev.id}" placeholder="코멘트 남기기..." class="flex-1 bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1 text-[11px] font-medium text-slate-800 outline-none focus:bg-white">
-                <button onclick="addEventComment(${ev.id})" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[10px] font-bold shrink-0">등록</button>
+              <div class="flex gap-1.5">
+                <input type="text" id="event-comment-${ev.id}" placeholder="이 일정에 답글 달기" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-full text-xs outline-none focus:border-brand-blue">
+                <button onclick="addEventComment(${ev.id})" class="px-3 py-2 bg-slate-900 text-white font-bold rounded-full text-xs shrink-0">게시</button>
               </div>
             </div>
           </div>
@@ -1543,11 +1529,11 @@
         .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
 
       return `
-        <div class="px-4 pt-3 pb-2 flex items-center justify-between text-xs border-b border-slate-100 bg-white">
+        <div class="px-4 pt-2 pb-2 flex items-center justify-between border-b border-slate-100 bg-white">
           <div class="flex gap-1.5">
-            ${['전체', '함께', '준영', '아정'].map(f => `<button onclick="setCalendarFilter('${f}')" class="px-3 py-1 rounded-full font-semibold text-[11px] ${filt === f ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}">${f}</button>`).join('')}
+            ${['전체', '함께', '준영', '아정'].map(f => `<button onclick="setCalendarFilter('${f}')" class="px-3 py-1 rounded-full text-xs font-bold ${filt === f ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}">${f}</button>`).join('')}
           </div>
-          <span class="text-[11px] text-slate-400 font-medium shrink-0">총 ${events.length}개</span>
+          <span class="text-[10px] text-slate-400 shrink-0">총 ${events.length}개</span>
         </div>
         <div class="divide-y divide-slate-100">
           ${events.length === 0 ? `<div class="py-12 text-center text-slate-400 text-xs font-semibold">등록된 일정이 없습니다.</div>` : events.map((ev, i) => threadPostHTML(ev, i === events.length - 1)).join('')}
@@ -1569,17 +1555,17 @@
       const matchFilter = (e) => (filt === '전체' || ownerOf(e) === filt) && !isHiddenFromMe(e) && e.lifecycle !== 'cancelled';
 
       return `
-        <div class="p-4 bg-white border-b border-slate-100">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-base font-extrabold text-slate-900">${yy}년 ${mm}월</h2>
+        <div class="px-4 pt-3 pb-3 bg-white border-b border-slate-100">
+          <div class="flex justify-between items-center mb-3">
+            <h2 class="text-base font-black text-slate-900">${yy}년 ${mm}월</h2>
             <div class="flex items-center gap-1">
-              <button onclick="goToToday()" class="px-2.5 py-1 text-[11px] font-bold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200">오늘</button>
+              <button onclick="goToToday()" class="px-2.5 py-1 text-xs font-bold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200">오늘</button>
               <button onclick="shiftMonth(-1)" class="w-7 h-7 rounded-lg border border-slate-100 flex items-center justify-center text-xs text-slate-600"><i class="fa-solid fa-chevron-left"></i></button>
               <button onclick="shiftMonth(1)" class="w-7 h-7 rounded-lg border border-slate-100 flex items-center justify-center text-xs text-slate-600"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
           </div>
 
-          <div class="grid grid-cols-7 text-center text-[11px] font-bold text-slate-400 mb-2">
+          <div class="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400 mb-1.5">
             <span class="text-rose-500">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="text-blue-500">토</span>
           </div>
 
@@ -1603,9 +1589,9 @@
           </div>
         </div>
 
-        <div class="p-4">
-          <div class="flex justify-between items-center mb-3">
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">${koreanDateShort(state.selectedDate)} 일정</h3>
+        <div class="px-4 pt-3 pb-4">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${koreanDateShort(state.selectedDate)} 일정</h3>
           </div>
           <div class="space-y-1.5">
             ${(() => {
@@ -1620,7 +1606,7 @@
                   <div class="flex items-center gap-3 min-w-0">
                     ${avatarBlockHTML(owner)}
                     <div class="min-w-0">
-                      <h4 class="text-xs font-bold text-slate-900 truncate">${escapeHtml(titleOf(ev))}</h4>
+                      <h4 class="text-[13px] font-bold text-slate-900 truncate">${escapeHtml(titleOf(ev))}</h4>
                       <span class="text-[10px] text-slate-400 font-medium">${ev.time}${place ? ' · ' + escapeHtml(place) : ''}</span>
                     </div>
                   </div>
@@ -1628,44 +1614,6 @@
               }).join('');
             })()}
           </div>
-        </div>
-      `;
-    }
-
-    // 날짜별 이모지·주기 표시. 보이는 것만 노출하고, 수정·삭제는 작성자만 (요청서 2-4, 2-5)
-    function markersSectionHTML(date) {
-      const emojis = visibleEmojiMarkers(date);
-      const cycles = visibleCycleMarkers(date);
-      const ownerActions = (m, kind) => m.author === state.currentUser ? `
-        <button onclick="deleteMarker('${kind}', ${m.id})" class="text-[10px] font-bold text-rose-500 px-1">삭제</button>
-      ` : '';
-      const esc = (v) => escapeHtml(v);
-
-      return `
-        <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-soft space-y-2">
-          <div class="flex justify-between items-center">
-            <h3 class="text-xs font-bold text-slate-700">${Number(date.split('-')[2])}일 표시</h3>
-            <button onclick="openMarkerSheet('${date}')" class="text-xs font-bold text-slate-600 px-2 py-0.5 rounded-full border border-slate-200 hover:bg-slate-50">+ 표시 남기기</button>
-          </div>
-          ${(!emojis.length && !cycles.length) ? '<p class="text-[11px] text-slate-400">남긴 표시가 없어요.</p>' : ''}
-          ${emojis.map(m => `
-            <div class="flex items-center gap-2 text-xs">
-              <span class="text-lg leading-none">${m.emoji}</span>
-              <span class="font-bold text-slate-600">${m.author}</span>
-              ${m.note ? `<span class="text-slate-500 truncate">${esc(m.note)}</span>` : ''}
-              <span class="text-[10px] text-emerald-600 font-bold">함께 보기</span>
-              <span class="ml-auto flex items-center gap-1 shrink-0">${ownerActions(m, 'emoji')}</span>
-            </div>
-          `).join('')}
-          ${cycles.map(m => `
-            <div class="flex items-center gap-2 text-xs">
-              <span class="text-base leading-none">${CYCLE_TYPES[m.type].icon}</span>
-              <span class="font-bold text-slate-600">${CYCLE_TYPES[m.type].label}</span>
-              <span class="text-slate-400">${m.author}</span>
-              <span class="text-[10px] text-emerald-600 font-bold">함께 보기</span>
-              <span class="ml-auto flex items-center gap-1 shrink-0">${ownerActions(m, 'cycle')}</span>
-            </div>
-          `).join('')}
         </div>
       `;
     }
@@ -1703,7 +1651,7 @@
             <div class="w-3.5 h-3.5 rounded border ${sub.done ? 'bg-emerald-500 border-emerald-500' : 'border-slate-300'} flex items-center justify-center shrink-0">
               ${sub.done ? `<i class="fa-solid fa-check text-white" style="font-size:8px"></i>` : ''}
             </div>
-            <span class="text-[11px] ${sub.done ? 'line-through text-slate-400' : 'text-slate-700 font-medium'} truncate">${escapeHtml(sub.text)}</span>
+            <span class="text-xs ${sub.done ? 'line-through text-slate-400' : 'text-slate-700 font-medium'} truncate">${escapeHtml(sub.text)}</span>
           </div>
           <button onclick="event.stopPropagation();removeWishSubItem(${item.id}, ${sub.id})" class="text-slate-300 hover:text-rose-500 p-1 shrink-0"><i class="fa-solid fa-xmark" style="font-size:10px"></i></button>
         </div>`).join('');
@@ -1714,12 +1662,12 @@
             const who = item.who || '함께';
             const itemCollapsed = item.collapsed !== false;
             return `
-            <div class="bg-white border border-slate-100 rounded-2xl p-3.5">
+            <div class="bg-white border border-slate-100 rounded-2xl px-3.5 py-2.5">
               <div class="flex justify-between items-center gap-2 cursor-pointer" onclick="toggleWishItemCollapse(${item.id})">
                 <div class="flex items-center gap-3 min-w-0">
                   ${avatarBlockHTML(who)}
                   <div class="min-w-0">
-                    <h4 class="text-xs font-bold text-slate-900 truncate flex items-center gap-1${item.done ? ' line-through text-slate-400' : ''}">${escapeHtml(item.text)} <i data-lucide="${itemCollapsed ? 'chevron-down' : 'chevron-up'}" class="w-3 h-3 text-slate-400"></i></h4>
+                    <h4 class="text-[13px] font-bold text-slate-900 truncate flex items-center gap-1${item.done ? ' line-through text-slate-400' : ''}">${escapeHtml(item.text)} <i data-lucide="${itemCollapsed ? 'chevron-down' : 'chevron-up'}" class="w-3 h-3 text-slate-400"></i></h4>
                     <span class="text-[10px] text-slate-400 font-medium truncate">${escapeHtml(item.date || '메모 없음')}</span>
                   </div>
                 </div>
@@ -1731,7 +1679,7 @@
               ${itemCollapsed ? '' : `
               <div class="mt-2 pt-2 border-t border-slate-50">
                 ${wishSubItemsHtml(item)}
-                <button onclick="event.stopPropagation();promptAddWishSubItem(${item.id})" class="w-full py-1.5 mt-1 border border-dashed border-slate-200 rounded-lg text-slate-400 text-[11px] font-bold hover:bg-slate-50 flex items-center justify-center gap-1">
+                <button onclick="event.stopPropagation();promptAddWishSubItem(${item.id})" class="w-full py-1.5 mt-1 border border-dashed border-slate-200 rounded-lg text-slate-400 text-xs font-bold hover:bg-slate-50 flex items-center justify-center gap-1">
                   <i data-lucide="plus" class="w-3 h-3"></i> 하위 항목 추가
                 </button>
               </div>
@@ -1739,10 +1687,10 @@
             </div>`;
           }).join(''));
 
-      const wishSectionHTML = !wishCat ? '' : ('<div class="space-y-2.5 mb-1">' + wishItemsHtml + '</div>');
+      const wishSectionHTML = !wishCat ? '' : ('<div class="space-y-1.5">' + wishItemsHtml + '</div>');
 
       return `
-        <div class="pt-12 px-4 pb-4 space-y-3.5 text-slate-900">
+        <div class="pt-12 px-4 pb-4 space-y-2.5 text-slate-900">
           <div class="flex justify-between items-center">
             <div>
               <h2 class="text-base font-black text-slate-900">함께할 일 & 버킷리스트</h2>
@@ -1752,54 +1700,6 @@
               <i class="fa-solid fa-plus text-[10px]"></i> 항목 추가
             </button>
           </div>
-
-          ${folderCats.map(cat => {
-            const completedCount = cat.items.filter(i => i.done).length;
-            const totalCount = cat.items.length;
-            const progress = totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
-
-            return `
-              <div class="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-soft space-y-3">
-                <div class="flex items-center gap-3 cursor-pointer" onclick="toggleCategoryCollapse('${cat.id}')">
-                  <img src="${folderCoverUrl(cat)}" class="w-12 h-12 rounded-xl object-cover border border-slate-100 shrink-0" alt="${escapeHtml(cat.title)}">
-                  <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-baseline">
-                      <h3 class="font-bold text-xs text-slate-900 truncate">${escapeHtml(cat.title)}</h3>
-                      <span class="text-[10px] font-extrabold text-brand-blue">${progress}%</span>
-                    </div>
-                    <p class="text-[9px] text-slate-400">${escapeHtml(cat.subtitle)}</p>
-                    <div class="w-full bg-slate-100 h-1.5 rounded-full mt-1.5 overflow-hidden">
-                      <div class="bg-brand-blue h-full rounded-full transition-all duration-300" style="width: ${progress}%"></div>
-                    </div>
-                  </div>
-                  <button onclick="event.stopPropagation(); openFolderSheet('${cat.id}')" class="p-1 text-slate-400 hover:text-slate-700 shrink-0" title="폴더 수정">
-                    <i data-lucide="more-horizontal" class="w-4 h-4"></i>
-                  </button>
-                  <i data-lucide="${cat.collapsed ? 'chevron-down' : 'chevron-up'}" class="w-4 h-4 text-slate-400 shrink-0"></i>
-                </div>
-
-                ${cat.collapsed ? '' : `
-                <div class="space-y-1.5 pt-1 border-t border-slate-50 text-xs">
-                  ${cat.items.map(item => `
-                    <div class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition-all">
-                      <div onclick="toggleTodoItem('${cat.id}', ${item.id})" class="flex items-center gap-2 cursor-pointer flex-1 min-w-0">
-                        <div class="w-4 h-4 rounded-md border ${item.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300'} flex items-center justify-center transition-all shrink-0">
-                          ${item.done ? '<i data-lucide="check" class="w-3 h-3"></i>' : ''}
-                        </div>
-                        <span class="${item.done ? 'line-through text-slate-400' : 'text-slate-800 font-medium'} text-xs truncate">${escapeHtml(item.text)}</span>
-                      </div>
-                      <span class="text-[9px] text-slate-400 font-mono ml-2 shrink-0">${item.date}</span>
-                    </div>
-                  `).join('')}
-
-                  <button onclick="promptAddTodoItem('${cat.id}')" class="w-full py-2 border border-dashed border-slate-200 rounded-xl text-slate-400 text-xs font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-1 mt-1">
-                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> 항목 추가하기
-                  </button>
-                </div>
-                `}
-              </div>
-            `;
-          }).join('')}
 
           ${wishSectionHTML}
         </div>
@@ -1831,13 +1731,13 @@
       // 알림은 어떤 기능(버튼)도 넣지 않는다. 텍스트로만 안내한다.
       // 함께 요청 수락은 알림이 아니라 해당 일정 자리의 '수락하기' 버튼에서 한다.
       list.innerHTML = mine.length === 0
-        ? `<div class="p-6 text-center text-xs text-slate-400">새로운 알림이 없습니다.</div>`
+        ? `<div class="py-6 text-center text-xs text-slate-400">새로운 알림이 없습니다.</div>`
         : mine.map(n => {
             return `
             <div onclick="markNotifRead(${n.id})" class="flex items-start gap-2.5 px-3.5 py-2.5 cursor-pointer hover:bg-slate-50 transition-all ${n.read ? 'opacity-50' : ''}">
               <div class="w-2 h-2 rounded-full ${n.color || 'bg-brand-red'} mt-1.5 shrink-0"></div>
-              <div class="flex-1 text-xs">
-                <p class="font-bold text-slate-800 leading-snug">${escapeHtml(n.text)}</p>
+              <div class="flex-1 min-w-0">
+                <p class="text-[13px] font-medium text-slate-800 leading-relaxed">${escapeHtml(n.text)}</p>
                 <span class="text-[10px] text-slate-400 mt-0.5 block">${n.timeAgo}</span>
               </div>
             </div>
@@ -1862,16 +1762,6 @@
         badge.textContent = unreadCount > 9 ? '9+' : String(unreadCount);
         badge.style.display = unreadCount > 0 ? 'flex' : 'none';
       }
-    }
-
-    // '나도 함께'는 즉시 참여가 아니라 작성자에게 가는 가벼운 요청이다 (요구사항 2)
-    function pendingJoinRequestOf(eventId, requesterId) {
-      return (state.joinRequests || []).find(r => r.eventId === eventId && r.requesterId === requesterId && r.status === 'pending');
-    }
-
-    // 내 일정에 대기 중인 함께 요청이 있는지 (수락하기 버튼용)
-    function pendingRequestForMyEvent(eventId) {
-      return (state.joinRequests || []).find(r => r.eventId === eventId && r.ownerId === state.currentUser && r.status === 'pending');
     }
 
     function requestJoinTogether(id) {
@@ -1910,17 +1800,6 @@
       justJoinedEventId = null;
       renderNotifPopover();
       updateNotifBadge();
-    }
-
-    // 요청자가 승인 전에 요청을 취소한다
-    function cancelJoinRequest(requestId) {
-      const req = (state.joinRequests || []).find(r => r.id === requestId);
-      if (!req || req.status !== 'pending' || req.requesterId !== state.currentUser) return;
-      req.status = 'cancelled';
-      req.resolvedAt = new Date().toISOString();
-      saveState();
-      showToast('요청을 취소했어요');
-      renderActiveScreen();
     }
 
     // 작성자만 '함께하기'로 승인할 수 있다. 승인 후에만 함께 일정으로 바뀐다 (요구사항 2)
@@ -2051,42 +1930,6 @@
       state.events = state.events.filter(e => e.id !== id);
       saveState();
       showToast('일정이 삭제되었어요');
-      renderActiveScreen();
-    }
-
-    // 위시리스트 아이템: 날짜가 정해지면 실제 일정으로 등록
-    function convertWishItemToSchedule(itemId) {
-      const wishCat = (state.todoCategories || []).find(c => c.id === 'wishlist');
-      if (!wishCat) return;
-      const item = wishCat.items.find(i => i.id === itemId);
-      if (!item) return;
-      const who = item.who || '함께';
-      const isTogether = who === '함께';
-      state.events.push({
-        id: Date.now(),
-        title: item.text,
-        date: item.targetDate || state.selectedDate,
-        endDate: null,
-        time: '12:00',
-        endTime: addMinutesToTime('12:00', 60),
-        subject: who,
-        subjectMemberId: isTogether ? null : who,
-        participants: isTogether ? ['준영', '아정'] : [who],
-        participation: {},
-        place: '',
-        createdBy: state.currentUser,
-        detailVisibility: isTogether ? 'shared' : 'busy_only',
-        lifecycle: 'active',
-        changeStatus: null,
-        version: 1,
-        revisions: [],
-        note: item.date || '',
-        completed: false,
-        comments: []
-      });
-      wishCat.items = wishCat.items.filter(i => i.id !== itemId);
-      saveState();
-      showToast('일정으로 등록했어요');
       renderActiveScreen();
     }
 
@@ -2226,15 +2069,6 @@
       renderActiveScreen();
     }
 
-
-    // 스레드 타임라인: 완료/진행중 토글 (내 일정만)
-    function toggleEventComplete(id) {
-      const ev = state.events.find(e => e.id === id);
-      if (!ev || !canDelete(ev)) return;
-      ev.completed = !ev.completed;
-      saveState();
-      renderActiveScreen();
-    }
 
     // 스레드 타임라인: 일정에 짧은 코멘트를 남긴다
     function addEventComment(id) {
@@ -2600,19 +2434,6 @@
       }
     }
 
-    function toggleTodoItem(catId, itemId) {
-      const cat = state.todoCategories.find(c => c.id === catId);
-      if (cat) {
-        const item = cat.items.find(i => i.id === itemId);
-        if (item) {
-          item.done = !item.done;
-          saveState();
-          showToast(item.done ? `'${item.text}' 완료!` : `'${item.text}' 해제`);
-          renderActiveScreen();
-        }
-      }
-    }
-
     function openWishAddSheet() {
       document.getElementById('wish-input-text').value = '';
       document.getElementById('wish-input-date').value = '';
@@ -2641,23 +2462,6 @@
       showToast('위시리스트에 추가했어요');
       closeAllSheets();
       renderActiveScreen();
-    }
-
-    function promptAddTodoItem(catId) {
-      const cat = state.todoCategories.find(c => c.id === catId);
-      if (!cat) return;
-      const text = prompt(`'${cat.title}' 폴더에 추가할 새 항목:`);
-      if (text && text.trim()) {
-        cat.items.push({
-          id: Date.now(),
-          text: text.trim(),
-          date: '이번 주',
-          done: false
-        });
-        saveState();
-        showToast('새 버킷리스트 항목이 추가되었습니다');
-        renderActiveScreen();
-      }
     }
 
     /* ----- 함께할 일 폴더 생성·수정 (요청서 2-2) ----- */
@@ -3365,7 +3169,9 @@
       renderActiveScreen();
       // 테스트 편의: 새로고침할 때마다 '이 휴대폰은 누구의 것인가요' 선택창을 다시 띄운다
       // (양쪽 시점을 번갈아 빠르게 테스트할 수 있도록. 선택하면 그 값은 그대로 저장됨)
-      document.getElementById('device-user-modal').classList.remove('hidden');
+      const deviceModal = document.getElementById('device-user-modal');
+      deviceModal.classList.remove('hidden');
+      deviceModal.classList.add('flex');
     };
   </script>
 </body>
