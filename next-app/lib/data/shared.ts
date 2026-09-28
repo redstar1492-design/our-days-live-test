@@ -169,3 +169,65 @@ export async function deleteTodo(id: string) {
   const { error } = await supabase.from('todos').delete().eq('id', id);
   if (error) throw error;
 }
+
+export async function uploadDumpPhoto(
+  dumpId: string,
+  file: File,
+  sortOrder = 0,
+) {
+  const { supabase, coupleId } = await sessionContext();
+  const extension = file.name.includes('.') ? file.name.split('.').pop() : 'jpg';
+  const storagePath =
+    `${coupleId}/${dumpId}/${crypto.randomUUID()}.${extension?.toLowerCase()}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('dump-photos')
+    .upload(storagePath, file, {
+      cacheControl: '3600',
+      contentType: file.type || undefined,
+      upsert: false,
+    });
+
+  if (uploadError) throw uploadError;
+
+  const { data, error: rowError } = await supabase
+    .from('dump_photos')
+    .insert({
+      dump_id: dumpId,
+      storage_path: storagePath,
+      sort_order: sortOrder,
+    })
+    .select()
+    .single();
+
+  if (rowError) {
+    await supabase.storage.from('dump-photos').remove([storagePath]);
+    throw rowError;
+  }
+
+  return data;
+}
+
+export function dumpPhotoUrl(storagePath: string) {
+  const supabase = createClient();
+  return supabase.storage.from('dump-photos').getPublicUrl(storagePath)
+    .data.publicUrl;
+}
+
+export async function deleteDumpPhoto(id: string, storagePath: string) {
+  const { supabase } = await sessionContext();
+
+  const { error: rowError } = await supabase
+    .from('dump_photos')
+    .delete()
+    .eq('id', id);
+
+  if (rowError) throw rowError;
+
+  const { error: storageError } = await supabase.storage
+    .from('dump-photos')
+    .remove([storagePath]);
+
+  if (storageError) throw storageError;
+}
+
