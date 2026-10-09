@@ -1,0 +1,26 @@
+const fs=require('fs'),vm=require('vm');
+let html=fs.readFileSync('outputs/index0922testv17.html','utf8').replace(/\r\n/g,'\n');
+const replace=(from,to)=>{if(!html.includes(from))throw Error('Missing patch anchor: '+from.slice(0,100));html=html.replace(from,to);};
+const logo='data:image/png;base64,'+fs.readFileSync('outputs/dump-selected-logo.png').toString('base64');
+const placeholder='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><rect width="80" height="80" fill="#eef0f3"/><circle cx="40" cy="29" r="12" fill="#a6afb9"/><path d="M16 80V66a24 24 0 0 1 48 0v14" fill="#a6afb9"/></svg>');
+replace("if(state.memberProfiles?.[person]?.avatar)return state.memberProfiles[person].avatar;","if(state.memberProfiles?.[person]?.avatar)return state.memberProfiles[person].avatar;\n      if(state.noSampleProfile)return "+JSON.stringify(placeholder)+';');
+replace('if (device) s.currentUser = device;','if (device && !s.noSampleProfile) s.currentUser = device;');
+replace("},w+' 시점으로 전환했어요.')","},nicknameOf(w)+' 시점으로 전환했어요.')");
+replace("+accountRow('데이터 및 설정'","+guideAccountRow()+accountRow('데이터 및 설정'");
+replace("posts.length?posts.map(postCard).join(''):('<div class=\"od-empty\">'","posts.length?posts.map(postCard).join(''):feedFilter==='전체'&&state.posts.length===0?onboardingEmpty():('<div class=\"od-empty\">'");
+replace('try{change();if(!saveState())', 'try{change();guideTrackMutation(before);if(!saveState())');
+// These hooks observe real screens and mutations; the tutorial never submits a form.
+replace("  }\n  function updateMoreLabels()", "    guideRefresh();\n  }\n  function updateMoreLabels()");
+replace("    enhanceSheet();$('od-overlay').querySelector('button')?.focus({preventScroll:true});", "    enhanceSheet();guideRefresh();$('od-overlay').querySelector('button')?.focus({preventScroll:true});");
+replace('if(window.odConflict)syncExternal();\n  }','if(window.odConflict)syncExternal();guideRefresh();\n  }');
+replace('    profileToken++;commentObserver?.disconnect();',"    if(modalKind==='invite')clearInvitePreviewHash();\n    profileToken++;commentObserver?.disconnect();");
+const conn=require('./patch-v20-connection.cjs');html=conn.apply(html);
+replace('  // New UI is the sole screen renderer;', '  const ONBOARDING_LOGO='+JSON.stringify(logo)+';\n'+require('./patch-v20-onboarding-state.cjs').source+'\n'+conn.source+'\n'+fs.readFileSync('work/onboarding-v20.js','utf8')+'\n  // New UI is the sole screen renderer;');
+replace("    render();\n    if(!window.odStorageIssue){if(window.odPersistedRaw===null)resetNow(true);else if(!state.demoV6)commit(()=>{state.demoV5=true;state.demoV6=true;});}render();", "    if(!window.odStorageIssue&&window.odPersistedRaw===null)window.state=freshOnboardingState({name:'나'});\n    render();\n    if(!window.odStorageIssue){if(window.odPersistedRaw===null)startOnboarding(false);else if(!state.demoV6)commit(()=>{state.demoV5=true;state.demoV6=true;});}render();onboardingBoot();");
+replace('</head>','<style id="dump-onboarding-v20">\n'+fs.readFileSync('work/onboarding-v20.css','utf8')+'\n'+(conn.css||'')+'\n</style>\n</head>');
+replace('<title>덤프 — 우리의 일상과 계획</title>','<title>dump — 둘이 쓰는 일상</title>');
+for(const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
+fs.writeFileSync('outputs/index0922testv20.html',html);fs.writeFileSync('outputs/dump-final.html',html);
+const preview=html.replaceAll("'our_days_app_v6_state'","'dump_onboarding_preview_v20_state'").replaceAll("'our_days_device_user'","'dump_onboarding_preview_v20_user'");
+fs.writeFileSync('outputs/dump-onboarding-preview.html',preview);
+console.log('v20 built: service → own profile → invite preview → real guided app. No tutorial examples or generated photos. All inline scripts parse.');

@@ -1,0 +1,15 @@
+{
+  "enabled": false,
+  "mode": "preview-only",
+  "supabase": {
+    "url": "",
+    "publishableKey": ""
+  },
+  "invitationApiBaseUrl": "",
+  "notes": [
+    "Preparation example only. This file does not connect the standalone HTML to a server.",
+    "Only public project URL and publishable key may be used in a browser.",
+    "Never place service role keys or server secrets in this file.",
+    "The v20 display-name hash is a preview, not an authenticated invitation token."
+  ]
+}

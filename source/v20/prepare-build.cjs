@@ -1,0 +1,16 @@
+'use strict';
+const fs = require('node:fs'), path = require('node:path');
+const destination = __dirname;
+const repository = path.resolve(destination, '../..');
+const baseline = path.join(repository, 'versions/v17/index.html');
+const released = path.join(repository, 'index.html');
+if (!fs.existsSync(baseline) || !fs.existsSync(released)) throw Error('Run this script inside the repository source/v20 directory.');
+const html = fs.readFileSync(released, 'utf8');
+const match = html.match(/const ONBOARDING_LOGO=("data:image\/png;base64,[A-Za-z0-9+/=]+");/);
+if (!match) throw Error('The released v20 embedded logo was not found.');
+const outputs = path.join(destination, 'outputs');
+fs.mkdirSync(outputs, { recursive: true });
+fs.copyFileSync(baseline, path.join(outputs, 'index0922testv17.html'));
+const logo = JSON.parse(match[1]).slice('data:image/png;base64,'.length);
+fs.writeFileSync(path.join(outputs, 'dump-selected-logo.png'), Buffer.from(logo, 'base64'));
+console.log('Prepared existing v17 baseline and the released embedded dump logo. No user data is read.');
