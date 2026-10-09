@@ -2,7 +2,7 @@
 
 기준일: 2026-10-09. `index.html`과 `versions/v20/index.html`은 전달용 `dump-final.html`과 같은 파일입니다. 체험 파일만 v20 전용 저장 키를 사용합니다.
 
-최종 HTML SHA256: `5620d72d7c01c80720d6a9fcf26fc1af352033cbbcb7849c73db3172e0761e5a`
+최종 HTML SHA256: `63de2c7089c19fc7137c92b12bf7a83db476fc87b459bb4eb025b0b309d461a5`
 
 자동 코드 검사와 실제 브라우저 확인을 아래에 분리해 기록했습니다. 이전 v19의 검사 통과 수를 이번 버전 수치로 합산하지 않았습니다. 실제 계정 연결·두 기기 동기화·푸시는 아직 제공하지 않으며 이번 검수 범위가 아닙니다.
 
@@ -18,8 +18,8 @@
 ```text
 dump v20 최종 코드 QA
 대상: versions/v20/index.html
-SHA256: 5620d72d7c01c80720d6a9fcf26fc1af352033cbbcb7849c73db3172e0761e5a
-실행(UTC): 2026-10-09T09:22:23.829Z
+SHA256: 63de2c7089c19fc7137c92b12bf7a83db476fc87b459bb4eb025b0b309d461a5
+실행(UTC): 2026-10-09T09:32:01.608Z
 결과: 339개 고유 검사 통과, 0개 실패
 
 - 본인 프로필·빈 계정·실제 사용 안내: 74개 통과
@@ -113,7 +113,7 @@ PASS delivered onboarding removes synthetic photo and demo-action runtime entire
 PASS contextual guide highlights actual header creation buttons without auto-filling user content
 PASS creation guide appears only for a new form and stays out of existing record edits
 PASS new preview storage is separated from canonical users and earlier previews
-{"target":"versions/v20/index.html","sha256":"5620d72d7c01c80720d6a9fcf26fc1af352033cbbcb7849c73db3172e0761e5a","passed":74,"failed":0,"report":"outputs/QA-v20-사용안내.txt"}
+{"target":"versions/v20/index.html","sha256":"63de2c7089c19fc7137c92b12bf7a83db476fc87b459bb4eb025b0b309d461a5","passed":74,"failed":0,"report":"outputs/QA-v20-사용안내.txt"}
 
 [test-v20-regression.cjs]
 test-v17-calendar.cjs: 32 passed, exit 0
@@ -125,7 +125,7 @@ test-release-logic.cjs: 43 passed, exit 0
 test-v10-storage.cjs: 21 passed, exit 0
 test-profile-dates.cjs: 25 passed, exit 0
 test-v19-title-migration.cjs: 5 passed, exit 0
-{"target":"versions/v20/index.html","hash":"5620d72d7c01c80720d6a9fcf26fc1af352033cbbcb7849c73db3172e0761e5a","passed":228,"failures":[],"report":"outputs/QA-v20-회귀.txt"}
+{"target":"versions/v20/index.html","hash":"63de2c7089c19fc7137c92b12bf7a83db476fc87b459bb4eb025b0b309d461a5","passed":228,"failures":[],"report":"outputs/QA-v20-회귀.txt"}
 
 [test-v20-connection.cjs]
 PASS connection source and all patched inline scripts parse
@@ -174,7 +174,7 @@ PASS outgoing invitation never creates a connected marker
 ```text
 dump v20 실제 브라우저 검수
 검수일: 2026-10-09 (Asia/Seoul)
-대상 SHA256: 5620D72D7C01C80720D6A9FCF26FC1AF352033CBBCB7849C73DB3172E0761E5A
+대상 SHA256: 63DE2C7089C19FC7137C92B12BF7A83DB476FC87B459BB4EB025B0B309D461A5
 
 검수 환경
 - 최종 체험 HTML만 제공하는 읽기 전용 로컬 서버(127.0.0.1:8880).
@@ -208,6 +208,7 @@ dump v20 실제 브라우저 검수
 - 320×640 작성창 게시 버튼 하단 628px, 입력 글꼴 DumpSans, 안내 본문 13px 확인.
 - 320×420 작성창 게시 버튼 하단 408px, 본문 client287/scroll493px, 가로 넘침 없음.
 - 임시 viewport override는 검수 뒤 해제.
+- 마지막 공개 PC 화면 확인 중 낮은 창의 불필요한 소개 스크롤 발견. compact breakpoint를 780px로 조정한 최종본을 새 저장소 1280×720에서 재확인: main670px, 본문 client513/scroll513px, 시작 버튼 하단651.5px. 불필요한 스크롤 없음.
 
 검수 중 수정·재확인
 - 안내 시작 시각 보존과 중단/이어보기 상태 표시를 수정해 재접속이 가입 직후 초대창으로 돌아가지 않도록 처리.
@@ -216,6 +217,7 @@ dump v20 실제 브라우저 검수
 - 안내의 + 버튼 선택자가 실제 헤더 버튼과 달랐던 문제를 실제 aria-label 기준으로 수정. 강조 표시 재확인.
 - 기존 기록 수정창에 신규 등록 안내를 붙이지 않도록 정리.
 - 초대 화면에서 같은 제한 설명이 반복되지 않게 안내 문구 축소, 본문 폰트 공통 크기로 정리.
+- 낮은 PC 창에 맞춰 소개 간격을 줄이고 필요한 스크롤에는 가는 스크롤바 적용. JS 기능 변경 없이 339개 코드 검사를 새 해시로 다시 통과.
 
 검수 한계
 - 실제 iOS/Android 기기, 서버 인증·두 기기 연결·동기화·푸시는 검수 대상이 아님.
