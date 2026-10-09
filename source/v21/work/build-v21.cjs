@@ -1,0 +1,25 @@
+const fs=require('fs'),vm=require('vm'),crypto=require('crypto');
+let html=fs.readFileSync('outputs/index0922testv20.html','utf8');
+const patch=(a,b)=>{if(!html.includes(a))throw Error('Missing v21 anchor: '+a.slice(0,100));html=html.replace(a,b);};
+patch('    function checkBackup(raw){',fs.readFileSync('work/v21-validation.js','utf8')+'\n    function checkBackup(raw){');
+patch('      return JSON.parse(JSON.stringify(raw));','      validateCollectionsV21(raw);\n      return JSON.parse(JSON.stringify(raw));');
+patch('      if (s.firstMetDate === undefined)',"      if (!Array.isArray(s.collections)) s.collections = [];\n      if (s.firstMetDate === undefined)");
+patch("next.connection = { status: 'unconnected' };","next.collections = [];\n  next.connection = { status: 'unconnected' };");
+patch('try{change();guideTrackMutation(before);','try{change();reconcileCollectionsV21(before);guideTrackMutation(before);');
+patch("function feed(){const posts=", "function feed(){if(collectionMode!=='feed')return collectionPageV21();const posts=");
+patch("${header('덤프')}${feedToolbar()}${posts.length?", "${header('덤프')}${feedToolbar()}${collectionNavV21()}${posts.length?");
+patch("['post','event','task','ledger','profile'].includes(modalKind)","['post','event','task','ledger','profile','collection','tripStop'].includes(modalKind)");
+patch("${field('장소','location',", "${collectionFieldV21(p?.collectionId)}${field('장소','location',");
+patch("const newId=p?.id||id(),data={text,location,", "const newId=p?.id||id(),data={text,location,collectionId:chosenCollectionV21(),");
+patch("${peopleField('참여자','owner',owner)}", "${peopleField('참여자','owner',owner)}${collectionFieldV21(v?.collectionId??task?.collectionId)}");
+patch("const together=owner==='함께',participants=", "if(!eventRangeAllowedV21(v,date,endDate))return;const together=owner==='함께',participants=");
+patch("data={title,date,endDate:endDate===date?null:endDate,", "data={title,collectionId:chosenCollectionV21(),date,endDate:endDate===date?null:endDate,");
+patch("+ taskCategoryField(t, prefill) + '</div>'", "+ taskCategoryField(t, prefill) + collectionFieldV21(t?.collectionId) + '</div>'");
+patch("const data = { text: title, group:", "const data = { text: title, collectionId: chosenCollectionV21(), group:");
+patch('  // New UI is the sole screen renderer;',fs.readFileSync('work/collections-v21.js','utf8')+'\n  // New UI is the sole screen renderer;');
+patch('</head>','<style id="dump-collections-v21">'+fs.readFileSync('work/collections-v21.css','utf8')+'</style>\n</head>');
+for(const m of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))new vm.Script(m[1]);
+fs.writeFileSync('outputs/index0922testv21.html',html);fs.writeFileSync('outputs/dump-final.html',html);
+// Preserve v20 preview records, while the primary app retains its existing key.
+fs.writeFileSync('outputs/dump-onboarding-preview.html',html.replaceAll("'our_days_app_v6_state'","'dump_onboarding_preview_v20_state'").replaceAll("'our_days_device_user'","'dump_onboarding_preview_v20_user'"));
+console.log('v21 built '+crypto.createHash('sha256').update(html).digest('hex'));

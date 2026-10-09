@@ -1,0 +1,215 @@
+{
+  "scope": "Static preparation checks only; SQL was not executed and no backend was connected.",
+  "passed": 52,
+  "failed": 0,
+  "assertions": [
+    {
+      "name": "baseline Git blob preserved: baseline-001.sql",
+      "passed": true
+    },
+    {
+      "name": "baseline Git blob preserved: baseline-002.sql",
+      "passed": true
+    },
+    {
+      "name": "baseline Git blob preserved: baseline-shared.ts",
+      "passed": true
+    },
+    {
+      "name": "collections: definition present",
+      "passed": true
+    },
+    {
+      "name": "collections: RLS enabled",
+      "passed": true
+    },
+    {
+      "name": "collections: select policy present",
+      "passed": true
+    },
+    {
+      "name": "collections: insert policy present",
+      "passed": true
+    },
+    {
+      "name": "collections: update policy present",
+      "passed": true
+    },
+    {
+      "name": "collections: delete policy present",
+      "passed": true
+    },
+    {
+      "name": "trips: definition present",
+      "passed": true
+    },
+    {
+      "name": "trips: RLS enabled",
+      "passed": true
+    },
+    {
+      "name": "trips: select policy present",
+      "passed": true
+    },
+    {
+      "name": "trips: insert policy present",
+      "passed": true
+    },
+    {
+      "name": "trips: update policy present",
+      "passed": true
+    },
+    {
+      "name": "trips: delete policy present",
+      "passed": true
+    },
+    {
+      "name": "trip_stops: definition present",
+      "passed": true
+    },
+    {
+      "name": "trip_stops: RLS enabled",
+      "passed": true
+    },
+    {
+      "name": "trip_stops: select policy present",
+      "passed": true
+    },
+    {
+      "name": "trip_stops: insert policy present",
+      "passed": true
+    },
+    {
+      "name": "trip_stops: update policy present",
+      "passed": true
+    },
+    {
+      "name": "trip_stops: delete policy present",
+      "passed": true
+    },
+    {
+      "name": "collection_items: definition present",
+      "passed": true
+    },
+    {
+      "name": "collection_items: RLS enabled",
+      "passed": true
+    },
+    {
+      "name": "collection_items: select policy present",
+      "passed": true
+    },
+    {
+      "name": "collection_items: insert policy present",
+      "passed": true
+    },
+    {
+      "name": "collection_items: update policy present",
+      "passed": true
+    },
+    {
+      "name": "collection_items: delete policy present",
+      "passed": true
+    },
+    {
+      "name": "authenticated gets SELECT only",
+      "passed": true
+    },
+    {
+      "name": "no client write grant",
+      "passed": true
+    },
+    {
+      "name": "no anonymous/public read grant",
+      "passed": true
+    },
+    {
+      "name": "public/anon default table privileges revoked",
+      "passed": true
+    },
+    {
+      "name": "dumps: target same-couple composite FK",
+      "passed": true
+    },
+    {
+      "name": "events: target same-couple composite FK",
+      "passed": true
+    },
+    {
+      "name": "todos: target same-couple composite FK",
+      "passed": true
+    },
+    {
+      "name": "exactly one real item reference required",
+      "passed": true
+    },
+    {
+      "name": "fixed helper search path",
+      "passed": true
+    },
+    {
+      "name": "membership derives verified auth identity",
+      "passed": true
+    },
+    {
+      "name": "atomic stop/date and order changes supported",
+      "passed": true
+    },
+    {
+      "name": "one calendar event per trip",
+      "passed": true
+    },
+    {
+      "name": "preflight is read-only",
+      "passed": true
+    },
+    {
+      "name": "connected adapter is explicitly distinct from local HTML",
+      "passed": true
+    },
+    {
+      "name": "revision conflict contract",
+      "passed": true
+    },
+    {
+      "name": "retry idempotency contract",
+      "passed": true
+    },
+    {
+      "name": "future chat read receipt requires visible message",
+      "passed": true
+    },
+    {
+      "name": "future chat reconnect backfill contract",
+      "passed": true
+    },
+    {
+      "name": "no fake chat schema or implementation",
+      "passed": true
+    },
+    {
+      "name": "runtime database validation is clearly not claimed",
+      "passed": true
+    },
+    {
+      "name": "delete authorization is documented",
+      "passed": true
+    },
+    {
+      "name": "legacy permissions limitation disclosed",
+      "passed": true
+    },
+    {
+      "name": "draft SQL: no credential-like strings",
+      "passed": true
+    },
+    {
+      "name": "contract: no credential-like strings",
+      "passed": true
+    },
+    {
+      "name": "documentation: no credential-like strings",
+      "passed": true
+    }
+  ]
+}
