@@ -1,0 +1,60 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const {TextDecoder,TextEncoder}=require('node:util');
+const patch=require('./patch-v20-connection.cjs');
+const input=fs.readFileSync(process.argv[2]||'outputs/index0922testv19.html','utf8');
+const alreadyPatched=input.includes('function parseDumpInviteHash(');
+const result=alreadyPatched?input:patch.apply(input);
+let connectionSource=patch.source;
+if(alreadyPatched){
+  const activeStart=input.indexOf('<script id="our-days-v4-app">');
+  const sourceStart=input.indexOf('  function isCoupleConnected()',activeStart);
+  const exportStart=input.indexOf('  Object.assign(window.OD,{invite,',sourceStart);
+  const sourceEnd=input.indexOf('\n',exportStart);
+  assert(sourceStart>activeStart&&exportStart>sourceStart&&sourceEnd>exportStart,'Final HTML connection source boundaries');
+  connectionSource=input.slice(sourceStart,sourceEnd);
+}
+for(const [,js]of result.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi))new vm.Script(js);
+new vm.Script(connectionSource);
+let tests=0;function check(name,fn){fn();tests++;console.log('PASS '+name);}
+const data={noSampleProfile:true,currentUser:'준영',memberProfiles:{준영:{nickname:'서연',avatar:'private-avatar'},아정:{}},posts:[{text:'private-note'}],events:[],notifications:[]};
+let showArgs,clipboardText,shared,clipboardFails=false;
+const elements={'od-invite-status':{textContent:''},'od-invite-link-area':{hidden:true},'od-invite-link':{value:'',focus(){},select(){}}};
+const context={state:data,TextDecoder,TextEncoder,Uint8Array,URL,atob,btoa,crypto:globalThis.crypto,console,me:()=>data.currentUser,nicknameOf:who=>data.memberProfiles[who]?.nickname||who,avatar:who=>'<img data-person="'+who+'">',icon:k=>'<svg data-icon="'+k+'"></svg>',feedFilter:'전체',calFilter:'전체',taskAuthorFilter:'전체',e:s=>String(s).replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])),$:id=>elements[id],show:(...args)=>{showArgs=args;context.modalKind=args[3];},footer:(label,action)=>label+' '+action,modalKind:'',navigator:{clipboard:{async writeText(s){if(clipboardFails)throw Error('denied');clipboardText=s;}},async share(s){shared=s;}},location:{href:'https://example.com/dump-onboarding-preview.html?v=20',protocol:'https:',hash:''}};
+context.window={location:context.location,OD:{}};vm.createContext(context);vm.runInContext(connectionSource,context);
+const od=context.window.OD;
+for(const name of ['peopleToolbar','peoplePicker','avatarPair','peopleField','taskPeopleField','calendarBarPeople','notify']){const found=result.match(new RegExp('^  function '+name+'\\([^\\r\\n]*$','m'));assert(found,'patched function '+name);vm.runInContext(found[0],context);}
+check('connection source and all patched inline scripts parse',()=>assert(result.includes('isCoupleConnected()')));
+check('fresh profile is unconnected',()=>assert.equal(od.isCoupleConnected(),false));
+check('fresh only exposes own member',()=>assert.deepEqual(Array.from(vm.runInContext('connectionMembers()',context)),['준영']));
+check('fresh filters omit partner and together',()=>assert.deepEqual(Array.from(vm.runInContext('connectionFilters()',context)),['전체','준영']));
+check('fresh notification list is empty without changing source',()=>{data.notifications=[{id:1}];assert.equal(vm.runInContext('connectionNotifications().length',context),0);assert.equal(data.notifications.length,1);});
+check('fresh top toolbar renders only own face with working dropdown action',()=>{const html=vm.runInContext("peopleToolbar('our','전체')",context);assert(html.includes("OD.peoplePicker('our')"));assert(html.includes('data-person="준영"'));assert(!html.includes('data-person="아정"'));});
+check('fresh picker contains only all and own author',()=>{vm.runInContext("peoplePicker('our')",context);assert(showArgs[1].includes("OD.choosePeople('our','전체')"));assert(showArgs[1].includes("OD.choosePeople('our','준영')"));assert(!showArgs[1].includes("OD.choosePeople('our','아정')"));assert(!showArgs[1].includes("OD.choosePeople('our','함께')"));});
+check('fresh participant and task selection become own hidden values',()=>{assert.equal(vm.runInContext("peopleField('참여자','owner','함께')",context),'<input type="hidden" id="od-owner" value="준영">');assert.equal(vm.runInContext("taskPeopleField('함께')",context),'<input type="hidden" id="od-who" value="준영">');});
+check('fresh paired photos cannot show a fake partner',()=>assert(!vm.runInContext("avatarPair(['준영','아정'])",context).includes('data-person="아정"')));
+check('fresh writes do not generate partner notification',()=>{const before=JSON.stringify(data.notifications);vm.runInContext("notify('new','post','아정',{postId:2})",context);assert.equal(JSON.stringify(data.notifications),before);});
+check('legacy compatibility retains original two people',()=>{delete data.noSampleProfile;assert.equal(od.isCoupleConnected(),true);assert.equal(vm.runInContext('connectionMembers().length',context),2);data.noSampleProfile=true;});
+check('explicit unconnected state cannot enter legacy compatibility',()=>{delete data.noSampleProfile;data.connection={status:'unconnected'};assert.equal(od.isCoupleConnected(),false);delete data.connection;data.noSampleProfile=true;});
+check('outgoing preview does not change state',()=>{const before=JSON.stringify(data);od.invitePreviewUrl();assert.equal(JSON.stringify(data),before);});
+let link=od.invitePreviewUrl(),hash=new URL(link).hash;
+check('preview link contains only version name nonce',()=>{context.location.hash=hash;const p=od.incomingInvite();assert.deepEqual(Object.keys(p).sort(),['name','nonce','v']);assert.equal(p.name,'서연');assert.equal(p.v,20);});
+check('preview link contains no avatar or records',()=>{const json=JSON.stringify(od.incomingInvite());assert(!json.includes('private-avatar'));assert(!json.includes('private-note'));});
+check('recipient name is received separately from own name',()=>{assert.equal(od.incomingInvite().name,'서연');data.memberProfiles.준영.nickname='도윤';assert.equal(od.incomingInvite().name,'서연');});
+check('invitation decoding preserves Korean',()=>assert.equal(od.incomingInvite().name,'서연'));
+check('incoming display escapes its name',()=>{context.location.hash='#dump-invite='+btoa(unescape(encodeURIComponent(JSON.stringify({v:20,name:'<b>서연</b>',nonce:'abcdefghijklmnop'})))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');od.invite();assert(showArgs[1].includes('&lt;b&gt;서연&lt;/b&gt;'));assert(!showArgs[1].includes('<b>서연</b>'));});
+for(const [name,payload]of [['unsupported version',{v:19,name:'서연'}],['extra avatar',{v:20,name:'서연',avatar:'private'}],['empty name',{v:20,name:' '}],['long name',{v:20,name:'가'.repeat(21)}],['control character',{v:20,name:'서\n연'}],['wrong nonce',{v:20,name:'서연',nonce:'bad'}],['array',[]]])check('rejects '+name,()=>{const encoded=btoa(unescape(encodeURIComponent(JSON.stringify(payload)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');context.location.hash='#dump-invite='+encoded;assert.equal(od.inviteHashState().status,'invalid');assert.equal(od.incomingInvite(),null);});
+check('malformed base64 is rejected',()=>{context.location.hash='#dump-invite=%%%';assert.equal(od.inviteHashState().status,'invalid');});
+check('very large hash is rejected',()=>{context.location.hash='#dump-invite='+'a'.repeat(801);assert.equal(od.inviteHashState().status,'invalid');});
+check('unrelated hash is ignored',()=>{context.location.hash='#other=123';assert.equal(od.inviteHashState().status,'none');});
+check('ordinary invitation has copy and share buttons',()=>{context.location.hash='';od.invite();assert.equal(showArgs[3],'invite');assert(showArgs[1].includes('OD.inviteCopy()'));assert(showArgs[1].includes('OD.inviteShare()'));assert(showArgs[1].includes('연결되거나 기록이 공유되지는 않습니다'));});
+check('setup invitation hands off to real tutorial APIs',()=>{od.invite(true);assert(showArgs[2].includes('OD.beginGuide()'));assert(showArgs[2].includes('OD.skipGuide()'));});
+check('incoming invitation does not offer fake accept',()=>{context.location.hash=hash;od.invite(true);assert(showArgs[1].includes('서연님의 초대'));assert(!showArgs[1].includes('수락'));assert(!showArgs[1].includes('연결 완료'));});
+check('partner filters and profile switches are guarded in patched app',()=>{assert(result.includes("if(!connectionFilters().includes(w))return;"));assert(result.includes("switchProfile:w=>{if(!isCoupleConnected()"));assert(result.includes("persona:w=>{if(!isCoupleConnected()"));});
+check('unconnected writes cannot choose fake shared post participant event or task',()=>{assert(result.includes("shared:isCoupleConnected()?!!$('od-shared')?.checked:!!p?.shared"));assert(result.includes("if(!isCoupleConnected()&&value('owner')!==me())"));assert(result.includes("if(!isCoupleConnected()&&value('who')!==me())"));});
+(async()=>{
+ context.location.hash='';od.invite();await od.inviteCopy();check('copy writes only safe preview URL',()=>{assert(clipboardText.includes('#dump-invite='));assert(elements['od-invite-status'].textContent.includes('복사했어요'));});
+ clipboardFails=true;await od.inviteCopy();check('blocked clipboard offers selectable link without false success',()=>{assert.equal(elements['od-invite-link-area'].hidden,false);assert(elements['od-invite-link'].value.includes('#dump-invite='));assert(elements['od-invite-status'].textContent.includes('복사해서'));});
+ await od.inviteShare();check('share is explicitly labelled as non-connected preview',()=>{assert(shared.title.includes('미리보기'));assert(shared.text.includes('기기 연결을 지원하지 않습니다'));assert(shared.url.includes('#dump-invite='));});
+ check('outgoing invitation never creates a connected marker',()=>{assert.equal(data.connection,undefined);assert.equal(data.noSampleProfile,true);});
+ console.log('\n'+tests+' passed, 0 failed');
+})().catch(err=>{console.error(err);process.exitCode=1;});
